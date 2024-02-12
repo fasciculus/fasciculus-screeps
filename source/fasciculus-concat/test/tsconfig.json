@@ -9,9 +9,10 @@
     "newLine": "crlf",
     "noImplicitReturns": true,
     "outDir": "dist",
+    "rootDir": "src",
     "strict": true,
     "strictPropertyInitialization": true,
     "target": "ESNext"
   },
-  "include": ["index.ts"]
+  "include": ["src/**/*.ts"]
 }

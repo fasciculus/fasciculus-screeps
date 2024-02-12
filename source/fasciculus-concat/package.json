@@ -3,9 +3,11 @@
   "bin": "./index.js",
   "bugs": { "url": "https://github.com/fasciculus/fasciculus-screeps/issues" },
   "dependencies": {
+    "glob": "10.3.10"
   },
   "devDependencies": {
     "@types/node": "20.11.17",
+    "glob": "10.3.10",
     "typescript": "5.3.3"
   },
   "description": "Concatenates TypeScript files into a single file",
@@ -23,5 +25,5 @@
     "clean": "tsc --build --clean",
     "experiment": "cd test && node ../dist/index.js"
   },
-  "version": "0.1.1"
+  "version": "0.1.2"
 }
