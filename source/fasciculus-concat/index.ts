@@ -3,24 +3,28 @@ import * as FS from "node:fs";
 import * as Path from "node:path";
 import * as TS from "typescript";
 
-interface PackageJson
+interface ConfigJson
 {
-    [key: string]: any,
-    main?: string
+    main?: string;
 }
 
-class PackageConfig
+class Config
 {
     readonly main: string;
 
     constructor()
     {
-        const json = FS.readFileSync("package.json", { encoding: "utf-8" });
-        const pkg: PackageJson = JSON.parse(json);
+        if (FS.existsSync("concat.json"))
+        {
+            const json: string = FS.readFileSync("concat.json", { encoding: "utf-8" });
+            const config: ConfigJson = JSON.parse(json);
 
-        if (!pkg.main) throw new Error(`no "main" in package.json`)
-
-        this.main = pkg.main;
+            this.main = config.main || "index";
+        }
+        else
+        {
+            this.main = "index";
+        }
     }
 }
 
@@ -66,10 +70,10 @@ class TSConfig
 
 try
 {
-    const pkg: PackageConfig = new PackageConfig();
-    const tsconfig: TSConfig = new TSConfig();
+    const cfg: Config = new Config();
+    const tsc: TSConfig = new TSConfig();
 
-    tsconfig.convert("index.ts");
+    tsc.convert(cfg.main);
 }
 catch(e)
 {
