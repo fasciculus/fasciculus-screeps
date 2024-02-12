@@ -1,0 +1,12 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "lib": [ "ESNext" ],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "newLine": "crlf",
+    "outDir": "dist",
+    "target": "ESNext"
+  },
+  "include": ["index.ts"]
+}

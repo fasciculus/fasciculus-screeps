@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+  <Target Name="CreateDirectories" BeforeTargets="BeforeResolveReferences">
+    <MakeDir Directories="$(RepositoryDirectory)" />
+    <MakeDir Directories="$(PackagesDirectory)" />
+    <MakeDir Directories="$(ModulesDirectory)" />
+  </Target>
+
+  <Target Name="UndeployModule">
+    <PropertyGroup>
+      <ModuleDirectory>$([System.IO.Path]::Combine($(ModulesDirectory), $(ProjectName)))</ModuleDirectory>
+    </PropertyGroup>
+    <Message Importance="high" Text="'$(ProjectName)' not deployed." Condition="!Exists($(ModuleDirectory))"/>
+    <Delete Files="$(ModuleDirectory)" Condition="Exists($(ModuleDirectory))"/>
+    <Message Importance="high" Text="Undeployed $(ProjectName)." Condition="Exists($(ModuleDirectory))"/>
+  </Target>
+
+  <Target Name="DeployModule" AfterTargets="Build" DependsOnTargets="UndeployModule">
+    <PropertyGroup>
+      <ModuleDirectory>$([System.IO.Path]::Combine($(ModulesDirectory), $(ProjectName)))</ModuleDirectory>
+    </PropertyGroup>
+    <ItemGroup>
+      <Files Include="dist/**/*" />
+      <Files Include="package.json" />
+    </ItemGroup>
+    <Copy DestinationFolder="$(ModuleDirectory)" SourceFiles="@(Files)" />
+    <Message Importance="high" Text="Deployed $(ProjectName)." />
+  </Target>
+
+</Project>

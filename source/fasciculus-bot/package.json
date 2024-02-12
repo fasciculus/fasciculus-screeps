@@ -1,0 +1,24 @@
+{
+  "author": { "name": "Roger H. Jörg" },
+  "bugs": { "url": "https://github.com/fasciculus/fasciculus-screeps/issues" },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "typescript": "5.3.3",
+    "fasciculus-concat": "file:../../.repository/node_modules/fasciculus-concat"
+  },
+  "description": "Screeps Bot from Fasciculus",
+  "homepage": "https://github.com/fasciculus/fasciculus-screeps",
+  "license": "MIT",
+  "name": "fasciculus-bot",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fasciculus/fasciculus-screeps.git",
+    "directory": "source/fasciculus-bot"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "tsc --build --clean"
+  },
+  "version": "0.1.1"
+}

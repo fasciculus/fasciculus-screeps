@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+    <!-- Directories -->
+
+  <PropertyGroup>
+    <RootDirectory>$(MSBuildThisFileDirectory)</RootDirectory>
+    <RepositoryDirectory>$([System.IO.Path]::Combine($(RootDirectory), '.repository'))</RepositoryDirectory>
+    <PackagesDirectory>$([System.IO.Path]::Combine($(RepositoryDirectory), 'packages'))</PackagesDirectory>
+    <ModulesDirectory>$([System.IO.Path]::Combine($(RepositoryDirectory), 'node_modules'))</ModulesDirectory>
+  </PropertyGroup>
+  
+  <!-- Compiler Settings -->
+
+  <PropertyGroup>
+    <LangVersion>12.0</LangVersion>
+  </PropertyGroup>
+  
+</Project>
