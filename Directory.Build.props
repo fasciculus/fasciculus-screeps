@@ -5,6 +5,7 @@
 
   <PropertyGroup>
     <RootDirectory>$(MSBuildThisFileDirectory)</RootDirectory>
+    <ModulesDirectory>$([System.IO.Path]::Combine($(RootDirectory), 'node_modules'))</ModulesDirectory>
   </PropertyGroup>
   
   <!-- Compiler Settings -->
