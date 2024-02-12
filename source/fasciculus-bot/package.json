@@ -4,8 +4,7 @@
   "dependencies": {
   },
   "devDependencies": {
-    "typescript": "5.3.3",
-    "fasciculus-concat": "file:../../.repository/node_modules/fasciculus-concat"
+    "typescript": "5.3.3"
   },
   "description": "Screeps Bot from Fasciculus",
   "homepage": "https://github.com/fasciculus/fasciculus-screeps",
@@ -17,7 +16,8 @@
     "directory": "source/fasciculus-bot"
   },
   "scripts": {
-    "build": "tsc --build",
+    "build": "npm run concat && tsc --build",
+    "concat": "node ../../.repository/node_modules/fasciculus-concat/index.js",
     "clean": "tsc --build --clean"
   },
   "version": "0.1.1"
