@@ -3,20 +3,21 @@
   "bugs": { "url": "https://github.com/fasciculus/fasciculus-screeps/issues" },
   "dependencies": {},
   "devDependencies": {
+    "@types/node": "20.11.17",
     "typescript": "5.3.3"
   },
-  "description": "Screeps Bot from Fasciculus",
+  "description": "Tests",
   "homepage": "https://github.com/fasciculus/fasciculus-screeps",
   "license": "MIT",
-  "name": "fasciculus-bot",
+  "main": "main.js",
+  "name": "fasciculus-concat-test",
   "repository": {
     "type": "git",
     "url": "https://github.com/fasciculus/fasciculus-screeps.git",
-    "directory": "source/fasciculus-bot"
+    "directory": "source/fasciculus-concat"
   },
   "scripts": {
-    "build": "npm run concat && tsc --build",
-    "concat": "node ../../node_modules/fasciculus-concat/index.js",
+    "build": "tsc --build",
     "clean": "tsc --build --clean"
   },
   "version": "0.1.1"

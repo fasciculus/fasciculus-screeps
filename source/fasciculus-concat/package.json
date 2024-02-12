@@ -3,7 +3,6 @@
   "bin": "./index.js",
   "bugs": { "url": "https://github.com/fasciculus/fasciculus-screeps/issues" },
   "dependencies": {
-    "@types/node": "20.11.17"
   },
   "devDependencies": {
     "@types/node": "20.11.17",
@@ -13,15 +12,16 @@
   "homepage": "https://github.com/fasciculus/fasciculus-screeps",
   "license": "MIT",
   "main": "index.js",
-  "name": "fasciculus-bot",
+  "name": "fasciculus-concat",
   "repository": {
     "type": "git",
     "url": "https://github.com/fasciculus/fasciculus-screeps.git",
     "directory": "source/fasciculus-concat"
   },
   "scripts": {
-    "build": "tsc --build && copy package.json dist",
-    "clean": "tsc --build --clean"
+    "build": "tsc --build",
+    "clean": "tsc --build --clean",
+    "experiment": "cd test && node ../dist/index.js"
   },
   "version": "0.1.1"
 }
