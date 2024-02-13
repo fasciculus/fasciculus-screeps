@@ -32,6 +32,7 @@ interface ConcatConfigJson
 {
     main?: string;
     concatDir?: string;
+    removeExports?: boolean;
 }
 
 interface PackageJson
@@ -91,6 +92,7 @@ class ConcatContext
     readonly mainFile: string;
     readonly mainKey: string;
     readonly concatDir: string;
+    readonly removeExports: boolean;
 
     readonly rootDir: string;
     readonly options: TS.CompilerOptions;
@@ -100,42 +102,38 @@ class ConcatContext
     constructor()
     {
         const tsc = new TSConfig();
+        const concatConfig: ConcatConfigJson | undefined = ConcatContext.getConcatConfig();
 
         this.tscFile = tsc.file;
 
-        var mainFile: string | undefined = undefined;
-        var concatDir: string | undefined = undefined;
-
-        if (FS.existsSync("concat.json"))
-        {
-            const json: string = FS.readFileSync("concat.json", { encoding: "utf-8" });
-            const config: ConcatConfigJson = JSON.parse(json);
-
-            mainFile = config.main;
-            concatDir = config.concatDir;
-        }
-
-        if ((!mainFile || !concatDir) && FS.existsSync("package.json"))
-        {
-            const json: string = FS.readFileSync("package.json", { encoding: "utf-8" });
-            const pkg: PackageJson = JSON.parse(json);
-            const config: ConcatConfigJson | undefined = pkg._concat;
-
-            if (config)
-            {
-                if (!mainFile) mainFile = config.main;
-                if (!concatDir) concatDir = concatDir;
-            }
-        }
-
-        this.mainFile = mainFile || "index";
+        this.mainFile = concatConfig?.main || "index";
         this.mainKey = getKey(tsc.rootDir, this.mainFile);
-        this.concatDir = concatDir || "concat";
+        this.concatDir = concatConfig?.concatDir || "concat";
+        this.removeExports = concatConfig?.removeExports || false;
 
         this.rootDir = tsc.rootDir;
         this.options = tsc.parsedOptions;
         this.newLine = tsc.newLine;
         this.fileNames = tsc.fileNames;
+    }
+
+    private static getConcatConfig(): ConcatConfigJson | undefined
+    {
+        var result: ConcatConfigJson | undefined = undefined;
+
+        if (FS.existsSync("concat.json"))
+        {
+            result = JSON.parse(FS.readFileSync("concat.json", { encoding: "utf-8" }));
+        }
+        else if (FS.existsSync("package.json"))
+        {
+            const json: string = FS.readFileSync("package.json", { encoding: "utf-8" });
+            const pkg: PackageJson = JSON.parse(json);
+
+            result = pkg._concat;
+        }
+
+        return result;
     }
 }
 
