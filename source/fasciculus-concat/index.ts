@@ -3,6 +3,11 @@ import * as FS from "node:fs";
 import * as Path from "node:path";
 import * as TS from "typescript";
 
+function unixify(file: string): string
+{
+    return file.replaceAll("\\", "/");
+}
+
 function getKey(root: string, file: string): string
 {
     var result: string = unixify(Path.relative(root, file));
@@ -31,8 +36,7 @@ interface ReadConfigFileResult
 
 class TSConfig
 {
-    private readonly file: string;
-
+    readonly file: string;
     readonly rootDir: string;
     readonly parsedOptions: TS.CompilerOptions;
     readonly fileNames: string[];
@@ -64,30 +68,11 @@ class TSConfig
         this.parsedOptions = parsed.options;
         this.fileNames = parsed.fileNames;
     }
-
-    convert(ctx: ConcatContext)
-    {
-        const content: ReadConfigFileResult = TS.readConfigFile(this.file, TS.sys.readFile);
-        const config: any | undefined = content.config;
-
-        if (!config) throw new Error("no config");
-
-        const include: string = unixify(Path.join("concat", ctx.mainFile));
-        const options: TS.CompilerOptions = config["compilerOptions"];
-
-        config["compileOnSave"] = false;
-        config["include"] = [include];
-        options.rootDir = "concat";
-
-        const json: string = JSON.stringify(config, undefined, 2);
-
-        FS.writeFileSync("tsconfig.concat.json", json);
-    }
 }
 
 class ConcatContext
 {
-    readonly tsc: TSConfig;
+    readonly tscFile: string;
 
     readonly mainFile: string;
     readonly mainKey: string;
@@ -96,9 +81,13 @@ class ConcatContext
     readonly options: TS.CompilerOptions;
     readonly fileNames: string[];
 
+    readonly concatDir: string;
+
     constructor()
     {
-        this.tsc = new TSConfig();
+        const tsc = new TSConfig();
+
+        this.tscFile = tsc.file;
 
         var mainFile: string | undefined = undefined;
 
@@ -123,11 +112,13 @@ class ConcatContext
         }
 
         this.mainFile = mainFile || "index";
-        this.mainKey = getKey(this.tsc.rootDir, this.mainFile);
+        this.mainKey = getKey(tsc.rootDir, this.mainFile);
 
-        this.rootDir = this.tsc.rootDir;
-        this.options = this.tsc.parsedOptions;
-        this.fileNames = this.tsc.fileNames;
+        this.rootDir = tsc.rootDir;
+        this.options = tsc.parsedOptions;
+        this.fileNames = tsc.fileNames;
+
+        this.concatDir = "concat";
     }
 }
 
@@ -157,12 +148,32 @@ class Sources
 
     constructor(ctx: ConcatContext)
     {
-        this.sources = ctx.tsc.fileNames.map(f => new Source(f, ctx));
+        this.sources = ctx.fileNames.map(f => new Source(f, ctx));
     }
 
     keys(): Set<string>
     {
         return new Set(this.sources.map(s => s.key));
+    }
+}
+
+class Transpiler
+{
+    static tsc(ctx: ConcatContext): string
+    {
+        const content: ReadConfigFileResult = TS.readConfigFile(ctx.tscFile, TS.sys.readFile);
+        const config: any | undefined = content.config;
+
+        if (!config) throw new Error("no config");
+
+        const include: string = unixify(Path.join(ctx.concatDir, ctx.mainFile));
+        const options: TS.CompilerOptions = config["compilerOptions"];
+
+        config["compileOnSave"] = false;
+        config["include"] = [include];
+        options.rootDir = ctx.concatDir;
+
+        return JSON.stringify(config, undefined, 2);
     }
 }
 
@@ -186,7 +197,9 @@ try
     //    });
     //}
 
-    ctx.tsc.convert(ctx);
+    const tsc: string = Transpiler.tsc(ctx);
+
+    FS.writeFileSync("tsconfig.concat.json", tsc);
 
     const duration: number = Date.now() - start;
 
@@ -196,9 +209,4 @@ catch(e)
 {
     console.log(e)
     process.exitCode = -1;
-}
-
-function unixify(file: string): string
-{
-    return file.replaceAll("\\", "/");
 }
