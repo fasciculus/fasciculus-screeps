@@ -165,17 +165,44 @@ class Sources
     {
         this.sources.forEach(fn);
     }
+
+    get(keys: Array<string>): Array<Source>
+    {
+        const result: Array<Source> = new Array();
+
+        for (let key of keys)
+        {
+            const source: Source | undefined = this.sourceMap.get(key);
+
+            if (source) result.push(source);
+        }
+
+        return result;
+    }
+}
+
+class Analyzer
+{
+    static importKey(key: string, tsSource: TS.SourceFile, decl: TS.ImportDeclaration): string
+    {
+        const specifier: string = decl.moduleSpecifier.getText(tsSource);
+        const trimmed: string = specifier.substring(1, specifier.length - 1);
+        const combined: string = unixify(Path.join(key, "..", trimmed));
+
+        return getKey("", combined);
+    }
 }
 
 class Dependencies
 {
-    private readonly ctx: ConcatContext;
+    private readonly sources: Sources;
     private readonly keys: Set<string>;
     private readonly unresolved: Map<string, Set<string>> = new Map();
+    private readonly resolved: Array<string> = new Array();
 
-    constructor(sources: Sources, ctx: ConcatContext)
+    constructor(sources: Sources)
     {
-        this.ctx = ctx;
+        this.sources = sources;
         this.keys = sources.keys();
         sources.forEach(source => this.addDependencies(source));
     }
@@ -183,19 +210,13 @@ class Dependencies
     private addDependencies(source: Source): void
     {
         const tsSource: TS.SourceFile = source.tsSource;
-        const rootDir = this.ctx.rootDir;
         const dependencies: Set<string> = new Set();
 
         TS.forEachChild(tsSource, (node) =>
         {
             if (TS.isImportDeclaration(node))
             {
-                const specifier: string = node.moduleSpecifier.getText(tsSource);
-                const trimmed: string = specifier.substring(1, specifier.length - 1);
-                const combined: string = unixify(Path.join(source.key, "..", trimmed));
-                const key: string = getKey("", combined);
-
-                console.log(`  found ${key}`)
+                const key = Analyzer.importKey(source.key, tsSource, node);
 
                 if (this.keys.has(key))
                 {
@@ -207,22 +228,36 @@ class Dependencies
         this.unresolved.set(source.key, dependencies);
     }
 
-    logDependencies()
+    resolve(): Source[]
     {
-        for (let entry of this.unresolved.entries())
-        {
-            const key: string = entry[0];
-            const dependencies: Set<string> = entry[1];
+        var iteration: number = 0;
+        const unresolved: Map<string, Set<string>> = this.unresolved;
 
-            if (dependencies.size == 0)
+        while (iteration < 100 && unresolved.size > 0)
+        {
+            const resolved: Set<string> = new Set(); 
+
+            for (let entry of unresolved.entries())
             {
-                console.log(`${key}: no dependencies`)
+                if (entry[1].size == 0) resolved.add(entry[0]);
             }
-            else
+
+            resolved.forEach(r => {
+                unresolved.delete(r);
+                this.resolved.push(r);
+            });
+
+            for (let dependencies of unresolved.values())
             {
-                console.log(`${key}: ${Array.from(dependencies)}`)
+                resolved.forEach(r => dependencies.delete(r));
             }
+
+            ++iteration;
         }
+
+        if (iteration >= 100) throw new Error("circular dependencies");
+
+        return this.sources.get(this.resolved);
     }
 }
 
@@ -251,10 +286,11 @@ try
     const start: number = Date.now();
     const ctx = new ConcatContext();
     const sources = new Sources(ctx);
-    const dependencies = new Dependencies(sources, ctx);
+    const dependencies = new Dependencies(sources);
+    const sorted: Array<Source> = dependencies.resolve();
     const tsc: string = Transpiler.tsc(ctx);
 
-    dependencies.logDependencies();
+    console.log(sorted.map(s => s.key));
 
     FS.writeFileSync("tsconfig.concat.json", tsc);
 
