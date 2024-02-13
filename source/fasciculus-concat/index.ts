@@ -3,38 +3,62 @@ import * as FS from "node:fs";
 import * as Path from "node:path";
 import * as TS from "typescript";
 
-interface ConfigJson
+interface ConcatConfigJson
 {
     main?: string;
 }
 
-class Config
+interface PackageJson
+{
+    [key: string]: any;
+    _concat?: ConcatConfigJson;
+}
+
+class ConcatConfig
 {
     readonly main: string;
 
     constructor()
     {
+        var main: string | undefined = undefined;
+
         if (FS.existsSync("concat.json"))
         {
             const json: string = FS.readFileSync("concat.json", { encoding: "utf-8" });
-            const config: ConfigJson = JSON.parse(json);
+            const config: ConcatConfigJson = JSON.parse(json);
 
-            this.main = config.main || "index";
+            main = config.main;
         }
-        else
+
+        if (!main && FS.existsSync("package.json"))
         {
-            this.main = "index";
+            const json: string = FS.readFileSync("package.json", { encoding: "utf-8" });
+            const pkg: PackageJson = JSON.parse(json);
+            const config: ConcatConfigJson | undefined = pkg._concat;
+
+            if (config)
+            {
+                main = config.main;
+            }
         }
+
+        this.main = main || "index";
     }
+}
+
+interface ReadConfigFileResult
+{
+    config?: any;
+    error?: TS.Diagnostic;
 }
 
 class TSConfig
 {
     private readonly file: string;
 
-    readonly options: TS.CompilerOptions;
-    readonly root: string;
-    readonly files: string[];
+    readonly rootDir: string;
+    readonly parsedOptions: TS.CompilerOptions;
+    readonly fileNames: string[];
 
     constructor()
     {
@@ -44,39 +68,39 @@ class TSConfig
 
         this.file = file;
 
-        const content = TS.readConfigFile(file, TS.sys.readFile);
+        const content: ReadConfigFileResult = TS.readConfigFile(file, TS.sys.readFile);
         const config: any | undefined = content.config;
-        const options: any = config["compilerOptions"];
+        const options: TS.CompilerOptions = config["compilerOptions"];
 
         if (!config) throw new Error("no config");
-        if (!options["rootDir"]) throw new Error("no rootDir in tsconfig.json");
+        if (!options.rootDir) throw new Error("no rootDir in tsconfig.json");
 
-        var root: string = unixify(options["rootDir"]);
+        var rootDir: string = unixify(options.rootDir);
 
-        if (root.startsWith("./")) root = root.substring(2);
-        if (root.endsWith("/")) root = root.substring(0, root.length - 1);
+        if (rootDir.startsWith("./")) rootDir = rootDir.substring(2);
+        if (rootDir.endsWith("/")) rootDir = rootDir.substring(0, rootDir.length - 1);
 
-        this.root = root;
+        this.rootDir = rootDir;
 
         const parsed: TS.ParsedCommandLine = TS.parseJsonConfigFileContent(content, TS.sys, "./");
 
-        this.options = parsed.options;
-        this.files = parsed.fileNames;
+        this.parsedOptions = parsed.options;
+        this.fileNames = parsed.fileNames;
     }
 
     convert(main: string)
     {
-        const content = TS.readConfigFile(this.file, TS.sys.readFile);
+        const content: ReadConfigFileResult = TS.readConfigFile(this.file, TS.sys.readFile);
         const config: any | undefined = content.config;
 
         if (!config) throw new Error("no config");
 
-        const include = unixify(Path.join("concat", main));
-        const options = config["compilerOptions"];
+        const include: string = unixify(Path.join("concat", main));
+        const options: TS.CompilerOptions = config["compilerOptions"];
 
         config["compileOnSave"] = false;
         config["include"] = [include];
-        options["rootDir"] = "concat";
+        options.rootDir = "concat";
 
         const json: string = JSON.stringify(config, undefined, 2);
 
@@ -105,9 +129,9 @@ class Source
     constructor(file: string, config: TSConfig)
     {
         this.file = file;
-        this.key = Keys.createKey(config.root, file);
+        this.key = Keys.createKey(config.rootDir, file);
 
-        const program: TS.Program = TS.createProgram([file], config.options);
+        const program: TS.Program = TS.createProgram([file], config.parsedOptions);
         const source: TS.SourceFile | undefined = program.getSourceFile(file);
 
         if (!source) throw new Error("no source");
@@ -124,28 +148,39 @@ class Sources
     {
         this.sources = files.map(f => new Source(f, config));
     }
+
+    keys(): Set<string>
+    {
+        return new Set(this.sources.map(s => s.key));
+    }
 }
 
 try
 {
-    const cfg: Config = new Config();
-    const tsc: TSConfig = new TSConfig();
-    const sources: Sources = new Sources(tsc.files, tsc);
+    const start: number = Date.now();
+    const cfg = new ConcatConfig();
+    const tsc = new TSConfig();
+    const sources = new Sources(tsc.fileNames, tsc);
+    const keys = sources.keys();
 
-    for (let source of sources.sources)
-    {
-        console.log(`${source.file} (${source.key})`);
+    //for (let source of sources.sources)
+    //{
+    //    console.log(`${source.file} (${source.key})`);
 
-        TS.forEachChild(source.source, node =>
-        {
-            if (TS.isImportDeclaration(node))
-            {
-                console.log(node.moduleSpecifier)
-            }
-        });
-    }
+    //    TS.forEachChild(source.source, node =>
+    //    {
+    //        if (TS.isImportDeclaration(node))
+    //        {
+    //            console.log(node.moduleSpecifier)
+    //        }
+    //    });
+    //}
 
     tsc.convert(cfg.main);
+
+    const duration: number = Date.now() - start;
+
+    console.log(`concatenation took ${(duration / 1000).toFixed(3)} seconds`);
 }
 catch(e)
 {

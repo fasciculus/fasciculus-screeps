@@ -1,4 +1,5 @@
 {
+  "_concat": { "main": "main.ts" },
   "author": { "name": "Roger H. Jörg" },
   "bugs": { "url": "https://github.com/fasciculus/fasciculus-screeps/issues" },
   "dependencies": {},
