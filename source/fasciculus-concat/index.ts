@@ -164,8 +164,15 @@ class Sources
 
     constructor(ctx: ConcatContext)
     {
-        this.sources = ctx.fileNames.map(f => new Source(f, ctx));
+        const files: Array<string> = ctx.fileNames.filter(f => Sources.isIncluded(f, ctx));
+
+        this.sources = files.map(f => new Source(f, ctx));
         this.sources.forEach(s => this.sourceMap.set(s.key, s));
+    }
+
+    private static isIncluded(file: string, ctx: ConcatContext)
+    {
+        return !getKey(ctx.rootDir, file).startsWith("../");
     }
 
     keys(): Set<string>
@@ -202,6 +209,26 @@ class Analyzer
         const combined: string = unixify(Path.join(key, "..", trimmed));
 
         return getKey("", combined);
+    }
+
+    private static hasExport(modifiers: TS.NodeArray<TS.ModifierLike> | undefined): boolean
+    {
+        if (!modifiers) return false;
+
+        return modifiers.findIndex(v => v.kind == TS.SyntaxKind.ExportKeyword) >= 0;
+    }
+
+    static isExport(node: TS.Node): boolean
+    {
+        if (node.kind == TS.SyntaxKind.EndOfFileToken) return false;
+        if (node.kind == TS.SyntaxKind.VariableStatement) return false;
+
+        if (TS.isInterfaceDeclaration(node)) return Analyzer.hasExport(node.modifiers);
+        if (TS.isClassDeclaration(node)) return Analyzer.hasExport(node.modifiers);
+
+        console.log(`unhandled: ${node.kind}`);
+
+        return false;
     }
 }
 
@@ -311,7 +338,14 @@ class Transpiler
                 if (keys.has(Analyzer.importKey(source.key, tsSource, node))) return;
             }
 
-            result.push(node.getText(tsSource));
+            var text = node.getText(tsSource);
+
+            if (ctx.removeExports && Analyzer.isExport(node))
+            {
+                text = text.trimStart().substring(6).trimStart();
+            }
+
+            result.push(text);
         });
 
         return result.join(newLine(ctx.newLine));

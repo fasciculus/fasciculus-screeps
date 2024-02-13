@@ -1,5 +1,8 @@
 {
-  "_concat": { "main": "main.ts" },
+  "_concat": {
+    "main": "main.ts",
+    "removeExports": true
+  },
   "author": { "name": "Roger H. Jörg" },
   "bugs": { "url": "https://github.com/fasciculus/fasciculus-screeps/issues" },
   "dependencies": {},
@@ -18,8 +21,9 @@
     "directory": "source/fasciculus-concat"
   },
   "scripts": {
-    "build": "tsc --build",
-    "clean": "tsc --build --clean"
+    "build": "npm run concat  && tsc --project tsconfig.concat.json",
+    "clean": "tsc --build --clean",
+    "concat": "node ../dist/index.js"
   },
   "version": "0.1.1"
 }

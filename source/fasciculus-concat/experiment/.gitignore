@@ -1,2 +1,3 @@
 concat/
+dist/
 tsconfig.concat.json

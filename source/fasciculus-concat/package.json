@@ -23,7 +23,7 @@
   "scripts": {
     "build": "tsc --build",
     "clean": "tsc --build --clean",
-    "experiment": "cd experiment && node ../dist/index.js"
+    "experiment": "cd experiment && npm run build"
   },
   "version": "0.1.2"
 }
