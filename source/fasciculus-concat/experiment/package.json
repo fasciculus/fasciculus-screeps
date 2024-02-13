@@ -7,11 +7,11 @@
     "@types/node": "20.11.17",
     "typescript": "5.3.3"
   },
-  "description": "Tests",
+  "description": "Experiment",
   "homepage": "https://github.com/fasciculus/fasciculus-screeps",
   "license": "MIT",
   "main": "main.js",
-  "name": "fasciculus-concat-test",
+  "name": "fasciculus-concat-experiment",
   "repository": {
     "type": "git",
     "url": "https://github.com/fasciculus/fasciculus-screeps.git",
