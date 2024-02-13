@@ -20,6 +20,7 @@ function getKey(root: string, file: string): string
 interface ConcatConfigJson
 {
     main?: string;
+    concatDir?: string;
 }
 
 interface PackageJson
@@ -76,12 +77,11 @@ class ConcatContext
 
     readonly mainFile: string;
     readonly mainKey: string;
+    readonly concatDir: string;
 
     readonly rootDir: string;
     readonly options: TS.CompilerOptions;
     readonly fileNames: string[];
-
-    readonly concatDir: string;
 
     constructor()
     {
@@ -90,6 +90,7 @@ class ConcatContext
         this.tscFile = tsc.file;
 
         var mainFile: string | undefined = undefined;
+        var concatDir: string | undefined = undefined;
 
         if (FS.existsSync("concat.json"))
         {
@@ -97,6 +98,7 @@ class ConcatContext
             const config: ConcatConfigJson = JSON.parse(json);
 
             mainFile = config.main;
+            concatDir = config.concatDir;
         }
 
         if (!mainFile && FS.existsSync("package.json"))
@@ -107,18 +109,18 @@ class ConcatContext
 
             if (config)
             {
-                mainFile = config.main;
+                if (!mainFile) mainFile = config.main;
+                if (!concatDir) concatDir = concatDir;
             }
         }
 
         this.mainFile = mainFile || "index";
         this.mainKey = getKey(tsc.rootDir, this.mainFile);
+        this.concatDir = concatDir || "concat";
 
         this.rootDir = tsc.rootDir;
         this.options = tsc.parsedOptions;
         this.fileNames = tsc.fileNames;
-
-        this.concatDir = "concat";
     }
 }
 
