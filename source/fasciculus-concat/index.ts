@@ -18,6 +18,16 @@ function getKey(root: string, file: string): string
     return result;
 }
 
+function newLine(newLine: TS.NewLineKind)
+{
+    switch (newLine)
+    {
+        case TS.NewLineKind.CarriageReturnLineFeed: return "\r\n";
+        case TS.NewLineKind.LineFeed: return "\n";
+        default: return "\r\n";
+    }
+}
+
 interface ConcatConfigJson
 {
     main?: string;
@@ -40,6 +50,7 @@ class TSConfig
 {
     readonly file: string;
     readonly rootDir: string;
+    readonly newLine: TS.NewLineKind;
     readonly parsedOptions: TS.CompilerOptions;
     readonly fileNames: string[];
 
@@ -64,6 +75,7 @@ class TSConfig
         if (rootDir.endsWith("/")) rootDir = rootDir.substring(0, rootDir.length - 1);
 
         this.rootDir = rootDir;
+        this.newLine = options.newLine || TS.NewLineKind.CarriageReturnLineFeed;
 
         const parsed: TS.ParsedCommandLine = TS.parseJsonConfigFileContent(content, TS.sys, "./");
 
@@ -82,6 +94,7 @@ class ConcatContext
 
     readonly rootDir: string;
     readonly options: TS.CompilerOptions;
+    readonly newLine: TS.NewLineKind;
     readonly fileNames: string[];
 
     constructor()
@@ -121,6 +134,7 @@ class ConcatContext
 
         this.rootDir = tsc.rootDir;
         this.options = tsc.parsedOptions;
+        this.newLine = tsc.newLine;
         this.fileNames = tsc.fileNames;
     }
 }
@@ -279,6 +293,31 @@ class Transpiler
 
         return JSON.stringify(config, undefined, 2);
     }
+
+    static sources(sources: Array<Source>, ctx: ConcatContext): string
+    {
+        const keys: Set<string> = new Set(sources.map(s => s.key));
+
+        return sources.map(s => Transpiler.source(s, keys, ctx)).join(newLine(ctx.newLine));
+    }
+
+    private static source(source: Source, keys: Set<string>, ctx: ConcatContext): string
+    {
+        const tsSource = source.tsSource;
+        const result: Array<string> = new Array();
+
+        TS.forEachChild(tsSource, node =>
+        {
+            if (TS.isImportDeclaration(node))
+            {
+                if (keys.has(Analyzer.importKey(source.key, tsSource, node))) return;
+            }
+
+            result.push(node.getText(tsSource));
+        });
+
+        return result.join(newLine(ctx.newLine));
+    }
 }
 
 try
@@ -289,9 +328,11 @@ try
     const dependencies = new Dependencies(sources);
     const sorted: Array<Source> = dependencies.resolve();
     const tsc: string = Transpiler.tsc(ctx);
+    const ts: string = Transpiler.sources(sorted, ctx);
+    const tsFile: string = unixify(Path.join(ctx.concatDir, ctx.mainFile));
 
-    console.log(sorted.map(s => s.key));
-
+    FS.mkdirSync(ctx.concatDir, { recursive: true });
+    FS.writeFileSync(tsFile, ts, { encoding: "utf-8", flush: true });
     FS.writeFileSync("tsconfig.concat.json", tsc);
 
     const duration: number = Date.now() - start;
