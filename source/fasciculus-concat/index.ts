@@ -12,6 +12,7 @@ function getKey(root: string, file: string): string
 {
     var result: string = unixify(Path.relative(root, file));
 
+    if (result.startsWith("./")) result = result.substring(2);
     if (result.endsWith(".ts")) result = result.substring(0, result.length - 3);
 
     return result;
@@ -101,7 +102,7 @@ class ConcatContext
             concatDir = config.concatDir;
         }
 
-        if (!mainFile && FS.existsSync("package.json"))
+        if ((!mainFile || !concatDir) && FS.existsSync("package.json"))
         {
             const json: string = FS.readFileSync("package.json", { encoding: "utf-8" });
             const pkg: PackageJson = JSON.parse(json);
@@ -128,7 +129,7 @@ class Source
 {
     readonly file: string;
     readonly key: string;
-    readonly source: TS.SourceFile;
+    readonly tsSource: TS.SourceFile;
 
     constructor(file: string, ctx: ConcatContext)
     {
@@ -136,26 +137,92 @@ class Source
         this.key = getKey(ctx.rootDir, file);
 
         const program: TS.Program = TS.createProgram([file], ctx.options);
-        const source: TS.SourceFile | undefined = program.getSourceFile(file);
+        const tsSource: TS.SourceFile | undefined = program.getSourceFile(file);
 
-        if (!source) throw new Error("no source");
+        if (!tsSource) throw new Error("no source");
 
-        this.source = source;
+        this.tsSource = tsSource;
     }
 }
 
 class Sources
 {
-    readonly sources: Source[];
+    private readonly sources: Source[];
+    private readonly sourceMap: Map<string, Source> = new Map();
 
     constructor(ctx: ConcatContext)
     {
         this.sources = ctx.fileNames.map(f => new Source(f, ctx));
+        this.sources.forEach(s => this.sourceMap.set(s.key, s));
     }
 
     keys(): Set<string>
     {
-        return new Set(this.sources.map(s => s.key));
+        return new Set(this.sourceMap.keys());
+    }
+
+    forEach(fn: (source: Source) => void): void
+    {
+        this.sources.forEach(fn);
+    }
+}
+
+class Dependencies
+{
+    private readonly ctx: ConcatContext;
+    private readonly keys: Set<string>;
+    private readonly unresolved: Map<string, Set<string>> = new Map();
+
+    constructor(sources: Sources, ctx: ConcatContext)
+    {
+        this.ctx = ctx;
+        this.keys = sources.keys();
+        sources.forEach(source => this.addDependencies(source));
+    }
+
+    private addDependencies(source: Source): void
+    {
+        const tsSource: TS.SourceFile = source.tsSource;
+        const rootDir = this.ctx.rootDir;
+        const dependencies: Set<string> = new Set();
+
+        TS.forEachChild(tsSource, (node) =>
+        {
+            if (TS.isImportDeclaration(node))
+            {
+                const specifier: string = node.moduleSpecifier.getText(tsSource);
+                const trimmed: string = specifier.substring(1, specifier.length - 1);
+                const combined: string = unixify(Path.join(source.key, "..", trimmed));
+                const key: string = getKey("", combined);
+
+                console.log(`  found ${key}`)
+
+                if (this.keys.has(key))
+                {
+                    dependencies.add(key);
+                }
+            }
+        });
+
+        this.unresolved.set(source.key, dependencies);
+    }
+
+    logDependencies()
+    {
+        for (let entry of this.unresolved.entries())
+        {
+            const key: string = entry[0];
+            const dependencies: Set<string> = entry[1];
+
+            if (dependencies.size == 0)
+            {
+                console.log(`${key}: no dependencies`)
+            }
+            else
+            {
+                console.log(`${key}: ${Array.from(dependencies)}`)
+            }
+        }
     }
 }
 
@@ -184,22 +251,10 @@ try
     const start: number = Date.now();
     const ctx = new ConcatContext();
     const sources = new Sources(ctx);
-    const keys = sources.keys();
-
-    //for (let source of sources.sources)
-    //{
-    //    console.log(`${source.file} (${source.key})`);
-
-    //    TS.forEachChild(source.source, node =>
-    //    {
-    //        if (TS.isImportDeclaration(node))
-    //        {
-    //            console.log(node.moduleSpecifier)
-    //        }
-    //    });
-    //}
-
+    const dependencies = new Dependencies(sources, ctx);
     const tsc: string = Transpiler.tsc(ctx);
+
+    dependencies.logDependencies();
 
     FS.writeFileSync("tsconfig.concat.json", tsc);
 
