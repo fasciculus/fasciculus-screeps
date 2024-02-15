@@ -35,4 +35,16 @@ export class Objects
 
         return result;
     }
+
+    static getter(fn: () => any): PropertyDescriptor
+    {
+        const result: PropertyDescriptor =
+        {
+            configurable: true,
+            enumerable: true,
+            get: fn
+        };
+
+        return result;
+    }
 }
