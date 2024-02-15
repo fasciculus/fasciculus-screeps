@@ -3,6 +3,11 @@ declare global
 {
     type ControllerId = Id<StructureController>;
 
+    interface Creep
+    {
+        get type(): string;
+    }
+
     interface Game
     {
         get username(): string;
