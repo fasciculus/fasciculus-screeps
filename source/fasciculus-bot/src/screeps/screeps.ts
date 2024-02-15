@@ -1,3 +1,4 @@
+import { Cached } from "./cache";
 import { Rooms } from "./room";
 
 export class Screeps
@@ -9,6 +10,6 @@ export class Screeps
 
     static cleanup()
     {
-
+        Cached.cleanup();
     }
 }
