@@ -4,6 +4,7 @@ import { Controllers } from "./controller";
 import { Creeps } from "./creep";
 import { Memories } from "./memory";
 import { Rooms } from "./room";
+import { Spawns } from "./spawn";
 
 export class Screeps
 {
@@ -13,6 +14,7 @@ export class Screeps
         Creeps.setup();
         Memories.setup();
         Rooms.setup();
+        Spawns.setup();
     }
 
     static cleanup()

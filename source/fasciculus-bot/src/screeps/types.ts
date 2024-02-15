@@ -3,6 +3,7 @@ declare global
 {
     type ControllerId = Id<StructureController>;
     type CreepId = Id<Creep>;
+    type SpawnId = Id<StructureSpawn>;
 
     type BodyInfo = { work: number };
 
@@ -46,6 +47,17 @@ declare global
     interface StructureController
     {
         get safe(): boolean;
+    }
+
+    interface StructureSpawn
+    {
+        spawn(type: string, body: Array<BodyPartConstant>): ScreepsReturnCode;
+    }
+
+    interface StructureSpawnConstructor
+    {
+        get my(): Array<StructureSpawn>;
+        get idle(): Array<StructureSpawn>;
     }
 }
 
