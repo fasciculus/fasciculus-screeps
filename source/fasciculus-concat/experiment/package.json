@@ -8,7 +8,8 @@
   "dependencies": {},
   "devDependencies": {
     "@types/node": "20.11.17",
-    "typescript": "5.3.3"
+    "typescript": "5.3.3",
+    "fasciculus-concat": "file:../../../node_modules/fasciculus-concat"
   },
   "description": "Experiment",
   "homepage": "https://github.com/fasciculus/fasciculus-screeps",
@@ -23,7 +24,7 @@
   "scripts": {
     "build": "npm run concat && tsc --project tsconfig.concat.json",
     "clean": "tsc --build --clean",
-    "concat": "node ../dist/index.js"
+    "concat": "npx fasciculus-concat"
   },
   "version": "0.1.1"
 }

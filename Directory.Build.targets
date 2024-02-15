@@ -4,6 +4,10 @@
   <Target Name="CreateDirectories" BeforeTargets="BeforeResolveReferences">
     <MakeDir Directories="$(ModulesDirectory)" />
   </Target>
+  
+  <Target Name="InstallModules" BeforeTargets="Build" DependsOnTargets="CreateDirectories">
+    <Exec Command="npm install typescript@5.3.3" WorkingDirectory="$(RootDirectory)" Condition="!Exists('$(ModulesDirectory)/typescript')" />
+  </Target>
 
   <Target Name="UndeployModule">
     <PropertyGroup>
@@ -21,8 +25,10 @@
     <ItemGroup>
       <Files Include="dist/**/*" />
       <Files Include="package.json" />
+      <BinFiles Include="bin/*" />
     </ItemGroup>
     <Copy DestinationFolder="$(ModuleDirectory)" SourceFiles="@(Files)" />
+    <Copy DestinationFolder="$(ModuleDirectory)/bin" SourceFiles="@(BinFiles)" />
     <Message Importance="high" Text="Deployed $(ProjectName)." />
   </Target>
   

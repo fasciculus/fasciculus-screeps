@@ -1,14 +1,16 @@
 {
-  "author": { "name": "Roger H. Jörg" },
-  "bin": "./index.js",
-  "bugs": { "url": "https://github.com/fasciculus/fasciculus-screeps/issues" },
-  "dependencies": {
-    "glob": "10.3.10"
+  "author": {
+    "name": "Roger H. Jörg"
+  },
+  "bin": {
+    "fasciculus-concat": "./bin/fasciculus-concat"
+  },
+  "bugs": {
+    "url": "https://github.com/fasciculus/fasciculus-screeps/issues"
   },
   "devDependencies": {
     "@types/node": "20.11.17",
-    "glob": "10.3.10",
-    "typescript": "5.3.3"
+    "typescript": "^5.3.3"
   },
   "description": "Concatenates TypeScript files into a single file",
   "homepage": "https://github.com/fasciculus/fasciculus-screeps",
@@ -23,7 +25,7 @@
   "scripts": {
     "build": "tsc --build",
     "clean": "tsc --build --clean",
-    "experiment": "cd experiment && npm run build"
+    "experiment": "cd experiment && npm install && npm run build"
   },
   "version": "0.1.2"
 }
