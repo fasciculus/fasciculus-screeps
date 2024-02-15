@@ -2,6 +2,7 @@ import { BodyInfos } from "./body";
 import { Cached } from "./cache";
 import { Controllers } from "./controller";
 import { Creeps } from "./creep";
+import { Games } from "./game";
 import { Memories } from "./memory";
 import { Rooms } from "./room";
 import { Spawns } from "./spawn";
@@ -12,6 +13,7 @@ export class Screeps
     {
         Controllers.setup();
         Creeps.setup();
+        Games.setup();
         Memories.setup();
         Rooms.setup();
         Spawns.setup();
