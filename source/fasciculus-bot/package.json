@@ -24,9 +24,8 @@
     "directory": "source/fasciculus-bot"
   },
   "scripts": {
-    "build": "npm run concat && tsc --project tsconfig.concat.json",
-    "clean": "tsc --build --clean",
-    "concat": "npx fasciculus-concat"
+    "build": "npx fasciculus-concat && tsc --project tsconfig.concat.json",
+    "clean": "tsc --build --clean"
   },
   "version": "0.1.2"
 }
