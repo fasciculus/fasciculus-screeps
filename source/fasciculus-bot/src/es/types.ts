@@ -17,6 +17,14 @@ declare global
         defined<T>(array: Array<T | undefined>): Array<T>;
         flatten<T>(arrays: Array<Array<T>>): Array<T>;
     }
+
+    interface Set<T>
+    {
+        keep(values: Set<T>): Set<T>;
+
+        filter(predicate: (value: T) => boolean): Set<T>;
+        map<U>(fn: (key: T) => U): Array<U>;
+    }
 }
 
 export { }
