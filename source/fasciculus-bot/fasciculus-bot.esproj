@@ -5,8 +5,4 @@
     <CommitToPServer>true</CommitToPServer>
   </PropertyGroup>
   
-  <ItemGroup>
-    <Folder Include="src\es\" />
-  </ItemGroup>
-  
 </Project>
