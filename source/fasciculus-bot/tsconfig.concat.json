@@ -14,7 +14,7 @@
     "rootDir": "concat",
     "strict": true,
     "strictPropertyInitialization": true,
-    "target": "ESNext"
+    "target": "ES2015"
   },
   "include": [
     "concat/main.ts",

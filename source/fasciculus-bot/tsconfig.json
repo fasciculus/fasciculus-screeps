@@ -12,7 +12,7 @@
     "rootDir": "src",
     "strict": true,
     "strictPropertyInitialization": true,
-    "target": "ESNext"
+    "target": "ES2015"
   },
   "include": [ "src/**/*.ts" ]
 }
