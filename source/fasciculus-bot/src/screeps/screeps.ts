@@ -1,3 +1,4 @@
+import { BodyInfos } from "./body";
 import { Cached } from "./cache";
 import { Controllers } from "./controller";
 import { Creeps } from "./creep";
@@ -17,5 +18,7 @@ export class Screeps
     static cleanup()
     {
         Cached.cleanup();
+
+        BodyInfos.cleanup();
     }
 }

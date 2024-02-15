@@ -4,6 +4,8 @@ declare global
     type ControllerId = Id<StructureController>;
     type CreepId = Id<Creep>;
 
+    type BodyInfo = { work: number };
+
     interface Creep
     {
         get type(): string;
@@ -19,6 +21,9 @@ declare global
         get username(): string;
 
         get<T extends _HasId>(id: Id<T> | undefined): T | undefined;
+        all<T extends _HasId>(ids: Set<Id<T>> | undefined): Array<T>;
+
+        existing<T extends _HasId>(ids: Set<Id<T>>): Set<Id<T>>;
     }
 
     interface Memory

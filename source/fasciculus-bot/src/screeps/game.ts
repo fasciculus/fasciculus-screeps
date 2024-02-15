@@ -18,9 +18,29 @@ export class Games
         return Games._username.value;
     }
 
+    private static get<T extends _HasId>(id: Id<T> | undefined): T | undefined
+    {
+        let result: T | null = id ? Game.getObjectById(id) : null;
+
+        return result || undefined;
+    }
+
+    private static all<T extends _HasId>(ids: Set<Id<T>> | undefined): Array<T>
+    {
+        return ids ? Array.defined(ids.map(Games.get)) : new Array();
+    }
+
+    private static existing<T extends _HasId>(ids: Set<Id<T>>): Set<Id<T>>
+    {
+        return ids.filter(id => Games.get(id) !== undefined);
+    }
+
     private static _classProperties: any =
         {
-            "username": Objects.getter(Games.username)
+            "username": Objects.getter(Games.username),
+            "get": Objects.function(Games.get),
+            "all": Objects.function(Games.all),
+            "existing": Objects.function(Games.existing),
         };
 
     static setup()
