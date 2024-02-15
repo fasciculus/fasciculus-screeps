@@ -231,6 +231,7 @@ class Analyzer
     {
         if (node.kind == TS.SyntaxKind.EndOfFileToken) return false;
         if (node.kind == TS.SyntaxKind.VariableStatement) return false;
+        if (node.kind == TS.SyntaxKind.ExpressionStatement) return false;
 
         if (TS.isInterfaceDeclaration(node)) return Analyzer.hasExport(node.modifiers);
         if (TS.isClassDeclaration(node)) return Analyzer.hasExport(node.modifiers);
