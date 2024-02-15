@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/0.5.476373-alpha">
+  
+  <PropertyGroup>
+    <CommitToPServer>true</CommitToPServer>
+  </PropertyGroup>
+  
   <ItemGroup>
     <Folder Include="src\es\" />
   </ItemGroup>
+  
 </Project>
