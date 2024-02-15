@@ -31,5 +31,16 @@
     <Copy DestinationFolder="$(ModuleDirectory)/bin" SourceFiles="@(BinFiles)" />
     <Message Importance="high" Text="Deployed $(ProjectName)." />
   </Target>
+
+  <Target Name="CommitToPServer" AfterTargets="Build" Condition="$(CommitToPServer)=='true'">
+    <PropertyGroup>
+      <CommitDir>$([System.IO.Path]::Combine("C:/Users", $(USERNAME), "AppData/Local/Screeps/scripts/127_0_0_1___21025/default"))</CommitDir>
+    </PropertyGroup>
+    <ItemGroup>
+      <Files Include="dist/main.js" />
+    </ItemGroup>
+    <Copy DestinationFolder="$(CommitDir)" SourceFiles="@(Files)" />
+    <Message Importance="high" Text="Committed to private server." />
+  </Target>
   
 </Project>
