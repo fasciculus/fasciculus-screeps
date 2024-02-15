@@ -25,6 +25,28 @@ declare global
         filter(predicate: (value: T) => boolean): Set<T>;
         map<U>(fn: (key: T) => U): Array<U>;
     }
+
+    interface SetConstructor
+    {
+        from<T>(iterable?: Iterable<T> | null): Set<T>;
+    }
+
+    interface Map<K, V>
+    {
+        get ids(): Set<K>;
+        get data(): Array<V>;
+
+        keep(keys: Set<K>): Map<K, V>;
+
+        filter(predicate: (key: K, value: V) => boolean): Map<K, V>;
+
+        ensure<H>(key: K, create: (key: K, hint?: H) => V, hint?: H): V;
+    }
+
+    interface MapConstructor
+    {
+        from<V>(o: { [key: string]: V }): Map<string, V>;
+    }
 }
 
 export { }

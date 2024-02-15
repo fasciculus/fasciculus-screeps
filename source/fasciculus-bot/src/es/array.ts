@@ -29,19 +29,19 @@ export class Arrays
         return result;
     }
 
-    //private static groupBy<K, T>(this: Array<T>, toKey: (value: T) => K): Map<K, Array<T>>
-    //{
-    //    const result: Map<K, Array<T>> = new Map();
+    private static groupBy<K, T>(this: Array<T>, toKey: (value: T) => K): Map<K, Array<T>>
+    {
+        const result: Map<K, Array<T>> = new Map();
 
-    //    for (const value of this)
-    //    {
-    //        const key: K = toKey(value);
+        for (const value of this)
+        {
+            const key: K = toKey(value);
 
-    //        result.ensure(key, () => new Array()).push(value);
-    //    }
+            result.ensure(key, () => new Array()).push(value);
+        }
 
-    //    return result;
-    //}
+        return result;
+    }
 
     private static sum<T>(this: Array<T>, toNumber: (value: T) => number): number
     {
@@ -81,6 +81,7 @@ export class Arrays
             "append": Objects.function(Arrays.append),
             "take": Objects.function(Arrays.take),
             "indexBy": Objects.function(Arrays.indexBy),
+            "groupBy": Objects.function(Arrays.groupBy),
             "sum": Objects.function(Arrays.sum),
         };
 

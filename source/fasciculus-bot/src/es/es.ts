@@ -1,4 +1,5 @@
 import { Arrays } from "./array";
+import { Maps } from "./map";
 import { Sets } from "./set";
 
 export class ES
@@ -7,5 +8,6 @@ export class ES
     {
         Arrays.setup();
         Sets.setup();
+        Maps.setup();
     }
 }
