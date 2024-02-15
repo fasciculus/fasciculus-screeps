@@ -21,7 +21,7 @@
     "directory": "source/fasciculus-concat"
   },
   "scripts": {
-    "build": "npm run concat  && tsc --project tsconfig.concat.json",
+    "build": "npm run concat && tsc --project tsconfig.concat.json",
     "clean": "tsc --build --clean",
     "concat": "node ../dist/index.js"
   },

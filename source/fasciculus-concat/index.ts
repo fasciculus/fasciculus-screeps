@@ -107,7 +107,7 @@ class ConcatContext
         this.tscFile = tsc.file;
 
         this.mainFile = concatConfig?.main || "index";
-        this.mainKey = getKey(tsc.rootDir, this.mainFile);
+        this.mainKey = getKey("", this.mainFile);
         this.concatDir = concatConfig?.concatDir || "concat";
         this.removeExports = concatConfig?.removeExports || false;
 
@@ -185,7 +185,16 @@ class Sources
         this.sources.forEach(fn);
     }
 
-    get(keys: Array<string>): Array<Source>
+    get(key: string): Source
+    {
+        const source: Source | undefined = this.sourceMap.get(key);
+
+        if (!source) throw new Error(`invalid program state '${key}'`);
+
+        return source;
+    }
+
+    all(keys: Array<string>): Array<Source>
     {
         const result: Array<Source> = new Array();
 
@@ -232,71 +241,137 @@ class Analyzer
     }
 }
 
+class Tree
+{
+    private _children: Map<string, Set<string>> = new Map();
+    private _root?: string;
+
+    constructor(root: string)
+    {
+        this._children.set(root, new Set());
+        this._root = root;
+    }
+
+    get size(): number
+    {
+        return this._root ? this._children.size : 0;
+    }
+
+    insert(parent: string, child: string)
+    {
+        const children: Set<string> | undefined = this._children.get(parent);
+
+        if (!children) throw new Error("invalid insert");
+
+        children.add(child);
+
+        if (!this._children.has(child))
+        {
+            this._children.set(child, new Set());
+        }
+    }
+
+    delete(node: string)
+    {
+        if (node == this._root)
+        {
+            this._root = undefined;
+            this._children.clear();
+            return;
+        }
+
+        for (let children of this._children.values())
+        {
+            children.delete(node);
+        }
+    }
+
+    next(): string
+    {
+        if (!this._root) throw new Error("tree empty");
+
+        var current: string = this._root;
+        var children: Set<string> | undefined = this._children.get(current);
+        var iteration: number = 0;
+        var maxIterations: number = this._children.size + 2;
+
+        while (iteration < maxIterations)
+        {
+            if (!children) throw new Error("invalid tree");
+            if (children.size == 0) return current;
+
+            current = Array.from(children)[0];
+            children = this._children.get(current);
+            ++iteration;
+        }
+
+        throw new Error("cyclic tree");
+    }
+}
+
 class Dependencies
 {
     private readonly sources: Sources;
     private readonly keys: Set<string>;
-    private readonly unresolved: Map<string, Set<string>> = new Map();
+    private readonly tree: Tree;
     private readonly resolved: Array<string> = new Array();
 
-    constructor(sources: Sources)
+    constructor(sources: Sources, ctx: ConcatContext)
     {
         this.sources = sources;
         this.keys = sources.keys();
-        sources.forEach(source => this.addDependencies(source));
+        this.tree = this.createTree(ctx.mainKey);
     }
 
-    private addDependencies(source: Source): void
+    private createTree(main: string): Tree
     {
-        const tsSource: TS.SourceFile = source.tsSource;
-        const dependencies: Set<string> = new Set();
+        const tree: Tree = new Tree(main);
+        const todo: Array<string> = Array.from([main]);
+        const done: Set<string> = new Set();
 
-        TS.forEachChild(tsSource, (node) =>
+        while (todo.length > 0)
         {
-            if (TS.isImportDeclaration(node))
+            const parent: string = todo.pop()!;
+
+            if (done.has(parent)) continue;
+
+            const source: Source = this.sources.get(parent);
+            const tsSource: TS.SourceFile = source.tsSource;
+
+            TS.forEachChild(tsSource, (node) =>
             {
-                const key = Analyzer.importKey(source.key, tsSource, node);
-
-                if (this.keys.has(key))
+                if (TS.isImportDeclaration(node))
                 {
-                    dependencies.add(key);
-                }
-            }
-        });
+                    const child = Analyzer.importKey(source.key, tsSource, node);
 
-        this.unresolved.set(source.key, dependencies);
+                    if (this.keys.has(child))
+                    {
+                        tree.insert(parent, child);
+                        todo.push(child);
+                    }
+                }
+            });
+
+            done.add(parent);
+        }
+
+        return tree;
     }
 
     resolve(): Source[]
     {
-        var iteration: number = 0;
-        const unresolved: Map<string, Set<string>> = this.unresolved;
+        const tree: Tree = this.tree;
+        const resolved: Array<string> = this.resolved;
 
-        while (iteration < 100 && unresolved.size > 0)
+        while (tree.size > 0)
         {
-            const resolved: Set<string> = new Set(); 
+            const next: string = tree.next();
 
-            for (let entry of unresolved.entries())
-            {
-                if (entry[1].size == 0) resolved.add(entry[0]);
-            }
-
-            resolved.forEach(r => {
-                unresolved.delete(r);
-                this.resolved.push(r);
-            });
-
-            for (let dependencies of unresolved.values())
-            {
-                resolved.forEach(r => dependencies.delete(r));
-            }
-
-            ++iteration;
+            resolved.push(next);
+            tree.delete(next);
         }
 
-        if (iteration >= 100) throw new Error("circular dependencies");
-
-        return this.sources.get(this.resolved);
+        return this.sources.all(resolved);
     }
 }
 
@@ -357,7 +432,7 @@ try
     const start: number = Date.now();
     const ctx = new ConcatContext();
     const sources = new Sources(ctx);
-    const dependencies = new Dependencies(sources);
+    const dependencies = new Dependencies(sources, ctx);
     const sorted: Array<Source> = dependencies.resolve();
     const tsc: string = Transpiler.tsc(ctx);
     const ts: string = Transpiler.sources(sorted, ctx);
