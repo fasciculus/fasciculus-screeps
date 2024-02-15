@@ -10,6 +10,13 @@ declare global
         get<T extends _HasId>(id: Id<T> | undefined): T | undefined;
     }
 
+    interface Memory
+    {
+        [index: string]: any;
+
+        get<T>(key: string, initial: T): T;
+    }
+
     interface Room
     {
         get safe(): boolean;
