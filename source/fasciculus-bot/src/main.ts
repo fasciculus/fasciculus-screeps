@@ -8,7 +8,9 @@ class Experiments
 {
     static run()
     {
-        console.log(`Room.safe ${Room.safe}`)
+        const my = Creep.my.map(c => ` ${c.name} is ${c.type}`);
+
+        console.log(`Creep.my ${my}`)
     }
 }
 
