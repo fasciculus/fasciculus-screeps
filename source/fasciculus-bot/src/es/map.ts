@@ -58,6 +58,7 @@ export class Maps
         {
             "ids": Objects.getter(Maps.ids),
             "data": Objects.getter(Maps.data),
+            "keep": Objects.function(Maps.keep),
             "filter": Objects.function(Maps.filter),
             "ensure": Objects.function(Maps.ensure),
         };
