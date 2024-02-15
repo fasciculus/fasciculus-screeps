@@ -10,6 +10,7 @@
   "dependencies": {},
   "devDependencies": {
     "@types/node": "20.11.17",
+    "@types/screeps": "3.3.7",
     "typescript": "5.3.3",
     "fasciculus-concat": "file:../../node_modules/fasciculus-concat"
   },
