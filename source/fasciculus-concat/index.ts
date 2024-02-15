@@ -31,6 +31,7 @@ function newLine(newLine: TS.NewLineKind)
 interface ConcatConfigJson
 {
     main?: string;
+    types?: Array<string>;
     concatDir?: string;
     removeExports?: boolean;
 }
@@ -53,7 +54,7 @@ class TSConfig
     readonly rootDir: string;
     readonly newLine: TS.NewLineKind;
     readonly parsedOptions: TS.CompilerOptions;
-    readonly fileNames: string[];
+    readonly fileNames: Array<string>;
 
     constructor()
     {
@@ -91,13 +92,14 @@ class ConcatContext
 
     readonly mainFile: string;
     readonly mainKey: string;
+    readonly types: Array<string>;
     readonly concatDir: string;
     readonly removeExports: boolean;
 
     readonly rootDir: string;
     readonly options: TS.CompilerOptions;
     readonly newLine: TS.NewLineKind;
-    readonly fileNames: string[];
+    readonly fileNames: Array<string>;
 
     constructor()
     {
@@ -108,6 +110,7 @@ class ConcatContext
 
         this.mainFile = concatConfig?.main || "index";
         this.mainKey = getKey("", this.mainFile);
+        this.types = concatConfig?.types || new Array();
         this.concatDir = concatConfig?.concatDir || "concat";
         this.removeExports = concatConfig?.removeExports || false;
 
@@ -385,14 +388,28 @@ class Transpiler
 
         if (!config) throw new Error("no config");
 
-        const include: string = unixify(Path.join(ctx.concatDir, ctx.mainFile));
+        const includes: Array<string> = Transpiler.includes(ctx);
         const options: TS.CompilerOptions = config["compilerOptions"];
 
         config["compileOnSave"] = false;
-        config["include"] = [include];
+        config["include"] = includes;
         options.rootDir = ctx.concatDir;
 
         return JSON.stringify(config, undefined, 2);
+    }
+
+    private static includes(ctx: ConcatContext): Array<string>
+    {
+        const result: Array<string> = new Array();
+
+        result.push(unixify(Path.join(ctx.concatDir, ctx.mainFile)));
+
+        for (let file of ctx.types)
+        {
+            result.push(unixify(Path.join(ctx.concatDir, file)));
+        }
+
+        return result;
     }
 
     static sources(sources: Array<Source>, ctx: ConcatContext): string
@@ -442,6 +459,16 @@ try
     FS.mkdirSync(ctx.concatDir, { recursive: true });
     FS.writeFileSync(tsFile, ts, { encoding: "utf-8", flush: true });
     FS.writeFileSync("tsconfig.concat.json", tsc);
+
+    for (let file of ctx.types)
+    {
+        const src = Path.join(ctx.rootDir, file);
+        const dst = Path.join(ctx.concatDir, file);
+        const dir = Path.dirname(dst);
+
+        FS.mkdirSync(dir, { recursive: true });
+        FS.copyFileSync(src, dst);
+    }
 
     const duration: number = Date.now() - start;
 

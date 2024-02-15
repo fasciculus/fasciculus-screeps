@@ -17,6 +17,7 @@
     "target": "ESNext"
   },
   "include": [
-    "concat/main.ts"
+    "concat/main.ts",
+    "concat/es/types.ts"
   ]
 }
