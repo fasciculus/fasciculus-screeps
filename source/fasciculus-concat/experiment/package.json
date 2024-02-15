@@ -1,7 +1,8 @@
 {
   "_concat": {
     "main": "main.ts",
-    "types": ["bar/types.ts", "foo/types.ts"],
+    "types": [ "bar/types.ts", "foo/types.ts" ],
+    "outDir": "dist",
     "removeExports": true
   },
   "author": { "name": "Roger H. Jörg" },

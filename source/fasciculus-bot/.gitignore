@@ -1,3 +1,6 @@
+concat/
+dist/
 node_modules/
 obj/
+temp/
 package-lock.json

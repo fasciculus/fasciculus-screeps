@@ -8,7 +8,7 @@
     "moduleResolution": "NodeNext",
     "newLine": "crlf",
     "noImplicitReturns": true,
-    "outDir": "dist",
+    "outDir": "temp",
     "rootDir": "src",
     "strict": true,
     "strictPropertyInitialization": true,

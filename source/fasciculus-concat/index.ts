@@ -8,6 +8,16 @@ function unixify(file: string): string
     return file.replaceAll("\\", "/");
 }
 
+function fixDirectory(dir: string): string
+{
+    dir = unixify(dir);
+
+    if (dir.startsWith("./")) dir = dir.substring(2);
+    if (dir.endsWith("/")) dir = dir.substring(0, dir.length - 1);
+
+    return dir;
+}
+
 function getKey(root: string, file: string): string
 {
     var result: string = unixify(Path.relative(root, file));
@@ -33,6 +43,7 @@ interface ConcatConfigJson
     main?: string;
     types?: Array<string>;
     concatDir?: string;
+    outDir?: string;
     removeExports?: boolean;
 }
 
@@ -52,6 +63,7 @@ class TSConfig
 {
     readonly file: string;
     readonly rootDir: string;
+    readonly outDir: string;
     readonly newLine: TS.NewLineKind;
     readonly parsedOptions: TS.CompilerOptions;
     readonly fileNames: Array<string>;
@@ -70,13 +82,11 @@ class TSConfig
 
         if (!config) throw new Error("no config");
         if (!options.rootDir) throw new Error("no rootDir in tsconfig.json");
+        if (!options.outDir) throw new Error("no outDir in tsconfig.json");
 
-        var rootDir: string = unixify(options.rootDir);
+        this.rootDir = fixDirectory(options.rootDir);
+        this.outDir = fixDirectory(options.rootDir);
 
-        if (rootDir.startsWith("./")) rootDir = rootDir.substring(2);
-        if (rootDir.endsWith("/")) rootDir = rootDir.substring(0, rootDir.length - 1);
-
-        this.rootDir = rootDir;
         this.newLine = options.newLine || TS.NewLineKind.CarriageReturnLineFeed;
 
         const parsed: TS.ParsedCommandLine = TS.parseJsonConfigFileContent(content, TS.sys, "./");
@@ -94,6 +104,7 @@ class ConcatContext
     readonly mainKey: string;
     readonly types: Array<string>;
     readonly concatDir: string;
+    readonly outDir: string;
     readonly removeExports: boolean;
 
     readonly rootDir: string;
@@ -112,6 +123,7 @@ class ConcatContext
         this.mainKey = getKey("", this.mainFile);
         this.types = concatConfig?.types || new Array();
         this.concatDir = concatConfig?.concatDir || "concat";
+        this.outDir = concatConfig?.outDir || tsc.outDir;
         this.removeExports = concatConfig?.removeExports || false;
 
         this.rootDir = tsc.rootDir;
@@ -394,6 +406,7 @@ class Transpiler
         config["compileOnSave"] = false;
         config["include"] = includes;
         options.rootDir = ctx.concatDir;
+        options.outDir = ctx.outDir;
 
         return JSON.stringify(config, undefined, 2);
     }
