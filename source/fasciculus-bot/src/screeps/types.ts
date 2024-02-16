@@ -51,6 +51,7 @@ declare global
     {
         get safe(): boolean;
 
+        get terrain(): RoomTerrain;
         get sources(): Array<Source>;
     }
 
@@ -84,6 +85,9 @@ declare global
         get my(): Array<StructureSpawn>;
         get idle(): Array<StructureSpawn>;
     }
+
+    type TerrainMask = 0 | 1 | 2;
+    type TerrainInfo = { pos: RoomPosition, mask: TerrainMask };
 }
 
 export { }

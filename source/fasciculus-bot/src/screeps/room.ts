@@ -1,5 +1,6 @@
 import { Objects } from "../es/object";
 import { Cached } from "./cache";
+import { Terrains } from "./terrain";
 
 class Finder
 {
@@ -43,6 +44,11 @@ export class Rooms
         return Rooms._safe.value.has(this.name);
     }
 
+    private static terrain(this: Room): RoomTerrain
+    {
+        return Terrains.ofRoom(this);
+    }
+
     private static sources(this: Room): Array<Source>
     {
         return Game.all(Rooms._sources.ensure(this.name, Rooms.getSources, this));
@@ -61,6 +67,7 @@ export class Rooms
     private static _instanceProperties: any =
         {
             "safe": Objects.getter(Rooms.safe),
+            "terrain": Objects.getter(Rooms.terrain),
             "sources": Objects.getter(Rooms.sources),
         };
 
