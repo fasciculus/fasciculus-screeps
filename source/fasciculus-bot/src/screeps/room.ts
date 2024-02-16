@@ -44,6 +44,16 @@ export class Rooms
         return Rooms._safe.value.has(this.name);
     }
 
+    private static energy(this: Room): number
+    {
+        return this.energyAvailable || 0;
+    }
+
+    private static energyCapacity(this: Room): number
+    {
+        return this.energyCapacityAvailable || 0;
+    }
+
     private static terrain(this: Room): RoomTerrain
     {
         return Terrains.ofRoom(this);
@@ -67,6 +77,8 @@ export class Rooms
     private static _instanceProperties: any =
         {
             "safe": Objects.getter(Rooms.safe),
+            "energy": Objects.getter(Rooms.energy),
+            "energyCapacity": Objects.getter(Rooms.energyCapacity),
             "terrain": Objects.getter(Rooms.terrain),
             "sources": Objects.getter(Rooms.sources),
         };
