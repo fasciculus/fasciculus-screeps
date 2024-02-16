@@ -13,9 +13,9 @@ class Experiments
         if (sources.length == 0) return;
 
         const source: Source = sources[0];
-        const slot: SourceSlot = new SourceSlot(source);
+        const assignees: Set<CreepId> = source.assignees;
 
-        console.log(`${slot.sourceId}, ${slot.source.id}`);
+        console.log(`assignees = [${Array.from(assignees)}]`)
     }
 }
 

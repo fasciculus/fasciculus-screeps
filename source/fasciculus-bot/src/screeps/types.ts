@@ -8,6 +8,18 @@ declare global
 
     type BodyInfo = { work: number };
 
+    type AssignableId = Id<Source>;
+
+    interface Assignable
+    {
+        get assignees(): Set<CreepId>;
+        get assignedCreeps(): Array<Creep>;
+
+        assign(creep: CreepId): void;
+        unassign(creep: CreepId): void;
+        unassignAll(): void;
+    }
+
     interface Creep
     {
         get type(): string;
@@ -48,17 +60,13 @@ declare global
         get safe(): Array<Room>;
     }
 
+    interface Source extends Assignable
+    {
+    }
+
     interface SourceConstructor
     {
         get safe(): Array<Source>;
-    }
-
-    class SourceSlot
-    {
-        get sourceId(): SourceId;
-        get source(): Source;
-
-        constructor(source: Source);
     }
 
     interface StructureController
