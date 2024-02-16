@@ -65,19 +65,19 @@ export class BodyTemplate
         return this;
     }
 
-    static createTemplate(type: string, times: number, ...parts: Array<BodyPartConstant>): BodyTemplate
+    static createTemplate(kind: string, times: number, ...parts: Array<BodyPartConstant>): BodyTemplate
     {
         const template = new BodyTemplate().add(times, ...parts);
 
-        BodyTemplate._templates.set(type, template);
+        BodyTemplate._templates.set(kind, template);
         BodyTemplate._minCost = Math.min(BodyTemplate._minCost, template._chunks[0].cost);
 
         return template;
     }
 
-    static get(type: string): BodyTemplate | undefined
+    static get(kind: string): BodyTemplate | undefined
     {
-        return BodyTemplate._templates.get(type);
+        return BodyTemplate._templates.get(kind);
     }
 
     static get minCost(): number

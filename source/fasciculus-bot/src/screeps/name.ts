@@ -1,8 +1,8 @@
 
 interface NamesMemory
 {
-    creeps: { [type: string]: number },
-    flags: { [type: string]: number }
+    creeps: { [kind: string]: number },
+    flags: { [kind: string]: number }
 }
 
 export class Names
@@ -14,29 +14,29 @@ export class Names
         return Memory.get("names", Names._initialNamesMemory);
     }
 
-    static type(name: string): string
+    static kind(name: string): string
     {
         return name.charAt(0);
     }
 
-    private static nextName(type: string, names: { [type: string]: number }): string
+    private static nextName(kind: string, names: { [kind: string]: number }): string
     {
-        type = Names.type(type);
+        kind = Names.kind(kind);
 
-        const nextIndex: number = (names[type] || 0) + 1;
+        const nextIndex: number = (names[kind] || 0) + 1;
 
-        names[type] = nextIndex;
+        names[kind] = nextIndex;
 
-        return type + nextIndex;
+        return kind + nextIndex;
     }
 
-    static nextCreepName(type: string): string
+    static nextCreepName(kind: string): string
     {
-        return Names.nextName(type, Names.memory.creeps);
+        return Names.nextName(kind, Names.memory.creeps);
     }
 
-    static nextFlagName(type: string): string
+    static nextFlagName(kind: string): string
     {
-        return Names.nextName(type, Names.memory.flags);
+        return Names.nextName(kind, Names.memory.flags);
     }
 }

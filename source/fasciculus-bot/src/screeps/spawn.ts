@@ -17,9 +17,9 @@ export class Spawns
         return Spawns._my.value.filter((id, spawn) => !spawn.spawning);
     }
 
-    private static spawn(this: StructureSpawn, type: string, body: Array<BodyPartConstant>): ScreepsReturnCode
+    private static spawn(this: StructureSpawn, kind: string, body: Array<BodyPartConstant>): ScreepsReturnCode
     {
-        const name = Names.nextCreepName(type);
+        const name = Names.nextCreepName(kind);
 
         return this.spawnCreep(body, name);
     }

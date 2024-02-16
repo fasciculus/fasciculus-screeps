@@ -22,7 +22,7 @@ declare global
 
     interface Creep
     {
-        get type(): string;
+        get kind(): string;
     }
 
     interface CreepConstructor
