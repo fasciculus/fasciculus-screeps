@@ -16,20 +16,20 @@ abstract class CachedBase
     }
 }
 
-export type ComplexCacheFetch<V> = (value: V | undefined, key: string) => V;
-export type WithKeyCacheFetch<V> = (key: string) => V;
+export type ComplexCacheFetch<V, K = string> = (value: V | undefined, key: K) => V;
+export type WithKeyCacheFetch<V, K = string> = (key: K) => V;
 export type WithValueCacheFetch<V> = (value: V | undefined) => V;
 export type SimpleCacheFetch<V> = () => V;
 
-export class Cached<V> extends CachedBase
+export class Cached<V, K = string> extends CachedBase
 {
-    private _fetch: ComplexCacheFetch<V>;
-    private _key: string;
+    private _fetch: ComplexCacheFetch<V, K>;
+    private _key: K;
 
     private _time: number;
     private _value?: V;
 
-    private constructor(fetch: ComplexCacheFetch<V>, key: string)
+    private constructor(fetch: ComplexCacheFetch<V, K>, key: K)
     {
         super();
 
@@ -40,22 +40,22 @@ export class Cached<V> extends CachedBase
         this._value = undefined;
     }
 
-    static complex<V>(fetch: ComplexCacheFetch<V>, key: string): Cached<V>
+    static complex<V, K = string>(fetch: ComplexCacheFetch<V, K>, key: K): Cached<V, K>
     {
-        return new Cached<V>(fetch, key);
+        return new Cached<V, K>(fetch, key);
     }
 
-    static withKey<V>(fetch: WithKeyCacheFetch<V>, key: string): Cached<V>
+    static withKey<V, K = string>(fetch: WithKeyCacheFetch<V, K>, key: K): Cached<V, K>
     {
-        return new Cached<V>((value: V | undefined, key: string) => fetch(key), key);
+        return new Cached<V, K>((value: V | undefined, key: K) => fetch(key), key);
     }
 
-    static withValue<V>(fetch: WithValueCacheFetch<V>): Cached<V>
+    static withValue<V>(fetch: WithValueCacheFetch<V>): Cached<V, string>
     {
         return new Cached<V>((value: V | undefined, key: string) => fetch(value), "");
     }
 
-    static simple<V>(fetch: SimpleCacheFetch<V>): Cached<V>
+    static simple<V>(fetch: SimpleCacheFetch<V>): Cached<V, string>
     {
         return new Cached<V>((value: V | undefined, key: string) => fetch(), "");
     }

@@ -8,9 +8,14 @@ class Experiments
 {
     static run()
     {
-        const my = Creep.my.map(c => ` ${c.name} is ${c.type}`);
+        const sources: Array<Source> = Source.safe;
 
-        console.log(`Creep.my ${my}`)
+        if (sources.length == 0) return;
+
+        const source: Source = sources[0];
+        const slot: SourceSlot = new SourceSlot(source);
+
+        console.log(`${slot.sourceId}, ${slot.source.id}`);
     }
 }
 

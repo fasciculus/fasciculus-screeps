@@ -1,10 +1,20 @@
 import { Objects } from "../es/object";
 import { Cached } from "./cache";
 
+class Finder
+{
+    static sources(room: Room | undefined): Array<Source>
+    {
+        return room ? room.find<FIND_SOURCES, Source>(FIND_SOURCES) : new Array();
+    }
+}
+
 export class Rooms
 {
     private static _known: Cached<Map<string, Room>> = Cached.simple(Rooms.fetchKnown);
     private static _safe: Cached<Map<string, Room>> = Cached.simple(Rooms.fetchSafe);
+
+    private static _sources: Map<string, Set<SourceId>> = new Map();
 
     private static fetchKnown(): Map<string, Room>
     {
@@ -16,14 +26,31 @@ export class Rooms
         return Rooms._known.value.filter(Rooms.isSafe);
     }
 
+    private static isSafe(name: string, room: Room)
+    {
+        return room.controller?.safe || true;
+    }
+
+    private static getSources(name: string, hint?: Room): Set<SourceId>
+    {
+        const room: Room | undefined = hint || Rooms._known.value.get(name);
+
+        return Set.from(Finder.sources(room).map(s => s.id));
+    }
+
     private static safe(this: Room): boolean
     {
         return Rooms._safe.value.has(this.name);
     }
 
-    private static isSafe(name: string, room: Room)
+    private static sources(this: Room): Array<Source>
     {
-        return room.controller?.safe || true;
+        return Game.all(Rooms._sources.ensure(this.name, Rooms.getSources, this));
+    }
+
+    private static knownRooms(): Array<Room>
+    {
+        return Rooms._known.value.data;
     }
 
     private static safeRooms(): Array<Room>
@@ -34,10 +61,12 @@ export class Rooms
     private static _instanceProperties: any =
         {
             "safe": Objects.getter(Rooms.safe),
+            "sources": Objects.getter(Rooms.sources),
         };
 
     private static _classProperties: any =
         {
+            "known": Objects.getter(Rooms.knownRooms),
             "safe": Objects.getter(Rooms.safeRooms),
         };
 

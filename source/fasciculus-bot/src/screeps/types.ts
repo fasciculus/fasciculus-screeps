@@ -3,6 +3,7 @@ declare global
 {
     type ControllerId = Id<StructureController>;
     type CreepId = Id<Creep>;
+    type SourceId = Id<Source>;
     type SpawnId = Id<StructureSpawn>;
 
     type BodyInfo = { work: number };
@@ -37,11 +38,27 @@ declare global
     interface Room
     {
         get safe(): boolean;
+
+        get sources(): Array<Source>;
     }
 
     interface RoomConstructor
     {
+        get known(): Array<Room>;
         get safe(): Array<Room>;
+    }
+
+    interface SourceConstructor
+    {
+        get safe(): Array<Source>;
+    }
+
+    class SourceSlot
+    {
+        get sourceId(): SourceId;
+        get source(): Source;
+
+        constructor(source: Source);
     }
 
     interface StructureController
