@@ -60,6 +60,8 @@ declare global
 
         get obstacles(): Array<AnyStructure>;
         get sources(): Array<Source>;
+
+        get creeps(): Array<Creep>;
     }
 
     interface RoomConstructor

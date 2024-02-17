@@ -8,9 +8,9 @@ class Experiments
 {
     static run()
     {
-        const obstacles = Room.known[0].obstacles.map(o => ` ${o.id}: ${o.structureType}`);
+        const creeps = Room.known[0].creeps;
 
-        console.log(`obstacles = ${obstacles}`);
+        console.log(`creeps = ${creeps}`);
     }
 }
 

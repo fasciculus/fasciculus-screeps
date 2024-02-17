@@ -54,6 +54,11 @@ class Finder
     {
         return room ? room.find<FIND_SOURCES, Source>(FIND_SOURCES) : new Array();
     }
+
+    static creeps(room: Room | undefined): Array<Creep>
+    {
+        return room ? room.find<FIND_CREEPS, Creep>(FIND_CREEPS) : new Array();
+    }
 }
 
 export class Rooms
@@ -63,6 +68,8 @@ export class Rooms
 
     private static _obstacles: Cached<Map<string, Array<AnyStructure>>> = Cached.simple(() => new Map());
     private static _sources: Map<string, Set<SourceId>> = new Map();
+
+    private static _creeps: Cached<Map<string, Array<Creep>>> = Cached.simple(() => new Map());
 
     private static fetchKnown(): Map<string, Room>
     {
@@ -91,6 +98,13 @@ export class Rooms
         const room: Room | undefined = hint || Rooms._known.value.get(name);
 
         return Set.from(Finder.sources(room).map(s => s.id));
+    }
+
+    private static getCreeps(name: string, hint?: Room): Array<Creep>
+    {
+        const room: Room | undefined = hint || Rooms._known.value.get(name);
+
+        return Finder.creeps(room);
     }
 
     private static safe(this: Room): boolean
@@ -123,6 +137,11 @@ export class Rooms
         return Game.all(Rooms._sources.ensure(this.name, Rooms.getSources, this));
     }
 
+    private static creeps(this: Room): Array<Creep>
+    {
+        return Rooms._creeps.value.ensure(this.name, Rooms.getCreeps, this);
+    }
+
     private static knownRooms(): Array<Room>
     {
         return Rooms._known.value.data;
@@ -141,6 +160,7 @@ export class Rooms
             "terrain": Objects.getter(Rooms.terrain),
             "obstacles": Objects.getter(Rooms.obstacles),
             "sources": Objects.getter(Rooms.sources),
+            "creeps": Objects.getter(Rooms.creeps),
         };
 
     private static _classProperties: any =
