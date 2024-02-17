@@ -57,6 +57,8 @@ declare global
         get energyCapacity(): number;
 
         get terrain(): RoomTerrain;
+
+        get obstacles(): Array<AnyStructure>;
         get sources(): Array<Source>;
     }
 

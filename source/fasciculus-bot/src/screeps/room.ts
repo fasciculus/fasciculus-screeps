@@ -4,6 +4,52 @@ import { Terrains } from "./terrain";
 
 class Finder
 {
+    private static _obstacleTypes: Set<string> | undefined = undefined;
+
+    private static getObstacleTypes(): Set<string>
+    {
+        if (!Finder._obstacleTypes)
+        {
+            Finder._obstacleTypes = Set.from([
+                "constructedWall",
+                "controller",
+                "deposit",
+                "extension",
+                "factory",
+                "invaderCore",
+                "lab",
+                "link",
+                "mineral",
+                "nuker",
+                "observer",
+                "powerBank",
+                "powerSpawn",
+                "source",
+                "spawn",
+                "storage",
+                "terminal",
+                "tower"
+            ]);
+        }
+
+        return Finder._obstacleTypes;
+    }
+
+    private static obstacleFilterOptions: FilterOptions<FIND_STRUCTURES, AnyStructure> =
+        {
+            filter: Finder.isObstacle
+        };
+
+    private static isObstacle(structure: AnyStructure): boolean
+    {
+        return Finder.getObstacleTypes().has(structure.structureType);
+    }
+
+    static obstacles(room: Room | undefined): Array<AnyStructure>
+    {
+        return room ? room.find<FIND_STRUCTURES, AnyStructure>(FIND_STRUCTURES, Finder.obstacleFilterOptions) : new Array();
+    }
+
     static sources(room: Room | undefined): Array<Source>
     {
         return room ? room.find<FIND_SOURCES, Source>(FIND_SOURCES) : new Array();
@@ -15,6 +61,7 @@ export class Rooms
     private static _known: Cached<Map<string, Room>> = Cached.simple(Rooms.fetchKnown);
     private static _safe: Cached<Map<string, Room>> = Cached.simple(Rooms.fetchSafe);
 
+    private static _obstacles: Cached<Map<string, Array<AnyStructure>>> = Cached.simple(() => new Map());
     private static _sources: Map<string, Set<SourceId>> = new Map();
 
     private static fetchKnown(): Map<string, Room>
@@ -30,6 +77,13 @@ export class Rooms
     private static isSafe(name: string, room: Room)
     {
         return room.controller?.safe || true;
+    }
+
+    private static getObstacles(name: string, hint?: Room): Array<AnyStructure>
+    {
+        const room: Room | undefined = hint || Rooms._known.value.get(name);
+
+        return Finder.obstacles(room);
     }
 
     private static getSources(name: string, hint?: Room): Set<SourceId>
@@ -59,6 +113,11 @@ export class Rooms
         return Terrains.ofRoom(this);
     }
 
+    private static obstacles(this: Room): Array<AnyStructure>
+    {
+        return Rooms._obstacles.value.ensure(this.name, Rooms.getObstacles, this);
+    }
+
     private static sources(this: Room): Array<Source>
     {
         return Game.all(Rooms._sources.ensure(this.name, Rooms.getSources, this));
@@ -80,6 +139,7 @@ export class Rooms
             "energy": Objects.getter(Rooms.energy),
             "energyCapacity": Objects.getter(Rooms.energyCapacity),
             "terrain": Objects.getter(Rooms.terrain),
+            "obstacles": Objects.getter(Rooms.obstacles),
             "sources": Objects.getter(Rooms.sources),
         };
 

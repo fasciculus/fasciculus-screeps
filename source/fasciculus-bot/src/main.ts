@@ -8,9 +8,9 @@ class Experiments
 {
     static run()
     {
-        const assignedWork = Source.safe.map(s => ` ${s.id}: ${s.assignedWork}/${s.workCapacity}`);
+        const obstacles = Room.known[0].obstacles.map(o => ` ${o.id}: ${o.structureType}`);
 
-        console.log(`assignedWork = ${assignedWork}`);
+        console.log(`obstacles = ${obstacles}`);
     }
 }
 
