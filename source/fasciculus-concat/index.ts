@@ -3,6 +3,8 @@ import * as FS from "node:fs";
 import * as Path from "node:path";
 import * as TS from "typescript";
 
+const version = "0.1.3";
+
 function unixify(file: string): string
 {
     return file.replaceAll("\\", "/");
@@ -112,6 +114,8 @@ class ConcatContext
     readonly newLine: TS.NewLineKind;
     readonly fileNames: Array<string>;
 
+    readonly tsHost: TS.CompilerHost;
+
     constructor()
     {
         const tsc = new TSConfig();
@@ -130,6 +134,8 @@ class ConcatContext
         this.options = tsc.parsedOptions;
         this.newLine = tsc.newLine;
         this.fileNames = tsc.fileNames;
+
+        this.tsHost = TS.createCompilerHost(this.options);
     }
 
     private static getConcatConfig(): ConcatConfigJson | undefined
@@ -163,7 +169,7 @@ class Source
         this.file = file;
         this.key = getKey(ctx.rootDir, file);
 
-        const program: TS.Program = TS.createProgram([file], ctx.options);
+        const program: TS.Program = TS.createProgram([file], ctx.options, ctx.tsHost);
         const tsSource: TS.SourceFile | undefined = program.getSourceFile(file);
 
         if (!tsSource) throw new Error("no source");
@@ -461,7 +467,7 @@ class Transpiler
 
 try
 {
-    console.log(`concatenation started.`);
+    console.log(`faciculus-concat ${version}.`);
 
     const start: number = Date.now();
     const ctx = new ConcatContext();
