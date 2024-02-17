@@ -9,6 +9,7 @@ import { RoomPositions } from "./pos";
 import { Rooms } from "./room";
 import { Sources } from "./source";
 import { Spawns } from "./spawn";
+import { Terrains } from "./terrain";
 
 export class Screeps
 {
@@ -22,6 +23,7 @@ export class Screeps
         RoomPositions.setup();
         Sources.setup();
         Spawns.setup();
+        Terrains.setup();
 
         Assignees.setup();
     }

@@ -67,6 +67,12 @@ declare global
     interface RoomPosition
     {
         forEachAround(range: number, fn: (x: number, y: number) => void): void;
+        forEachAtRange(range: number, fn: (x: number, y: number) => void): void;
+    }
+
+    interface RoomTerrain
+    {
+        walkableAround(pos: RoomPosition, range: number): number;
     }
 
     interface Source extends Assignable
