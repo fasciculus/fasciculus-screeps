@@ -39,6 +39,11 @@ export class Sources
         return this.slots - this.assignees.size;
     }
 
+    private static assignedWork(this: Source): number
+    {
+        return this.assignedCreeps.sum(c => c.workParts);
+    }
+
     private static assignees(this: Source): Set<CreepId> { return Assignees.assignees(this.id); }
     private static assignedCreeps(this: Source): Array<Creep> { return Game.all(this.assignees); }
     private static assign(this: Source, creep: CreepId): void { Assignees.assign(this.id, creep); }
@@ -54,6 +59,7 @@ export class Sources
         {
             "slots": Objects.getter(Sources.slots),
             "freeSlots": Objects.getter(Sources.freeSlots),
+            "assignedWork": Objects.getter(Sources.assignedWork),
             "assignees": Objects.getter(Sources.assignees),
             "assignedCreeps": Objects.getter(Sources.assignedCreeps),
             "assign": Objects.function(Sources.assign),

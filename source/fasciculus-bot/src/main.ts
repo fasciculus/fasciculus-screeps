@@ -8,9 +8,9 @@ class Experiments
 {
     static run()
     {
-        const workParts = Creep.my.map(c => ` ${c.name}: ${c.workParts}`);
+        const assignedWork = Source.safe.map(s => ` ${s.id}: ${s.assignedWork}`);
 
-        console.log(`workParts = ${workParts}`);
+        console.log(`assignedWork = ${assignedWork}`);
     }
 }
 

@@ -81,6 +81,7 @@ declare global
     {
         get slots(): number;
         get freeSlots(): number;
+        get assignedWork(): number;
     }
 
     interface SourceConstructor
