@@ -39,6 +39,16 @@ export class Sources
         return this.slots - this.assignees.size;
     }
 
+    private static workCapacity(this: Source): number
+    {
+        return this.energyCapacity / ENERGY_REGEN_TIME / 2;
+    }
+
+    private static freeWork(this: Source): number
+    {
+        return Math.max(0, this.workCapacity - this.assignedWork);
+    }
+
     private static assignedWork(this: Source): number
     {
         return this.assignedCreeps.sum(c => c.workParts);
@@ -59,6 +69,8 @@ export class Sources
         {
             "slots": Objects.getter(Sources.slots),
             "freeSlots": Objects.getter(Sources.freeSlots),
+            "workCapacity": Objects.getter(Sources.workCapacity),
+            "freeWork": Objects.getter(Sources.freeWork),
             "assignedWork": Objects.getter(Sources.assignedWork),
             "assignees": Objects.getter(Sources.assignees),
             "assignedCreeps": Objects.getter(Sources.assignedCreeps),

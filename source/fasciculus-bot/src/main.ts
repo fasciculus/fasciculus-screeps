@@ -8,7 +8,7 @@ class Experiments
 {
     static run()
     {
-        const assignedWork = Source.safe.map(s => ` ${s.id}: ${s.assignedWork}`);
+        const assignedWork = Source.safe.map(s => ` ${s.id}: ${s.assignedWork}/${s.workCapacity}`);
 
         console.log(`assignedWork = ${assignedWork}`);
     }

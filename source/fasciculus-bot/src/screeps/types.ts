@@ -81,6 +81,9 @@ declare global
     {
         get slots(): number;
         get freeSlots(): number;
+
+        get workCapacity(): number;
+        get freeWork(): number;
         get assignedWork(): number;
     }
 
