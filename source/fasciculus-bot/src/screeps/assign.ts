@@ -1,11 +1,11 @@
 
 export class Assignees
 {
-    private static _assigns: Map<AssignableId, Set<CreepId>> = new Map();
+    private static _assignees: Map<AssignableId, Set<CreepId>> = new Map();
 
     static assignees(assignable: AssignableId): Set<CreepId>
     {
-        return Assignees._assigns.ensure(assignable, () => new Set());
+        return Assignees._assignees.ensure(assignable, () => new Set());
     }
 
     static assign(assignable: AssignableId, creep: CreepId): void
@@ -20,6 +20,15 @@ export class Assignees
 
     static unassignAll(assignable: AssignableId): void
     {
-        Assignees._assigns.delete(assignable);
+        Assignees._assignees.delete(assignable);
+    }
+
+    static setup()
+    {
+        const assignees = Assignees._assignees;
+
+        assignees.keep(Game.existing(assignees.ids));
+
+        Assignees._assignees = assignees.map((k, v) => Game.existing(v));
     }
 }

@@ -30,6 +30,15 @@ export class Maps
         return result;
     }
 
+    private static map<K, V, U>(this: Map<K, V>, fn: (key: K, value: V) => U): Map<K, U>
+    {
+        const result: Map<K, U> = new Map();
+
+        this.forEach((v, k) => result.set(k, fn(k, v)));
+
+        return result;
+    }
+
     private static ensure<K, V, H>(this: Map<K, V>, key: K, create: (key: K, hint?: H) => V, hint?: H): V
     {
         var result: V | undefined = this.get(key);
@@ -60,6 +69,7 @@ export class Maps
             "data": Objects.getter(Maps.data),
             "keep": Objects.function(Maps.keep),
             "filter": Objects.function(Maps.filter),
+            "map": Objects.function(Maps.map),
             "ensure": Objects.function(Maps.ensure),
         };
 

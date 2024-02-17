@@ -1,3 +1,4 @@
+import { Assignees } from "./assign";
 import { BodyInfos } from "./body";
 import { Cached } from "./cache";
 import { Controllers } from "./controller";
@@ -19,6 +20,8 @@ export class Screeps
         Rooms.setup();
         Sources.setup();
         Spawns.setup();
+
+        Assignees.setup();
     }
 
     static cleanup()

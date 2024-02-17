@@ -39,6 +39,7 @@ declare global
         keep(keys: Set<K>): Map<K, V>;
 
         filter(predicate: (key: K, value: V) => boolean): Map<K, V>;
+        map<U>(fn: (key: K, value: V) => U): Map<K, U>;
 
         ensure<H>(key: K, create: (key: K, hint?: H) => V, hint?: H): V;
     }
