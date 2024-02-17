@@ -8,9 +8,9 @@ class Experiments
 {
     static run()
     {
-        const slots = Source.safe.map(s => ` ${s.id}: ${s.freeSlots}/${s.slots}`);
-        
-        console.log(`slots:${slots}`);
+        const workParts = Creep.my.map(c => ` ${c.name}: ${c.workParts}`);
+
+        console.log(`workParts = ${workParts}`);
     }
 }
 

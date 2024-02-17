@@ -23,6 +23,8 @@ declare global
     interface Creep
     {
         get kind(): string;
+
+        get workParts(): number;
     }
 
     interface CreepConstructor

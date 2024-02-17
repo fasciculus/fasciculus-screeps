@@ -1,4 +1,5 @@
 import { Objects } from "../es/object";
+import { BodyInfos } from "./body";
 import { Cached } from "./cache";
 import { Names } from "./name";
 
@@ -16,6 +17,11 @@ export class Creeps
         return Names.kind(this.name);
     }
 
+    private static workParts(this: Creep): number
+    {
+        return BodyInfos.workParts(this);
+    }
+
     private static my(): Array<Creep>
     {
         return Creeps._my.value.data;
@@ -24,6 +30,7 @@ export class Creeps
     private static _instanceProperties: any =
         {
             "kind": Objects.getter(Creeps.kind),
+            "workParts": Objects.getter(Creeps.workParts),
         };
 
     private static _classProperties: any =
