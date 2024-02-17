@@ -64,6 +64,11 @@ declare global
         get safe(): Array<Room>;
     }
 
+    interface RoomPosition
+    {
+        forEachAround(range: number, fn: (x: number, y: number) => void): void;
+    }
+
     interface Source extends Assignable
     {
     }

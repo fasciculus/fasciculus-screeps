@@ -5,6 +5,7 @@ import { Controllers } from "./controller";
 import { Creeps } from "./creep";
 import { Games } from "./game";
 import { Memories } from "./memory";
+import { RoomPositions } from "./pos";
 import { Rooms } from "./room";
 import { Sources } from "./source";
 import { Spawns } from "./spawn";
@@ -18,6 +19,7 @@ export class Screeps
         Games.setup();
         Memories.setup();
         Rooms.setup();
+        RoomPositions.setup();
         Sources.setup();
         Spawns.setup();
 
