@@ -78,6 +78,7 @@ declare global
     interface Source extends Assignable
     {
         get slots(): number;
+        get freeSlots(): number;
     }
 
     interface SourceConstructor

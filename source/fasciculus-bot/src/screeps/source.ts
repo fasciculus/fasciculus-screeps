@@ -34,6 +34,11 @@ export class Sources
         return Sources._slots.ensure(this.id, Sources.getSlots, this);
     }
 
+    private static freeSlots(this: Source): number
+    {
+        return this.slots - this.assignees.size;
+    }
+
     private static assignees(this: Source): Set<CreepId> { return Assignees.assignees(this.id); }
     private static assignedCreeps(this: Source): Array<Creep> { return Game.all(this.assignees); }
     private static assign(this: Source, creep: CreepId): void { Assignees.assign(this.id, creep); }
@@ -48,6 +53,7 @@ export class Sources
     private static _instanceProperties: any =
         {
             "slots": Objects.getter(Sources.slots),
+            "freeSlots": Objects.getter(Sources.freeSlots),
             "assignees": Objects.getter(Sources.assignees),
             "assignedCreeps": Objects.getter(Sources.assignedCreeps),
             "assign": Objects.function(Sources.assign),

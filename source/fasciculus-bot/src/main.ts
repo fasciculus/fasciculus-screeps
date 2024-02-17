@@ -8,7 +8,7 @@ class Experiments
 {
     static run()
     {
-        const slots = Source.safe.map(s => ` ${s.id}: ${s.slots}`);
+        const slots = Source.safe.map(s => ` ${s.id}: ${s.freeSlots}/${s.slots}`);
         
         console.log(`slots:${slots}`);
     }
