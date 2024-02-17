@@ -3,7 +3,7 @@ import * as FS from "node:fs";
 import * as Path from "node:path";
 import * as TS from "typescript";
 
-const version = "0.1.3";
+const VERSION = "0.1.3";
 
 function unixify(file: string): string
 {
@@ -467,7 +467,7 @@ class Transpiler
 
 try
 {
-    console.log(`faciculus-concat ${version}.`);
+    console.log(`faciculus-concat ${VERSION}.`);
 
     const start: number = Date.now();
     const ctx = new ConcatContext();
