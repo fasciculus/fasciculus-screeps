@@ -461,6 +461,8 @@ class Transpiler
 
 try
 {
+    console.log(`concatenation started.`);
+
     const start: number = Date.now();
     const ctx = new ConcatContext();
     const sources = new Sources(ctx);
@@ -486,7 +488,7 @@ try
 
     const duration: number = Date.now() - start;
 
-    console.log(`concatenation took ${(duration / 1000).toFixed(3)} seconds`);
+    console.log(`concatenation took ${(duration / 1000).toFixed(3)} seconds.`);
 }
 catch(e)
 {
