@@ -7,6 +7,8 @@ export class Sources
     private static _known: Cached<Map<SourceId, Source>> = Cached.simple(Sources.fetchKnown);
     private static _safe: Cached<Map<SourceId, Source>> = Cached.simple(Sources.fetchSafe);
 
+    private static _slots: Map<SourceId, number> = new Map();
+
     private static fetchKnown(): Map<SourceId, Source>
     {
         return Array.flatten(Room.known.map(r => r.sources)).indexBy(s => s.id);
@@ -22,6 +24,16 @@ export class Sources
         return Sources._known.value.filter(Sources.isSafe);
     }
 
+    private static getSlots(id: SourceId, source: Source | undefined): number
+    {
+        return source ? source.room.terrain.walkableAround(source.pos, 1) : 0;
+    }
+
+    private static slots(this: Source)
+    {
+        return Sources._slots.ensure(this.id, Sources.getSlots, this);
+    }
+
     private static assignees(this: Source): Set<CreepId> { return Assignees.assignees(this.id); }
     private static assignedCreeps(this: Source): Array<Creep> { return Game.all(this.assignees); }
     private static assign(this: Source, creep: CreepId): void { Assignees.assign(this.id, creep); }
@@ -35,6 +47,7 @@ export class Sources
 
     private static _instanceProperties: any =
         {
+            "slots": Objects.getter(Sources.slots),
             "assignees": Objects.getter(Sources.assignees),
             "assignedCreeps": Objects.getter(Sources.assignedCreeps),
             "assign": Objects.function(Sources.assign),
