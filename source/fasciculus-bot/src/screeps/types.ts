@@ -61,6 +61,8 @@ declare global
         get obstacles(): Array<AnyStructure>;
         get sources(): Array<Source>;
 
+        get myRamparts(): Array<StructureRampart>
+
         get creeps(): Array<Creep>;
     }
 

@@ -4,55 +4,58 @@ import { Terrains } from "./terrain";
 
 class Finder
 {
-    private static _obstacleTypes: Set<string> | undefined = undefined;
+    private static _obstacleTypes: Set<string> = new Set([
+        "constructedWall",
+        "controller",
+        "deposit",
+        "extension",
+        "factory",
+        "invaderCore",
+        "lab",
+        "link",
+        "mineral",
+        "nuker",
+        "observer",
+        "powerBank",
+        "powerSpawn",
+        "source",
+        "spawn",
+        "storage",
+        "terminal",
+        "tower"
+    ]);
 
-    private static getObstacleTypes(): Set<string>
+    private static createTypeFilterOptions<T extends FindConstant, S extends FindTypes[T] = FindTypes[T]>(type: string): FilterOptions<T, S>
     {
-        if (!Finder._obstacleTypes)
-        {
-            Finder._obstacleTypes = Set.from([
-                "constructedWall",
-                "controller",
-                "deposit",
-                "extension",
-                "factory",
-                "invaderCore",
-                "lab",
-                "link",
-                "mineral",
-                "nuker",
-                "observer",
-                "powerBank",
-                "powerSpawn",
-                "source",
-                "spawn",
-                "storage",
-                "terminal",
-                "tower"
-            ]);
-        }
-
-        return Finder._obstacleTypes;
+        return { filter: { structureType: type } };
     }
 
-    private static obstacleFilterOptions: FilterOptions<FIND_STRUCTURES, AnyStructure> =
+    private static _myRampartFilterOptions: FilterOptions<FIND_MY_STRUCTURES, StructureRampart> =
+        Finder.createTypeFilterOptions(STRUCTURE_RAMPART);
+
+    private static _obstacleFilterOptions: FilterOptions<FIND_STRUCTURES, AnyStructure> =
         {
             filter: Finder.isObstacle
         };
 
     private static isObstacle(structure: AnyStructure): boolean
     {
-        return Finder.getObstacleTypes().has(structure.structureType);
+        return Finder._obstacleTypes.has(structure.structureType);
     }
 
     static obstacles(room: Room | undefined): Array<AnyStructure>
     {
-        return room ? room.find<FIND_STRUCTURES, AnyStructure>(FIND_STRUCTURES, Finder.obstacleFilterOptions) : new Array();
+        return room ? room.find<FIND_STRUCTURES, AnyStructure>(FIND_STRUCTURES, Finder._obstacleFilterOptions) : new Array();
     }
 
     static sources(room: Room | undefined): Array<Source>
     {
         return room ? room.find<FIND_SOURCES, Source>(FIND_SOURCES) : new Array();
+    }
+
+    static myRamparts(room: Room | undefined): Array<StructureRampart>
+    {
+        return room ? room.find<FIND_MY_STRUCTURES, StructureRampart>(FIND_MY_STRUCTURES, Finder._myRampartFilterOptions) : new Array();
     }
 
     static creeps(room: Room | undefined): Array<Creep>
@@ -68,6 +71,8 @@ export class Rooms
 
     private static _obstacles: Cached<Map<string, Array<AnyStructure>>> = Cached.simple(() => new Map());
     private static _sources: Map<string, Set<SourceId>> = new Map();
+
+    private static _myRamparts: Cached<Map<string, Array<StructureRampart>>> = Cached.simple(() => new Map());
 
     private static _creeps: Cached<Map<string, Array<Creep>>> = Cached.simple(() => new Map());
 
@@ -86,18 +91,25 @@ export class Rooms
         return room.controller?.safe || true;
     }
 
-    private static getObstacles(name: string, hint?: Room): Array<AnyStructure>
+    private static findObstacles(name: string, hint?: Room): Array<AnyStructure>
     {
         const room: Room | undefined = hint || Rooms._known.value.get(name);
 
         return Finder.obstacles(room);
     }
 
-    private static getSources(name: string, hint?: Room): Set<SourceId>
+    private static findSources(name: string, hint?: Room): Set<SourceId>
     {
         const room: Room | undefined = hint || Rooms._known.value.get(name);
 
         return Set.from(Finder.sources(room).map(s => s.id));
+    }
+
+    private static findMyRamparts(name: string, hint?: Room): Array<StructureRampart>
+    {
+        const room: Room | undefined = hint || Rooms._known.value.get(name);
+
+        return Finder.myRamparts(room);
     }
 
     private static getCreeps(name: string, hint?: Room): Array<Creep>
@@ -129,12 +141,17 @@ export class Rooms
 
     private static obstacles(this: Room): Array<AnyStructure>
     {
-        return Rooms._obstacles.value.ensure(this.name, Rooms.getObstacles, this);
+        return Rooms._obstacles.value.ensure(this.name, Rooms.findObstacles, this);
     }
 
     private static sources(this: Room): Array<Source>
     {
-        return Game.all(Rooms._sources.ensure(this.name, Rooms.getSources, this));
+        return Game.all(Rooms._sources.ensure(this.name, Rooms.findSources, this));
+    }
+
+    private static myRamparts(this: Room): Array<StructureRampart>
+    {
+        return Rooms._myRamparts.value.ensure(this.name, Rooms.findMyRamparts, this);
     }
 
     private static creeps(this: Room): Array<Creep>
@@ -160,6 +177,7 @@ export class Rooms
             "terrain": Objects.getter(Rooms.terrain),
             "obstacles": Objects.getter(Rooms.obstacles),
             "sources": Objects.getter(Rooms.sources),
+            "myRamparts": Objects.getter(Rooms.myRamparts),
             "creeps": Objects.getter(Rooms.creeps),
         };
 
