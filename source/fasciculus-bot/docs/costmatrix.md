@@ -20,7 +20,7 @@ The CostMatrix doesn't use priorities. Therefore the above priorities need to be
 These values need to be kept low.
 
 The following rules are used in the given order:
-1. plain cost is set to 3, the swamp cost to 8.
+1. plain cost is set to 3, the swamp cost to 10.
 1. A road sets the value to 2.
 1. A rampart sets the value to 1.
 
@@ -32,12 +32,12 @@ These gives the following costs:
 | Plain | No | Yes | 2 |
 | Plain | Yes | No | 1 |
 | Plain | Yes | Yes | 1 |
-| Swamp | No | No | 8 (see Note 1)|
+| Swamp | No | No | 10 (see Note 1)|
 | Swamp | No | Yes | 2 |
 | Swamp | Yes | No | 1 |
 | Swamp | Yes | Yes | 1 (see Note 2) |
 
-**Note 1:** Swamp cost with neither rampart nor road may be too low (8)!
+**Note 1:** Swamp cost with neither rampart nor road may be too low (10)!
 
 **Note 2:** Swamp tiles with rampart but without road have a very low cost (1)!
 
