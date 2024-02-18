@@ -62,6 +62,11 @@ class Finder
     {
         return room ? room.find<FIND_CREEPS, Creep>(FIND_CREEPS) : new Array();
     }
+
+    static hostileCreeps(room: Room | undefined): Array<Creep>
+    {
+        return room ? room.find<FIND_HOSTILE_CREEPS, Creep>(FIND_HOSTILE_CREEPS) : new Array();
+    }
 }
 
 export class Rooms
@@ -75,6 +80,9 @@ export class Rooms
     private static _myRamparts: Cached<Map<string, Array<StructureRampart>>> = Cached.simple(() => new Map());
 
     private static _creeps: Cached<Map<string, Array<Creep>>> = Cached.simple(() => new Map());
+    private static _hostileCreeps: Cached<Map<string, Array<Creep>>> = Cached.simple(() => new Map());
+
+    private static _attacked: Cached<Map<string, boolean>> = Cached.simple(() => new Map());
 
     private static fetchKnown(): Map<string, Room>
     {
@@ -112,11 +120,25 @@ export class Rooms
         return Finder.myRamparts(room);
     }
 
-    private static getCreeps(name: string, hint?: Room): Array<Creep>
+    private static findCreeps(name: string, hint?: Room): Array<Creep>
     {
         const room: Room | undefined = hint || Rooms._known.value.get(name);
 
         return Finder.creeps(room);
+    }
+
+    private static findHostileCreeps(name: string, hint?: Room): Array<Creep>
+    {
+        const room: Room | undefined = hint || Rooms._known.value.get(name);
+
+        return Finder.hostileCreeps(room);
+    }
+
+    private static isAttacked(name: string, hint?: Room): boolean
+    {
+        const room: Room | undefined = hint || Rooms._known.value.get(name);
+
+        return room ? room.safe && room.hostileCreeps.length > 0 : false;
     }
 
     private static safe(this: Room): boolean
@@ -156,7 +178,17 @@ export class Rooms
 
     private static creeps(this: Room): Array<Creep>
     {
-        return Rooms._creeps.value.ensure(this.name, Rooms.getCreeps, this);
+        return Rooms._creeps.value.ensure(this.name, Rooms.findCreeps, this);
+    }
+
+    private static hostileCreeps(this: Room): Array<Creep>
+    {
+        return Rooms._hostileCreeps.value.ensure(this.name, Rooms.findHostileCreeps, this);
+    }
+
+    private static attacked(this: Room): boolean
+    {
+        return Rooms._attacked.value.ensure(this.name, Rooms.isAttacked, this);
     }
 
     private static knownRooms(): Array<Room>
@@ -179,6 +211,8 @@ export class Rooms
             "sources": Objects.getter(Rooms.sources),
             "myRamparts": Objects.getter(Rooms.myRamparts),
             "creeps": Objects.getter(Rooms.creeps),
+            "hostileCreeps": Objects.getter(Rooms.hostileCreeps),
+            "attacked": Objects.getter(Rooms.attacked),
         };
 
     private static _classProperties: any =

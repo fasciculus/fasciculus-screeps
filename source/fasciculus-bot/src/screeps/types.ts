@@ -69,6 +69,9 @@ declare global
         get myRamparts(): Array<StructureRampart>
 
         get creeps(): Array<Creep>;
+        get hostileCreeps(): Array<Creep>;
+
+        get attacked(): boolean;
     }
 
     interface RoomConstructor
