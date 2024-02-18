@@ -24,12 +24,17 @@ declare global
     {
         get kind(): string;
 
+        get blocking(): boolean;
+        set blocking(value: boolean);
+
         get workParts(): number;
     }
 
     interface CreepConstructor
     {
         get my(): Array<Creep>;
+
+        ofKind(kind: string): Array<Creep>;
     }
 
     interface Game

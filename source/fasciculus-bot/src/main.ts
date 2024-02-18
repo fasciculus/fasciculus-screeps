@@ -8,7 +8,11 @@ class Experiments
 {
     static run()
     {
-        const creeps = Room.known[0].creeps;
+        const wellers = Creep.ofKind("W");
+
+        wellers.forEach(w => w.blocking = true);
+
+        const creeps = Creep.my.map(c => ` ${c.name}: ${c.blocking}`);
 
         console.log(`creeps = ${creeps}`);
     }
