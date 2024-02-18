@@ -1,5 +1,6 @@
 import { ES } from "./es/es";
 import { Scheduler } from "./schedule";
+import { Paths } from "./screeps/path";
 import { Screeps } from "./screeps/screeps";
 
 ES.setup();
@@ -8,13 +9,11 @@ class Experiments
 {
     static run()
     {
-        const wellers = Creep.ofKind("W");
+        const origin = Spawn.my[0];
+        const goal = Source.safe[0];
+        const cost = Paths.cost(origin.pos, goal.pos, 1);
 
-        wellers.forEach(w => w.blocking = true);
-
-        const creeps = Creep.my.map(c => ` ${c.name}: ${c.blocking}`);
-
-        console.log(`creeps = ${creeps}`);
+        console.log(`cost = ${cost}`);
     }
 }
 
