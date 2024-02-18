@@ -25,18 +25,14 @@ class Finder
         "tower"
     ]);
 
-    private static createTypeFilterOptions<T extends FindConstant, S extends FindTypes[T] = FindTypes[T]>(type: string): FilterOptions<T, S>
+    private static createTypeOpts<T extends FindConstant, S extends FindTypes[T] = FindTypes[T]>(type: string): FilterOptions<T, S>
     {
         return { filter: { structureType: type } };
     }
 
-    private static _myRampartFilterOptions: FilterOptions<FIND_MY_STRUCTURES, StructureRampart> =
-        Finder.createTypeFilterOptions(STRUCTURE_RAMPART);
-
-    private static _obstacleFilterOptions: FilterOptions<FIND_STRUCTURES, AnyStructure> =
-        {
-            filter: Finder.isObstacle
-        };
+    private static _roadOpts: FilterOptions<FIND_STRUCTURES, StructureRoad> = Finder.createTypeOpts(STRUCTURE_ROAD);
+    private static _myRampartOpts: FilterOptions<FIND_MY_STRUCTURES, StructureRampart> = Finder.createTypeOpts(STRUCTURE_RAMPART);
+    private static _obstacleOpts: FilterOptions<FIND_STRUCTURES, AnyStructure> = { filter: Finder.isObstacle };
 
     private static isObstacle(structure: AnyStructure): boolean
     {
@@ -45,7 +41,7 @@ class Finder
 
     static obstacles(room: Room | undefined): Array<AnyStructure>
     {
-        return room ? room.find<FIND_STRUCTURES, AnyStructure>(FIND_STRUCTURES, Finder._obstacleFilterOptions) : new Array();
+        return room ? room.find<FIND_STRUCTURES, AnyStructure>(FIND_STRUCTURES, Finder._obstacleOpts) : new Array();
     }
 
     static sources(room: Room | undefined): Array<Source>
@@ -53,9 +49,14 @@ class Finder
         return room ? room.find<FIND_SOURCES, Source>(FIND_SOURCES) : new Array();
     }
 
+    static roads(room: Room | undefined): Array<StructureRoad>
+    {
+        return room ? room.find<FIND_STRUCTURES, StructureRoad>(FIND_STRUCTURES, Finder._roadOpts) : new Array();
+    }
+
     static myRamparts(room: Room | undefined): Array<StructureRampart>
     {
-        return room ? room.find<FIND_MY_STRUCTURES, StructureRampart>(FIND_MY_STRUCTURES, Finder._myRampartFilterOptions) : new Array();
+        return room ? room.find<FIND_MY_STRUCTURES, StructureRampart>(FIND_MY_STRUCTURES, Finder._myRampartOpts) : new Array();
     }
 
     static creeps(room: Room | undefined): Array<Creep>
@@ -77,6 +78,7 @@ export class Rooms
     private static _obstacles: Cached<Map<string, Array<AnyStructure>>> = Cached.simple(() => new Map());
     private static _sources: Map<string, Set<SourceId>> = new Map();
 
+    private static _roads: Cached<Map<string, Array<StructureRoad>>> = Cached.simple(() => new Map());
     private static _myRamparts: Cached<Map<string, Array<StructureRampart>>> = Cached.simple(() => new Map());
 
     private static _creeps: Cached<Map<string, Array<Creep>>> = Cached.simple(() => new Map());
@@ -111,6 +113,13 @@ export class Rooms
         const room: Room | undefined = hint || Rooms._known.value.get(name);
 
         return Set.from(Finder.sources(room).map(s => s.id));
+    }
+
+    private static findRoads(name: string, hint?: Room): Array<StructureRoad>
+    {
+        const room: Room | undefined = hint || Rooms._known.value.get(name);
+
+        return Finder.roads(room);
     }
 
     private static findMyRamparts(name: string, hint?: Room): Array<StructureRampart>
@@ -171,6 +180,11 @@ export class Rooms
         return Game.all(Rooms._sources.ensure(this.name, Rooms.findSources, this));
     }
 
+    private static roads(this: Room): Array<StructureRoad>
+    {
+        return Rooms._roads.value.ensure(this.name, Rooms.findRoads, this);
+    }
+
     private static myRamparts(this: Room): Array<StructureRampart>
     {
         return Rooms._myRamparts.value.ensure(this.name, Rooms.findMyRamparts, this);
@@ -215,6 +229,7 @@ export class Rooms
             "obstacles": Objects.getter(Rooms.obstacles),
             "sources": Objects.getter(Rooms.sources),
             "myRamparts": Objects.getter(Rooms.myRamparts),
+            "roads": Objects.getter(Rooms.roads),
             "creeps": Objects.getter(Rooms.creeps),
             "hostileCreeps": Objects.getter(Rooms.hostileCreeps),
             "attacked": Objects.getter(Rooms.attacked),

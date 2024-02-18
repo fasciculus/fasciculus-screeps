@@ -21,6 +21,8 @@ export class Matrices
 
     private static populatePeaceful(room: Room, matrix: CostMatrix): CostMatrix
     {
+        room.roads.forEach(r => Matrices.setMatrixAt(matrix, r.pos, 1));
+
         return Matrices.populateObstacles(room, matrix);
     }
 
