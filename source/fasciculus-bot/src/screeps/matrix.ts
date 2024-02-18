@@ -16,6 +16,9 @@ export class Matrices
 
     private static populateAttacked(room: Room, matrix: CostMatrix): CostMatrix
     {
+        room.roads.forEach(r => Matrices.setMatrixAt(matrix, r.pos, 2));
+        room.myRamparts.forEach(r => Matrices.setMatrixAt(matrix, r.pos, 1));
+
         return Matrices.populateObstacles(room, matrix);
     }
 
