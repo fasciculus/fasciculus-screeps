@@ -24,6 +24,9 @@ declare global
     {
         get kind(): string;
 
+        get target(): Target | undefined;
+        set target(value: Target | undefined);
+
         get blocking(): boolean;
         set blocking(value: boolean);
 
@@ -125,8 +128,18 @@ declare global
         get idle(): Array<StructureSpawn>;
     }
 
-    type TerrainMask = 0 | 1 | 2;
-    type TerrainInfo = { pos: RoomPosition, mask: TerrainMask };
+    enum TargetKind
+    {
+        Unknown,
+        Source
+    }
+
+    interface Target
+    {
+        readonly assignable: Assignable;
+        readonly kind: TargetKind;
+        readonly source?: SourceId;
+    }
 }
 
 export { }

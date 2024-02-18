@@ -116,6 +116,8 @@ export class BodyInfos
 
     static cleanup()
     {
-        BodyInfos._infos.keep(Game.existing(BodyInfos._infos.ids));
+        const infos = BodyInfos._infos;
+
+        infos.keep(Game.existing(infos.ids));
     }
 }

@@ -8,6 +8,7 @@ export class Creeps
     private static _my: Cached<Map<CreepId, Creep>> = Cached.simple(Creeps.fetchMy);
     private static _ofKind: Cached<Map<string, Array<Creep>>> = Cached.simple(Creeps.fetchOfKind);
 
+    private static _targets: Map<CreepId, Target> = new Map();
     private static _blocking: Cached<Map<CreepId, boolean>> = Cached.simple(() => new Map());
 
     private static fetchMy(): Map<CreepId, Creep>
@@ -28,6 +29,23 @@ export class Creeps
     private static createBlocking(id: CreepId, hint?: Creep): boolean
     {
         return false;
+    }
+
+    private static getTarget(this: Creep): Target | undefined
+    {
+        return Creeps._targets.get(this.id);
+    }
+
+    private static setTarget(this: Creep, value: Target | undefined): void
+    {
+        if (value)
+        {
+            Creeps._targets.set(this.id, value);
+        }
+        else
+        {
+            Creeps._targets.delete(this.id);
+        }
     }
 
     private static getBlocking(this: Creep): boolean
@@ -58,6 +76,7 @@ export class Creeps
     private static _instanceProperties: any =
         {
             "kind": Objects.getter(Creeps.kind),
+            "target": Objects.property(Creeps.getTarget, Creeps.setTarget),
             "blocking": Objects.property(Creeps.getBlocking, Creeps.setBlocking),
             "workParts": Objects.getter(Creeps.workParts),
         };
@@ -72,5 +91,12 @@ export class Creeps
     {
         Object.defineProperties(Creep.prototype, Creeps._instanceProperties);
         Object.defineProperties(Creep, Creeps._classProperties);
+    }
+
+    static cleanup()
+    {
+        const targets = Creeps._targets;
+
+        targets.keep(Game.existing(targets.ids));
     }
 }

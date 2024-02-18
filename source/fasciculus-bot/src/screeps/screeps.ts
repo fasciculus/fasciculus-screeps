@@ -33,5 +33,6 @@ export class Screeps
         Cached.cleanup();
 
         BodyInfos.cleanup();
+        Creeps.cleanup();
     }
 }
