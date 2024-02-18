@@ -57,11 +57,75 @@ export class Paths
         return o.roomName + "_" + o.x + "_" + o.y + "_" + g.roomName + "_" + g.x + "_" + g.y + "_" + range;
     }
 
-    static cost(origin: RoomPosition, goal: RoomPosition, range: number): number
+    private static cache(goal: RoomPosition, range: number, fullPath: PathFinderPath)
+    {
+        if (fullPath.incomplete) return;
+
+        const paths: Map<string, PathFinderPath> = Paths._paths.value;
+        const ops: number = fullPath.ops;
+        var path: Array<RoomPosition> = fullPath.path;
+        var cost: number = fullPath.cost;
+        var costDelta: number = cost / Math.max(1, path.length);
+
+        while (path.length > 0)
+        {
+            const origin: RoomPosition = path[0];
+            const key: string = Paths.createKey(origin, goal, range);
+
+            if (paths.has(key)) break;
+
+            path = path.slice(1);
+            cost = Math.max(0, cost - costDelta);
+
+            const newPath: PathFinderPath = { path, ops, cost, incomplete: false };
+
+            paths.set(key, newPath);
+        }
+    }
+
+    private static path(origin: RoomPosition, goal: RoomPosition, range: number): PathFinderPath
     {
         const key: string = Paths.createKey(origin, goal, range);
         const hint: PathSearch = { origin, goal, range };
         const path: PathFinderPath = Paths._paths.value.ensure(key, Paths.findPath, hint);
+
+        Paths.cache(goal, range, path);
+
+        return path;
+    }
+
+    private static dirFromTo(from: RoomPosition, to: RoomPosition): DirectionConstant
+    {
+        const dx = to.x - from.x;
+        const dy = to.y - from.y;
+
+        if (dx < 0) 
+        {
+            return dy < 0 ? TOP_LEFT : (dy > 0 ? BOTTOM_LEFT : LEFT);
+        }
+        else if (dx > 0)
+        {
+            return dy < 0 ? TOP_RIGHT : (dy > 0 ? BOTTOM_RIGHT : RIGHT);
+        }
+        else
+        {
+            return dy < 0 ? TOP : BOTTOM;
+        }
+    }
+
+    static direction(origin: RoomPosition, goal: RoomPosition, range: number): DirectionConstant | undefined
+    {
+        const path: PathFinderPath = Paths.path(origin, goal, range);
+        const pathPath: Array<RoomPosition> = path.path;
+
+        if (path.incomplete || pathPath.length == 0) return undefined;
+
+        return Paths.dirFromTo(origin, pathPath[0]);
+    }
+
+    static cost(origin: RoomPosition, goal: RoomPosition, range: number): number
+    {
+        const path: PathFinderPath = Paths.path(origin, goal, range);
 
         return path.incomplete ? 9999999 : path.cost;
     }
