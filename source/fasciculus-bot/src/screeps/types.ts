@@ -76,6 +76,8 @@ declare global
 
     interface RoomConstructor
     {
+        get(name: string): Room | undefined;
+
         get known(): Array<Room>;
         get safe(): Array<Room>;
     }

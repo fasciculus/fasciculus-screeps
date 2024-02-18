@@ -191,6 +191,11 @@ export class Rooms
         return Rooms._attacked.value.ensure(this.name, Rooms.isAttacked, this);
     }
 
+    private static get(name: string): Room | undefined
+    {
+        return Rooms._known.value.get(name);
+    }
+
     private static knownRooms(): Array<Room>
     {
         return Rooms._known.value.data;
@@ -217,6 +222,7 @@ export class Rooms
 
     private static _classProperties: any =
         {
+            "get": Objects.function(Rooms.get),
             "known": Objects.getter(Rooms.knownRooms),
             "safe": Objects.getter(Rooms.safeRooms),
         };
