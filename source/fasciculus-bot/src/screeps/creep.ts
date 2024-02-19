@@ -1,4 +1,5 @@
 import { Objects } from "../es/object";
+import { Blocking } from "./block";
 import { BodyInfos } from "./body";
 import { Cached } from "./cache";
 import { Names } from "./name";
@@ -9,7 +10,6 @@ export class Creeps
     private static _ofKind: Cached<Map<string, Array<Creep>>> = Cached.simple(Creeps.fetchOfKind);
 
     private static _targets: Map<CreepId, Target> = new Map();
-    private static _blocking: Cached<Map<CreepId, boolean>> = Cached.simple(() => new Map());
 
     private static fetchMy(): Map<CreepId, Creep>
     {
@@ -48,14 +48,9 @@ export class Creeps
         }
     }
 
-    private static getBlocking(this: Creep): boolean
+    private static blocking(this: Creep): boolean
     {
-        return Creeps._blocking.value.ensure(this.id, Creeps.createBlocking, this);
-    }
-
-    private static setBlocking(this: Creep, value: boolean): void
-    {
-        Creeps._blocking.value.set(this.id, value);
+        return Blocking.blocking(this);
     }
 
     private static workParts(this: Creep): number
@@ -77,7 +72,7 @@ export class Creeps
         {
             "kind": Objects.getter(Creeps.kind),
             "target": Objects.property(Creeps.getTarget, Creeps.setTarget),
-            "blocking": Objects.property(Creeps.getBlocking, Creeps.setBlocking),
+            "blocking": Objects.getter(Creeps.blocking),
             "workParts": Objects.getter(Creeps.workParts),
         };
 

@@ -1,0 +1,33 @@
+import { Cached } from "./cache";
+
+export type BlockingCallback = (creep: Creep) => boolean;
+
+export class Blocking
+{
+    private static _callbacks: Map<string, BlockingCallback> = new Map();
+    private static _blocking: Cached<Map<CreepId, boolean>> = Cached.simple(() => new Map());
+
+    static register(kind: string, callback: BlockingCallback): boolean
+    {
+        Blocking._callbacks.set(kind, callback);
+
+        return true;
+    }
+
+    private static getBlocking(id: CreepId, creep?: Creep): boolean
+    {
+        if (!creep) return false;
+
+        const kind: string = creep.kind;
+        const callback: BlockingCallback | undefined = Blocking._callbacks.get(kind);
+
+        if (!callback) return false;
+
+        return callback(creep);
+    }
+
+    static blocking(creep: Creep): boolean
+    {
+        return Blocking._blocking.value.ensure(creep.id, Blocking.getBlocking, creep);
+    }
+}

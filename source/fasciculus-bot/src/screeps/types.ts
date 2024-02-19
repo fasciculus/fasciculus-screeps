@@ -28,7 +28,6 @@ declare global
         set target(value: Target | undefined);
 
         get blocking(): boolean;
-        set blocking(value: boolean);
 
         get workParts(): number;
     }
