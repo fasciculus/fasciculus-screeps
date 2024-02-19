@@ -10,7 +10,7 @@ declare global
 
     type AssignableId = Id<Source>;
 
-    interface Assignable
+    interface _Assignable
     {
         get assignees(): Set<CreepId>;
         get assignedCreeps(): Array<Creep>;
@@ -20,12 +20,14 @@ declare global
         unassignAll(): void;
     }
 
+    export type Assignable = Source;
+
     interface Creep
     {
         get kind(): string;
 
-        get target(): Target | undefined;
-        set target(value: Target | undefined);
+        get target(): Assignable | undefined;
+        set target(value: Assignable | undefined);
 
         get blocking(): boolean;
 
@@ -96,7 +98,7 @@ declare global
         walkableAround(pos: RoomPosition, range: number): number;
     }
 
-    interface Source extends Assignable
+    interface Source extends _Assignable
     {
         get slots(): number;
         get freeSlots(): number;
@@ -125,19 +127,6 @@ declare global
     {
         get my(): Array<StructureSpawn>;
         get idle(): Array<StructureSpawn>;
-    }
-
-    enum TargetKind
-    {
-        Unknown,
-        Source
-    }
-
-    interface Target
-    {
-        readonly assignable: Assignable;
-        readonly kind: TargetKind;
-        readonly source?: SourceId;
     }
 }
 

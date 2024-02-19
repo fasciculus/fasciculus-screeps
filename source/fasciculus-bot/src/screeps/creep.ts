@@ -3,13 +3,12 @@ import { Blocking } from "./block";
 import { BodyInfos } from "./body";
 import { Cached } from "./cache";
 import { Names } from "./name";
+import { Targets } from "./target";
 
 export class Creeps
 {
     private static _my: Cached<Map<CreepId, Creep>> = Cached.simple(Creeps.fetchMy);
     private static _ofKind: Cached<Map<string, Array<Creep>>> = Cached.simple(Creeps.fetchOfKind);
-
-    private static _targets: Map<CreepId, Target> = new Map();
 
     private static fetchMy(): Map<CreepId, Creep>
     {
@@ -26,26 +25,14 @@ export class Creeps
         return Names.kind(this.name);
     }
 
-    private static createBlocking(id: CreepId, hint?: Creep): boolean
+    private static getTarget(this: Creep): Assignable | undefined
     {
-        return false;
+        return Targets.getTarget(this);
     }
 
-    private static getTarget(this: Creep): Target | undefined
+    private static setTarget(this: Creep, value: Assignable | undefined): void
     {
-        return Creeps._targets.get(this.id);
-    }
-
-    private static setTarget(this: Creep, value: Target | undefined): void
-    {
-        if (value)
-        {
-            Creeps._targets.set(this.id, value);
-        }
-        else
-        {
-            Creeps._targets.delete(this.id);
-        }
+        Targets.setTarget(this, value);
     }
 
     private static blocking(this: Creep): boolean
@@ -86,12 +73,5 @@ export class Creeps
     {
         Object.defineProperties(Creep.prototype, Creeps._instanceProperties);
         Object.defineProperties(Creep, Creeps._classProperties);
-    }
-
-    static cleanup()
-    {
-        const targets = Creeps._targets;
-
-        targets.keep(Game.existing(targets.ids));
     }
 }

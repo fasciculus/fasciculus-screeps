@@ -9,6 +9,7 @@ import { RoomPositions } from "./pos";
 import { Rooms } from "./room";
 import { Sources } from "./source";
 import { Spawns } from "./spawn";
+import { Targets } from "./target";
 import { Terrains } from "./terrain";
 
 export class Screeps
@@ -33,6 +34,6 @@ export class Screeps
         Cached.cleanup();
 
         BodyInfos.cleanup();
-        Creeps.cleanup();
+        Targets.cleanup();
     }
 }
