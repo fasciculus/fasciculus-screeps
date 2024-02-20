@@ -19,13 +19,13 @@ export class Harvest
         return Creep.ofKind(HARVESTER).sum(c => c.workParts) < Source.safeFreeWork;
     }
 
-    static run()
+    static run(): void
     {
         Harvest.assign();
         Harvest.harvest();
     }
 
-    private static assign()
+    private static assign(): void
     {
         const creeps: Array<Creep> = Creep.ofKind(HARVESTER).filter(c => !c.target);
 
@@ -53,7 +53,7 @@ export class Harvest
         return creep.workParts * 10 - Paths.cost(creep.pos, source.pos, 1);
     }
 
-    private static harvest()
+    private static harvest(): void
     {
         for (let creep of Creep.ofKind(HARVESTER))
         {
@@ -69,7 +69,7 @@ export class Harvest
             }
             else
             {
-                creep.travelTo(source.pos, 1)
+                creep.travelTo(source.pos, 1);
             }
         }
     }
