@@ -2,6 +2,7 @@ import { Match, Matcher } from "./alg/match";
 import { HARVESTER, TRANSPORTER } from "./constant";
 import { BodyTemplate } from "./screeps/body";
 import { Paths } from "./screeps/path";
+import { Targets } from "./screeps/target";
 
 export class Transport
 {
@@ -71,7 +72,13 @@ export class Transport
 
             if (transporter.pos.inRangeTo(target.pos, 1))
             {
+                const harvester: Opt<Creep> = Targets.creep(target);
 
+                if (harvester && harvester.energy > 0)
+                {
+                    harvester.transfer(transporter, RESOURCE_ENERGY);
+                    continue;
+                }
             }
             else
             {
