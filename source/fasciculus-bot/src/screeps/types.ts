@@ -8,8 +8,8 @@ declare global
 
     type BodyInfo = { work: number };
 
-    type Assignable = Creep | Source;
-    type AssignableId = Id<Creep | Source>;
+    type Assignable = Creep | Source | StructureSpawn;
+    type AssignableId = Id<Assignable>;
 
     interface _Assignable
     {
@@ -123,7 +123,7 @@ declare global
         get safe(): boolean;
     }
 
-    interface StructureSpawn
+    interface StructureSpawn extends _Assignable
     {
         get roomEnergy(): number;
         get roomEnergyCapacity(): number;

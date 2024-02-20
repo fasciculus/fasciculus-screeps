@@ -66,11 +66,11 @@ export class Creeps
         return direction ? this.move(direction) : ERR_NO_PATH;
     }
 
-    private static assignees(this: Source): Set<CreepId> { return Assignees.assignees(this.id); }
-    private static assignedCreeps(this: Source): Array<Creep> { return Game.all(this.assignees); }
-    private static assign(this: Source, creep: CreepId): void { Assignees.assign(this.id, creep); }
-    private static unassign(this: Source, creep: CreepId): void { Assignees.unassign(this.id, creep); }
-    private static unassignAll(this: Source): void { Assignees.unassignAll(this.id); }
+    private static assignees(this: Creep): Set<CreepId> { return Assignees.assignees(this.id); }
+    private static assignedCreeps(this: Creep): Array<Creep> { return Game.all(this.assignees); }
+    private static assign(this: Creep, creep: CreepId): void { Assignees.assign(this.id, creep); }
+    private static unassign(this: Creep, creep: CreepId): void { Assignees.unassign(this.id, creep); }
+    private static unassignAll(this: Creep): void { Assignees.unassignAll(this.id); }
 
     private static my(): Array<Creep>
     {

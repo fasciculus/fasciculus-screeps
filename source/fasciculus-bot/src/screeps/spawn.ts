@@ -1,4 +1,5 @@
 import { Objects } from "../es/object";
+import { Assignees } from "./assign";
 import { Cached } from "./cache";
 import { Names } from "./name";
 
@@ -34,6 +35,12 @@ export class Spawns
         return this.spawnCreep(body, name);
     }
 
+    private static assignees(this: StructureSpawn): Set<CreepId> { return Assignees.assignees(this.id); }
+    private static assignedCreeps(this: StructureSpawn): Array<Creep> { return Game.all(this.assignees); }
+    private static assign(this: StructureSpawn, creep: CreepId): void { Assignees.assign(this.id, creep); }
+    private static unassign(this: StructureSpawn, creep: CreepId): void { Assignees.unassign(this.id, creep); }
+    private static unassignAll(this: StructureSpawn): void { Assignees.unassignAll(this.id); }
+
     private static my(): Array<StructureSpawn>
     {
         return Spawns._my.value.data;
@@ -67,6 +74,11 @@ export class Spawns
             "roomEnergy": Objects.getter(Spawns.roomEnergy),
             "roomEnergyCapacity": Objects.getter(Spawns.roomEnergyCapacity),
             "spawn": Objects.function(Spawns.spawn),
+            "assignees": Objects.getter(Spawns.assignees),
+            "assignedCreeps": Objects.getter(Spawns.assignedCreeps),
+            "assign": Objects.function(Spawns.assign),
+            "unassign": Objects.function(Spawns.unassign),
+            "unassignAll": Objects.function(Spawns.unassignAll),
         };
 
     private static _classProperties: any =
