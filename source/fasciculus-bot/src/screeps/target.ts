@@ -31,6 +31,11 @@ export class Targets
         }
     }
 
+    static source(target: Opt<Assignable>): Opt<Source>
+    {
+        return target && target instanceof Source ? target : undefined;
+    }
+
     static cleanup()
     {
         const targets = Targets._targets;

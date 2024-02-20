@@ -32,6 +32,8 @@ declare global
         get blocking(): boolean;
 
         get workParts(): number;
+
+        travelTo(goal: RoomPosition, range: number): CreepMoveReturnCode | ERR_NO_PATH;
     }
 
     interface CreepConstructor

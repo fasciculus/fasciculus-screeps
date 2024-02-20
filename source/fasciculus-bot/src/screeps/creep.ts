@@ -3,6 +3,7 @@ import { Blocking } from "./block";
 import { BodyInfos } from "./body";
 import { Cached } from "./cache";
 import { Names } from "./name";
+import { Paths } from "./path";
 import { Targets } from "./target";
 
 export class Creeps
@@ -45,6 +46,15 @@ export class Creeps
         return BodyInfos.workParts(this);
     }
 
+    private static travelTo(this: Creep, goal: RoomPosition, range: number): CreepMoveReturnCode | ERR_NO_PATH
+    {
+        if (this.fatigue > 0) return ERR_TIRED;
+
+        const direction: Opt<DirectionConstant> = Paths.direction(this.pos, goal, range);
+
+        return direction ? this.move(direction) : ERR_NO_PATH;
+    }
+
     private static my(): Array<Creep>
     {
         return Creeps._my.value.data;
@@ -61,6 +71,7 @@ export class Creeps
             "target": Objects.property(Creeps.getTarget, Creeps.setTarget),
             "blocking": Objects.getter(Creeps.blocking),
             "workParts": Objects.getter(Creeps.workParts),
+            "travelTo": Objects.function(Creeps.travelTo),
         };
 
     private static _classProperties: any =

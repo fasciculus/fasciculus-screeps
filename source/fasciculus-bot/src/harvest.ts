@@ -2,6 +2,7 @@ import { Match, Matcher } from "./alg/match";
 import { HARVESTER } from "./constant";
 import { BodyTemplate } from "./screeps/body";
 import { Paths } from "./screeps/path";
+import { Targets } from "./screeps/target";
 
 export class Harvest
 {
@@ -54,6 +55,18 @@ export class Harvest
 
     private static harvest()
     {
+        for (let creep of Creep.ofKind(HARVESTER))
+        {
+            if (creep.store.getFreeCapacity(RESOURCE_ENERGY) < creep.workParts * 2) continue;
 
+            const source: Opt<Source> = Targets.source(creep.target);
+
+            if (!source) continue;
+
+            if (creep.harvest(source) == ERR_NOT_IN_RANGE)
+            {
+                creep.travelTo(source.pos, 1);
+            }
+        }
     }
 }
