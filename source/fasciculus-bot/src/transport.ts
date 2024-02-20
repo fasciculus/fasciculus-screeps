@@ -25,6 +25,8 @@ export class Transport
 
     private static assign(): void
     {
+        Creep.ofKind(TRANSPORTER).forEach(t => t.target = undefined);
+
         for (let iteration = 0; iteration < 3; ++iteration)
         {
             const transporters: Array<Creep> = Creep.ofKind(TRANSPORTER).filter(c => !c.target);
@@ -48,18 +50,38 @@ export class Transport
         const result: Array<Assignable> = new Array();
 
         result.append(Creep.ofKind(HARVESTER));
+        result.append(StructureSpawn.my);
 
         return result;
     }
 
     private static targetValue(transporter: Creep, target: Assignable): number
     {
-        return -Paths.cost(transporter.pos, target.pos, 1);
+        var value: number = 0 - Paths.cost(transporter.pos, target.pos, 1) * 5;
+        const harvester: Opt<Creep> = Targets.creep(target);
+
+        if (transporter.energy == 0)
+        {
+            value += harvester ? harvester.energy : -999999;
+        }
+        else
+        {
+            const spawn: Opt<StructureSpawn> = Targets.spawn(target);
+
+            if (transporter.freeEnergyCapacity == 0)
+            {
+                value -= harvester ? 999999 : 0;
+            }
+
+            value += spawn ? spawn.store.getFreeCapacity(RESOURCE_ENERGY) : 0;
+        }
+
+        return value;
     }
 
     private static transporterValue(target: Assignable, transporter: Creep): number
     {
-        return -Paths.cost(transporter.pos, target.pos, 1);
+        return 0 - Paths.cost(transporter.pos, target.pos, 1);
     }
 
     private static transport(): void
@@ -78,6 +100,13 @@ export class Transport
                 {
                     harvester.transfer(transporter, RESOURCE_ENERGY);
                     continue;
+                }
+
+                const spawn: Opt<StructureSpawn> = Targets.spawn(target);
+
+                if (spawn)
+                {
+                    transporter.transfer(spawn, RESOURCE_ENERGY);
                 }
             }
             else

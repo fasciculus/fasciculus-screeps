@@ -41,6 +41,11 @@ export class Targets
         return target && target instanceof Source ? target : undefined;
     }
 
+    static spawn(target: Opt<Assignable>): Opt<StructureSpawn>
+    {
+        return target && target instanceof StructureSpawn ? target : undefined;
+    }
+
     static cleanup()
     {
         const targets = Targets._targets;
