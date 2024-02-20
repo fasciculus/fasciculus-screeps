@@ -1,6 +1,8 @@
 
 declare global
 {
+    type Opt<T> = T | undefined;
+
     interface Array<T>
     {
         append(values: Array<T>): number;
@@ -14,7 +16,7 @@ declare global
 
     interface ArrayConstructor
     {
-        defined<T>(array: Array<T | undefined>): Array<T>;
+        defined<T>(array: Array<Opt<T>>): Array<T>;
         flatten<T>(arrays: Array<Array<T>>): Array<T>;
     }
 

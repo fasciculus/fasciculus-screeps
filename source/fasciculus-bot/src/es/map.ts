@@ -41,7 +41,7 @@ export class Maps
 
     private static ensure<K, V, H>(this: Map<K, V>, key: K, create: (key: K, hint?: H) => V, hint?: H): V
     {
-        var result: V | undefined = this.get(key);
+        var result: Opt<V> = this.get(key);
 
         if (!result)
         {

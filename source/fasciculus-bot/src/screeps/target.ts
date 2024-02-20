@@ -3,17 +3,17 @@ export class Targets
 {
     private static _targets: Map<CreepId, AssignableId> = new Map();
 
-    static getTarget(creep: Creep): Assignable | undefined
+    static getTarget(creep: Creep): Opt<Assignable>
     {
-        const id: AssignableId | undefined = Targets._targets.get(creep.id);
+        const id: Opt<AssignableId> = Targets._targets.get(creep.id);
 
         return id ? Game.get(id) : undefined;
     }
 
-    static setTarget(creep: Creep, newTarget: Assignable | undefined): void
+    static setTarget(creep: Creep, newTarget: Opt<Assignable>): void
     {
         const creepId: CreepId = creep.id;
-        const oldTarget: Assignable | undefined = Targets.getTarget(creep);
+        const oldTarget: Opt<Assignable> = Targets.getTarget(creep);
 
         if (oldTarget)
         {

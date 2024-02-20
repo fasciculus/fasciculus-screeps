@@ -25,12 +25,12 @@ export class Creeps
         return Names.kind(this.name);
     }
 
-    private static getTarget(this: Creep): Assignable | undefined
+    private static getTarget(this: Creep): Opt<Assignable>
     {
         return Targets.getTarget(this);
     }
 
-    private static setTarget(this: Creep, value: Assignable | undefined): void
+    private static setTarget(this: Creep, value: Opt<Assignable>): void
     {
         Targets.setTarget(this, value);
     }

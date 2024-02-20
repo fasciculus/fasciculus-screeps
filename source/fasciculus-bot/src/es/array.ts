@@ -52,7 +52,7 @@ export class Arrays
         return result;
     }
 
-    private static defined<T>(values: Array<T | undefined>): Array<T>
+    private static defined<T>(values: Array<Opt<T>>): Array<T>
     {
         var result: Array<T> = new Array<T>();
 

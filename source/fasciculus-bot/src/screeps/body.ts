@@ -43,7 +43,7 @@ export class BodyTemplate
         return result;
     }
 
-    createBody(energy: number): Array<BodyPartConstant> | undefined
+    createBody(energy: number): Opt<Array<BodyPartConstant>>
     {
         const chunkCount: number = this.chunkCount(energy);
 
@@ -75,7 +75,7 @@ export class BodyTemplate
         return template;
     }
 
-    static get(kind: string): BodyTemplate | undefined
+    static get(kind: string): Opt<BodyTemplate>
     {
         return BodyTemplate._templates.get(kind);
     }
@@ -92,7 +92,7 @@ export class BodyInfos
 
     private static createInfo(id: CreepId, hint?: Creep): BodyInfo
     {
-        const creep: Creep | undefined = hint || Game.get(id);
+        const creep: Opt<Creep> = hint || Game.get(id);
 
         if (!creep) return { work: 0 };
 

@@ -24,7 +24,7 @@ export class Sources
         return Sources._known.value.filter(Sources.isSafe);
     }
 
-    private static getSlots(id: SourceId, source: Source | undefined): number
+    private static getSlots(id: SourceId, source: Opt<Source>): number
     {
         return source ? source.room.terrain.walkableAround(source.pos, 1) : 0;
     }

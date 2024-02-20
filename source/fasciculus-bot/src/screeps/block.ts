@@ -19,7 +19,7 @@ export class Blocking
         if (!creep) return false;
 
         const kind: string = creep.kind;
-        const callback: BlockingCallback | undefined = Blocking._callbacks.get(kind);
+        const callback: Opt<BlockingCallback> = Blocking._callbacks.get(kind);
 
         if (!callback) return false;
 

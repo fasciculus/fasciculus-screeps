@@ -7,7 +7,7 @@ export class Matrices
     private static createMatrix(name: string): CostMatrix
     {
         const matrix: CostMatrix = new PathFinder.CostMatrix();
-        const room: Room | undefined = Room.get(name);
+        const room: Opt<Room> = Room.get(name);
 
         if (!room) return matrix;
 

@@ -16,9 +16,9 @@ abstract class CachedBase
     }
 }
 
-export type ComplexCacheFetch<V, K = string> = (value: V | undefined, key: K) => V;
+export type ComplexCacheFetch<V, K = string> = (value: Opt<V>, key: K) => V;
 export type WithKeyCacheFetch<V, K = string> = (key: K) => V;
-export type WithValueCacheFetch<V> = (value: V | undefined) => V;
+export type WithValueCacheFetch<V> = (value: Opt<V>) => V;
 export type SimpleCacheFetch<V> = () => V;
 
 export class Cached<V, K = string> extends CachedBase
@@ -47,17 +47,17 @@ export class Cached<V, K = string> extends CachedBase
 
     static withKey<V, K = string>(fetch: WithKeyCacheFetch<V, K>, key: K): Cached<V, K>
     {
-        return new Cached<V, K>((value: V | undefined, key: K) => fetch(key), key);
+        return new Cached<V, K>((value: Opt<V>, key: K) => fetch(key), key);
     }
 
     static withValue<V>(fetch: WithValueCacheFetch<V>): Cached<V, string>
     {
-        return new Cached<V>((value: V | undefined, key: string) => fetch(value), "");
+        return new Cached<V>((value: Opt<V>, key: string) => fetch(value), "");
     }
 
     static simple<V>(fetch: SimpleCacheFetch<V>): Cached<V, string>
     {
-        return new Cached<V>((value: V | undefined, key: string) => fetch(), "");
+        return new Cached<V>((value: Opt<V>, key: string) => fetch(), "");
     }
 
     get value(): V

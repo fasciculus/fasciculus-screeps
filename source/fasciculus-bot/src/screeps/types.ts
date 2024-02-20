@@ -26,8 +26,8 @@ declare global
     {
         get kind(): string;
 
-        get target(): Assignable | undefined;
-        set target(value: Assignable | undefined);
+        get target(): Opt<Assignable>;
+        set target(value: Opt<Assignable>);
 
         get blocking(): boolean;
 
@@ -45,8 +45,8 @@ declare global
     {
         get username(): string;
 
-        get<T extends _HasId>(id: Id<T> | undefined): T | undefined;
-        all<T extends _HasId>(ids: Set<Id<T>> | undefined): Array<T>;
+        get<T extends _HasId>(id: Opt<Id<T>>): Opt<T>;
+        all<T extends _HasId>(ids: Opt<Set<Id<T>>>): Array<T>;
 
         existing<T extends _HasId>(ids: Set<Id<T>>): Set<Id<T>>;
     }
@@ -81,7 +81,7 @@ declare global
 
     interface RoomConstructor
     {
-        get(name: string): Room | undefined;
+        get(name: string): Opt<Room>;
 
         get known(): Array<Room>;
         get safe(): Array<Room>;

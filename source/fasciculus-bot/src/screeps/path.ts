@@ -25,7 +25,7 @@ export class Paths
     {
         var plainCost = 2;
         var swampCost = 10;
-        const room: Room | undefined = Room.get(name);
+        const room: Opt<Room> = Room.get(name);
 
         if (room && room.attacked)
         {
@@ -113,7 +113,7 @@ export class Paths
         }
     }
 
-    static direction(origin: RoomPosition, goal: RoomPosition, range: number): DirectionConstant | undefined
+    static direction(origin: RoomPosition, goal: RoomPosition, range: number): Opt<DirectionConstant>
     {
         const path: PathFinderPath = Paths.path(origin, goal, range);
         const pathPath: Array<RoomPosition> = path.path;

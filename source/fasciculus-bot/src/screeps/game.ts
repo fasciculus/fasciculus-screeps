@@ -18,14 +18,14 @@ export class Games
         return Games._username.value;
     }
 
-    private static get<T extends _HasId>(id: Id<T> | undefined): T | undefined
+    private static get<T extends _HasId>(id: Opt<Id<T>>): Opt<T>
     {
         let result: T | null = id ? Game.getObjectById(id) : null;
 
         return result || undefined;
     }
 
-    private static all<T extends _HasId>(ids: Set<Id<T>> | undefined): Array<T>
+    private static all<T extends _HasId>(ids: Opt<Set<Id<T>>>): Array<T>
     {
         return ids ? Array.defined(ids.map(Games.get)) : new Array();
     }

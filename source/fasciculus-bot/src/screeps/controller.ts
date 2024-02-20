@@ -7,12 +7,12 @@ export class Controllers
 
     private static getSafe(id: ControllerId, hint?: StructureController): boolean
     {
-        const controller: StructureController | undefined = hint || Game.get(id);
+        const controller: Opt<StructureController> = hint || Game.get(id);
 
         if (!controller) return false;
         if (controller.my) return true;
 
-        const reservation: ReservationDefinition | undefined = controller.reservation;
+        const reservation: Opt<ReservationDefinition> = controller.reservation;
 
         if (!reservation) return true;
 

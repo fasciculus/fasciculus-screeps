@@ -24,7 +24,7 @@ export class Terrains
     {
         const terrains: Map<string, RoomTerrain> = Terrains._terrains.value;
         const name: string = room.name;
-        var result: RoomTerrain | undefined = terrains.get(name);
+        var result: Opt<RoomTerrain> = terrains.get(name);
 
         if (!result)
         {
@@ -37,7 +37,7 @@ export class Terrains
     static ofName(name: string): RoomTerrain
     {
         const terrains: Map<string, RoomTerrain> = Terrains._terrains.value;
-        var result: RoomTerrain | undefined = terrains.get(name);
+        var result: Opt<RoomTerrain> = terrains.get(name);
 
         if (!result)
         {

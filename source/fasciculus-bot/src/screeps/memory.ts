@@ -4,7 +4,7 @@ export class Memories
 {
     private static get<T>(key: string, initial: T): T
     {
-        var result: any | undefined = Memory[key];
+        var result: Opt<any> = Memory[key];
 
         if (!result)
         {
