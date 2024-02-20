@@ -1,6 +1,7 @@
-import { HARVESTER } from "./constant";
+import { HARVESTER, TRANSPORTER } from "./constant";
 import { Harvest } from "./harvest";
 import { BodyTemplate } from "./screeps/body";
+import { Transport } from "./transport";
 
 export class Spawning
 {
@@ -11,6 +12,7 @@ export class Spawning
         if (!spawn) return;
         if (spawn.roomEnergy < BodyTemplate.minCost) return;
 
+        if (Transport.more() && Spawning.spawn(TRANSPORTER, spawn)) return;
         if (Harvest.more() && Spawning.spawn(HARVESTER, spawn)) return;
     }
 

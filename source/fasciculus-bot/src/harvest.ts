@@ -35,13 +35,10 @@ export class Harvest
 
         if (sources.length == 0) return;
 
-        console.log(`matching ${creeps.length} creeps to ${sources.length} sources`);
-
         const matches: Array<Match<Creep, Source>> = Matcher.match(creeps, sources, Harvest.sourceValue, Harvest.creepValue);
 
         for (let match of matches)
         {
-            console.log(`assigned ${match.left} to ${match.right.id}`);
             match.left.target = match.right;
         }
     }
