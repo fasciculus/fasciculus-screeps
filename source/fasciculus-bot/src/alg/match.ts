@@ -100,7 +100,7 @@ export class Matcher<L, R>
             if (!changed) break;
         }
 
-        return new Array();
+        return this.createMatches(leftMatches);
     }
 
     private findRightMatches(): Array<Match<L, R>>
