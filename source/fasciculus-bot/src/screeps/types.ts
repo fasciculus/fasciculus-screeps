@@ -8,7 +8,8 @@ declare global
 
     type BodyInfo = { work: number };
 
-    type AssignableId = Id<Source>;
+    type Assignable = Creep | Source;
+    type AssignableId = Id<Creep | Source>;
 
     interface _Assignable
     {
@@ -20,9 +21,7 @@ declare global
         unassignAll(): void;
     }
 
-    export type Assignable = Source;
-
-    interface Creep
+    interface Creep extends _Assignable
     {
         get kind(): string;
 

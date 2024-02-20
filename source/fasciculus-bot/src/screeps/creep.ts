@@ -1,4 +1,5 @@
 import { Objects } from "../es/object";
+import { Assignees } from "./assign";
 import { Blocking } from "./block";
 import { BodyInfos } from "./body";
 import { Cached } from "./cache";
@@ -65,6 +66,12 @@ export class Creeps
         return direction ? this.move(direction) : ERR_NO_PATH;
     }
 
+    private static assignees(this: Source): Set<CreepId> { return Assignees.assignees(this.id); }
+    private static assignedCreeps(this: Source): Array<Creep> { return Game.all(this.assignees); }
+    private static assign(this: Source, creep: CreepId): void { Assignees.assign(this.id, creep); }
+    private static unassign(this: Source, creep: CreepId): void { Assignees.unassign(this.id, creep); }
+    private static unassignAll(this: Source): void { Assignees.unassignAll(this.id); }
+
     private static my(): Array<Creep>
     {
         return Creeps._my.value.data;
@@ -84,6 +91,11 @@ export class Creeps
             "energy": Objects.getter(Creeps.energy),
             "freeEnergyCapacity": Objects.getter(Creeps.freeEnergyCapacity),
             "travelTo": Objects.function(Creeps.travelTo),
+            "assignees": Objects.getter(Creeps.assignees),
+            "assignedCreeps": Objects.getter(Creeps.assignedCreeps),
+            "assign": Objects.function(Creeps.assign),
+            "unassign": Objects.function(Creeps.unassign),
+            "unassignAll": Objects.function(Creeps.unassignAll),
         };
 
     private static _classProperties: any =
