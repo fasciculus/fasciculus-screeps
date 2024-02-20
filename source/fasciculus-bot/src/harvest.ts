@@ -32,9 +32,6 @@ export class Harvest
         if (creeps.length == 0) return;
 
         const sources: Array<Source> = Source.safe.filter(s => s.freeWork > 0 && s.freeSlots > 0);
-
-        if (sources.length == 0) return;
-
         const matches: Array<Match<Creep, Source>> = Matcher.match(creeps, sources, Harvest.sourceValue, Harvest.creepValue);
 
         for (let match of matches)

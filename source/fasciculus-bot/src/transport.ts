@@ -1,5 +1,7 @@
+import { Match, Matcher } from "./alg/match";
 import { HARVESTER, TRANSPORTER } from "./constant";
 import { BodyTemplate } from "./screeps/body";
+import { Paths } from "./screeps/path";
 
 export class Transport
 {
@@ -12,5 +14,69 @@ export class Transport
         const sources: number = Source.safe.length;
 
         return transporters < harvesters && transporters < sources;
+    }
+
+    static run(): void
+    {
+        Transport.assign();
+        Transport.transport();
+    }
+
+    private static assign(): void
+    {
+        for (let iteration = 0; iteration < 3; ++iteration)
+        {
+            const transporters: Array<Creep> = Creep.ofKind(TRANSPORTER).filter(c => !c.target);
+
+            if (transporters.length == 0) break;
+
+            const targets: Array<Assignable> = Transport.getTargets();
+            const matches: Array<Match<Creep, Assignable>> = Matcher.match(transporters, targets, Transport.targetValue, Transport.transporterValue);
+
+            if (matches.length == 0) break;
+
+            for (let match of matches)
+            {
+                match.left.target = match.right;
+            }
+        }
+    }
+
+    private static getTargets(): Array<Assignable>
+    {
+        const result: Array<Assignable> = new Array();
+
+        result.append(Creep.ofKind(HARVESTER));
+
+        return result;
+    }
+
+    private static targetValue(transporter: Creep, target: Assignable): number
+    {
+        return -Paths.cost(transporter.pos, target.pos, 1);
+    }
+
+    private static transporterValue(target: Assignable, transporter: Creep): number
+    {
+        return -Paths.cost(transporter.pos, target.pos, 1);
+    }
+
+    private static transport(): void
+    {
+        for (let transporter of Creep.ofKind(TRANSPORTER))
+        {
+            const target: Opt<Assignable> = transporter.target;
+
+            if (!target) continue;
+
+            if (transporter.pos.inRangeTo(target.pos, 1))
+            {
+
+            }
+            else
+            {
+                transporter.travelTo(target.pos, 1)
+            }
+        }
     }
 }

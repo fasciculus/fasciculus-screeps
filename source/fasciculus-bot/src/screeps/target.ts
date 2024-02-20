@@ -31,6 +31,11 @@ export class Targets
         }
     }
 
+    static creep(target: Opt<Assignable>): Opt<Creep>
+    {
+        return target && target instanceof Creep ? target : undefined;
+    }
+
     static source(target: Opt<Assignable>): Opt<Source>
     {
         return target && target instanceof Source ? target : undefined;
