@@ -65,6 +65,11 @@ export class Sources
         return Sources._safe.value.data;
     }
 
+    private static safeFreeWork(): number
+    {
+        return Sources._safe.value.data.sum(s => s.freeWork);
+    }
+
     private static _instanceProperties: any =
         {
             "slots": Objects.getter(Sources.slots),
@@ -82,6 +87,7 @@ export class Sources
     private static _classProperties: any =
         {
             "safe": Objects.getter(Sources.safe),
+            "safeFreeWork": Objects.getter(Sources.safeFreeWork),
         };
 
     static setup()

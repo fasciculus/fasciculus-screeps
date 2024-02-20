@@ -111,6 +111,7 @@ declare global
     interface SourceConstructor
     {
         get safe(): Array<Source>;
+        get safeFreeWork(): number;
     }
 
     interface StructureController
