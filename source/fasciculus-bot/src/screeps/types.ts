@@ -121,13 +121,18 @@ declare global
 
     interface StructureSpawn
     {
-        spawn(type: string, body: Array<BodyPartConstant>): ScreepsReturnCode;
+        get roomEnergy(): number;
+        get roomEnergyCapacity(): number;
+
+        spawn(kind: string, body: Array<BodyPartConstant>): ScreepsReturnCode;
     }
 
     interface StructureSpawnConstructor
     {
         get my(): Array<StructureSpawn>;
         get idle(): Array<StructureSpawn>;
+
+        get best(): Opt<StructureSpawn>;
     }
 }
 

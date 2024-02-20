@@ -22,15 +22,15 @@ class Experiments
 
     static run()
     {
-        const start: number = Game.cpu.getUsed();
-        const creeps = Creep.my;
-        const sources = Source.safe;
-        const matches = Matcher.match(creeps, sources, Experiments.sourceValue, Experiments.creepValue);
-        const duration = Game.cpu.getUsed() - start;
-        const texts = matches.map(m => ` ${m.left.name} -> ${m.right.id}`);
+    //    const start: number = Game.cpu.getUsed();
+    //    const creeps = Creep.my;
+    //    const sources = Source.safe;
+    //    const matches = Matcher.match(creeps, sources, Experiments.sourceValue, Experiments.creepValue);
+    //    const duration = Game.cpu.getUsed() - start;
+    //    const texts = matches.map(m => ` ${m.left.name} -> ${m.right.id}`);
 
-        console.log(`matches:${texts}`);
-        console.log(`duration: ${duration.toFixed(2)}`);
+    //    console.log(`matches:${texts}`);
+    //    console.log(`duration: ${duration.toFixed(2)}`);
     }
 }
 

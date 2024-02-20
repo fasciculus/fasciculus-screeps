@@ -52,9 +52,17 @@ export class BodyTemplate
         return Array.flatten(this._chunks.take(chunkCount).map(c => c.parts)).sort(BodyTemplate.compare)
     }
 
+    wait(currentEnergy: number, maxEnergy: number): boolean
+    {
+        const count1: number = this.chunkCount(currentEnergy);
+        const count2: number = this.chunkCount(maxEnergy);
+
+        return count1 < count2;
+    }
+
     add(times: number, ...parts: Array<BodyPartConstant>): BodyTemplate
     {
-        const cost = parts.sum(p => BODYPART_COST[p]);
+        const cost = BodyTemplate.cost(parts);
         const chunk: BodyChunk = { cost, parts };
 
         for (var i = 0; i < times; ++i)
@@ -63,6 +71,15 @@ export class BodyTemplate
         }
 
         return this;
+    }
+
+    private static cost(parts: Array<BodyPartConstant>): number
+    {
+        var result: number = 0;
+
+        parts.forEach(p => { result += BODYPART_COST[p]; });
+
+        return result;
     }
 
     static createTemplate(kind: string, times: number, ...parts: Array<BodyPartConstant>): BodyTemplate

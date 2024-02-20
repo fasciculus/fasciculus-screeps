@@ -17,6 +17,16 @@ export class Spawns
         return Spawns._my.value.filter((id, spawn) => !spawn.spawning);
     }
 
+    private static roomEnergy(this: StructureSpawn): number
+    {
+        return this.room.energy;
+    }
+
+    private static roomEnergyCapacity(this: StructureSpawn): number
+    {
+        return this.room.energyCapacity;
+    }
+
     private static spawn(this: StructureSpawn, kind: string, body: Array<BodyPartConstant>): ScreepsReturnCode
     {
         const name = Names.nextCreepName(kind);
@@ -34,8 +44,28 @@ export class Spawns
         return Spawns._idle.value.data;
     }
 
+    private static best(): Opt<StructureSpawn>
+    {
+        const spawns: Array<StructureSpawn> = Spawns.idle();
+        const length: number = spawns.length;
+
+        if (length == 0) return undefined;
+        if (length == 1) return spawns[0];
+
+        spawns.sort(Spawns.compare);
+
+        return spawns[0];
+    }
+
+    private static compare(a: StructureSpawn, b: StructureSpawn): number
+    {
+        return b.roomEnergy - a.roomEnergy;
+    }
+
     private static _instanceProperties: any =
         {
+            "roomEnergy": Objects.getter(Spawns.roomEnergy),
+            "roomEnergyCapacity": Objects.getter(Spawns.roomEnergyCapacity),
             "spawn": Objects.function(Spawns.spawn),
         };
 
@@ -43,6 +73,7 @@ export class Spawns
         {
             "my": Objects.getter(Spawns.my),
             "idle": Objects.getter(Spawns.idle),
+            "best": Objects.getter(Spawns.best),
         };
 
     static setup()
