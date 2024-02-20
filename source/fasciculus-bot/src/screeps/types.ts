@@ -33,6 +33,9 @@ declare global
 
         get workParts(): number;
 
+        get energy(): number;
+        get freeEnergyCapacity(): number;
+
         travelTo(goal: RoomPosition, range: number): CreepMoveReturnCode | ERR_NO_PATH;
     }
 

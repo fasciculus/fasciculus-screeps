@@ -1,15 +1,18 @@
 import { Match, Matcher } from "./alg/match";
 import { HARVESTER } from "./constant";
+import { Blocking } from "./screeps/block";
 import { BodyTemplate } from "./screeps/body";
 import { Paths } from "./screeps/path";
 import { Targets } from "./screeps/target";
 
 export class Harvest
 {
-    static template = BodyTemplate.createTemplate(HARVESTER, 1, WORK, CARRY, MOVE)
+    static readonly template = BodyTemplate.createTemplate(HARVESTER, 1, WORK, CARRY, MOVE)
         .add(1, WORK, MOVE)
         .add(1, WORK, CARRY, MOVE)
         .add(2, WORK, MOVE);
+
+    static readonly blockingRegistered: boolean = Blocking.register(HARVESTER, Harvest.blocking);
 
     static more(): boolean
     {
@@ -57,16 +60,27 @@ export class Harvest
     {
         for (let creep of Creep.ofKind(HARVESTER))
         {
-            if (creep.store.getFreeCapacity(RESOURCE_ENERGY) < creep.workParts * 2) continue;
-
             const source: Opt<Source> = Targets.source(creep.target);
 
             if (!source) continue;
 
-            if (creep.harvest(source) == ERR_NOT_IN_RANGE)
+            if (creep.pos.inRangeTo(source.pos, 1))
             {
-                creep.travelTo(source.pos, 1);
+                if (creep.freeEnergyCapacity < creep.workParts * 2) continue;
+
+                creep.harvest(source);
+            }
+            else
+            {
+                creep.travelTo(source.pos, 1)
             }
         }
+    }
+
+    private static blocking(creep: Creep): boolean
+    {
+        const target: Opt<Assignable> = creep.target;
+
+        return target !== undefined && creep.pos.inRangeTo(target, 1);
     }
 }

@@ -46,6 +46,16 @@ export class Creeps
         return BodyInfos.workParts(this);
     }
 
+    private static energy(this: Creep): number
+    {
+        return this.store.energy;
+    }
+
+    private static freeEnergyCapacity(this: Creep): number
+    {
+        return this.store.getFreeCapacity(RESOURCE_ENERGY);
+    }
+
     private static travelTo(this: Creep, goal: RoomPosition, range: number): CreepMoveReturnCode | ERR_NO_PATH
     {
         if (this.fatigue > 0) return ERR_TIRED;
@@ -71,6 +81,8 @@ export class Creeps
             "target": Objects.property(Creeps.getTarget, Creeps.setTarget),
             "blocking": Objects.getter(Creeps.blocking),
             "workParts": Objects.getter(Creeps.workParts),
+            "energy": Objects.getter(Creeps.energy),
+            "freeEnergyCapacity": Objects.getter(Creeps.freeEnergyCapacity),
             "travelTo": Objects.function(Creeps.travelTo),
         };
 
