@@ -29,14 +29,14 @@ export class Sources
         return source ? source.room.terrain.walkableAround(source.pos, 1) : 0;
     }
 
-    private static slots(this: Source)
+    private static slotsCount(this: Source)
     {
         return Sources._slots.ensure(this.id, Sources.getSlots, this);
     }
 
-    private static freeSlots(this: Source): number
+    private static slotsFree(this: Source): number
     {
-        return this.slots - this.assignees.size;
+        return this.slotsCount - this.assignees.size;
     }
 
     private static workCapacity(this: Source): number
@@ -44,14 +44,16 @@ export class Sources
         return this.energyCapacity / ENERGY_REGEN_TIME / 2;
     }
 
-    private static freeWork(this: Source): number
-    {
-        return Math.max(0, this.workCapacity - this.assignedWork);
-    }
-
-    private static assignedWork(this: Source): number
+    private static workAssigned(this: Source): number
     {
         return this.assignedCreeps.sum(c => c.workParts);
+    }
+
+    private static workFree(this: Source): number
+    {
+        if (this.slotsFree == 0) return 0;
+
+        return Math.max(0, this.workCapacity - this.workAssigned);
     }
 
     private static assignees(this: Source): Set<CreepId> { return Assignees.assignees(this.id); }
@@ -65,18 +67,18 @@ export class Sources
         return Sources._safe.value.data;
     }
 
-    private static safeFreeWork(): number
+    private static safeWorkFree(): number
     {
-        return Sources._safe.value.data.sum(s => s.freeWork);
+        return Sources._safe.value.data.sum(s => s.workFree);
     }
 
     private static _instanceProperties: any =
         {
-            "slots": Objects.getter(Sources.slots),
-            "freeSlots": Objects.getter(Sources.freeSlots),
+            "slotsCount": Objects.getter(Sources.slotsCount),
+            "slotsFree": Objects.getter(Sources.slotsFree),
             "workCapacity": Objects.getter(Sources.workCapacity),
-            "freeWork": Objects.getter(Sources.freeWork),
-            "assignedWork": Objects.getter(Sources.assignedWork),
+            "workAssigned": Objects.getter(Sources.workAssigned),
+            "workFree": Objects.getter(Sources.workFree),
             "assignees": Objects.getter(Sources.assignees),
             "assignedCreeps": Objects.getter(Sources.assignedCreeps),
             "assign": Objects.function(Sources.assign),
@@ -87,7 +89,7 @@ export class Sources
     private static _classProperties: any =
         {
             "safe": Objects.getter(Sources.safe),
-            "safeFreeWork": Objects.getter(Sources.safeFreeWork),
+            "safeWorkFree": Objects.getter(Sources.safeWorkFree),
         };
 
     static setup()

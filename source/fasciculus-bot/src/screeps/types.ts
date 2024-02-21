@@ -104,18 +104,18 @@ declare global
 
     interface Source extends _Assignable
     {
-        get slots(): number;
-        get freeSlots(): number;
+        get slotsCount(): number;
+        get slotsFree(): number;
 
         get workCapacity(): number;
-        get freeWork(): number;
-        get assignedWork(): number;
+        get workAssigned(): number;
+        get workFree(): number;
     }
 
     interface SourceConstructor
     {
         get safe(): Array<Source>;
-        get safeFreeWork(): number;
+        get safeWorkFree(): number;
     }
 
     interface StructureController

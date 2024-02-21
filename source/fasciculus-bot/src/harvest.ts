@@ -16,7 +16,7 @@ export class Harvest
 
     static more(): boolean
     {
-        return Creep.ofKind(HARVESTER).sum(c => c.workParts) < Source.safeFreeWork;
+        return Creep.ofKind(HARVESTER).sum(c => c.workParts) < Source.safeWorkFree;
     }
 
     static run(): void
@@ -31,7 +31,7 @@ export class Harvest
 
         if (creeps.length == 0) return;
 
-        const sources: Array<Source> = Source.safe.filter(s => s.freeWork > 0 && s.freeSlots > 0);
+        const sources: Array<Source> = Source.safe.filter(s => s.workFree > 0);
         const matches: Array<Match<Creep, Source>> = Matcher.match(creeps, sources, Harvest.sourceValue, Harvest.creepValue);
 
         for (let match of matches)
@@ -42,7 +42,7 @@ export class Harvest
 
     private static sourceValue(creep: Creep, source: Source): number
     {
-        return source.freeWork * 10 - Paths.cost(creep.pos, source.pos, 1);
+        return source.workFree * 10 - Paths.cost(creep.pos, source.pos, 1);
     }
 
     private static creepValue(source: Source, creep: Creep): number
