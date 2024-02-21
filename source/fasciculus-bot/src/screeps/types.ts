@@ -21,19 +21,22 @@ declare global
         unassignAll(): void;
     }
 
+    interface _HasStore
+    {
+        store: StoreDefinition;
+    }
+
     interface Creep extends _Assignable
     {
         get kind(): string;
 
+        get hasTarget(): boolean;
         get target(): Opt<Assignable>;
         set target(value: Opt<Assignable>);
 
         get blocking(): boolean;
 
         get workParts(): number;
-
-        get energy(): number;
-        get freeEnergyCapacity(): number;
 
         travelTo(goal: RoomPosition, range: number): CreepMoveReturnCode | ERR_NO_PATH;
     }

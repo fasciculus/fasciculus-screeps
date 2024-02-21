@@ -12,6 +12,7 @@ declare global
         groupBy<K>(toKey: (value: T) => K): Map<K, Array<T>>;
 
         sum(toNumber: (value: T) => number): number;
+        avg(toNumber: (value: T) => number): number;
     }
 
     interface ArrayConstructor

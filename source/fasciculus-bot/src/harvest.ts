@@ -1,8 +1,9 @@
-import { Match, Matcher } from "./alg/match";
 import { HARVESTER } from "./constant";
+import { Match, Matcher } from "./match";
 import { Blocking } from "./screeps/block";
 import { BodyTemplate } from "./screeps/body";
 import { Paths } from "./screeps/path";
+import { Stores } from "./screeps/store";
 import { Targets } from "./screeps/target";
 
 export class Harvest
@@ -16,7 +17,7 @@ export class Harvest
 
     static more(): boolean
     {
-        return Creep.ofKind(HARVESTER).sum(c => c.workParts) < Source.safeWorkFree;
+        return Source.safeWorkFree > 0;
     }
 
     static run(): void
@@ -27,46 +28,78 @@ export class Harvest
 
     private static assign(): void
     {
-        const creeps: Array<Creep> = Creep.ofKind(HARVESTER).filter(c => !c.target);
+        const harvesters: Array<Creep> = Creep.ofKind(HARVESTER).filter(c => !c.target);
 
-        if (creeps.length == 0) return;
+        if (harvesters.length == 0) return;
 
-        const sources: Array<Source> = Source.safe.filter(s => s.workFree > 0);
-        const matches: Array<Match<Creep, Source>> = Matcher.match(creeps, sources, Harvest.sourceValue, Harvest.creepValue);
+        const targets: Array<Assignable> = Harvest.collectTargets();
+        const matches: Array<Match> = Matcher.match(harvesters, targets, Harvest.targetValue, Harvest.harvesterValue);
 
-        for (let match of matches)
+        Matcher.assign(matches);
+    }
+
+    private static collectTargets(): Array<Assignable>
+    {
+        const result: Array<Assignable> = new Array();
+
+        result.append(Harvest.collectSources());
+
+        return result;
+    }
+
+    private static collectSources(): Array<Assignable>
+    {
+        const result: Array<Assignable> = new Array();
+        const avgWorkParts: number = Math.max(1.0, Creep.ofKind(HARVESTER).avg(c => c.workParts));
+
+        for (let source of Source.safe)
         {
-            match.left.target = match.right;
+            const workFree: number = source.workFree;
+
+            if (workFree == 0) continue;
+
+            const count: number = Math.min(source.slotsFree, workFree / avgWorkParts);
+
+            for (let i = 0; i < count; ++i)
+            {
+                result.push(source);
+            }
         }
+
+        return result;
     }
 
-    private static sourceValue(creep: Creep, source: Source): number
+    private static targetValue(harvester: Creep, target: Assignable): number
     {
-        return source.workFree * 10 - Paths.cost(creep.pos, source.pos, 1);
+        const source: Opt<Source> = Targets.source(target);
+
+        return source ? source.workFree / Paths.logCost(harvester.pos, target.pos, 1) : -1;
     }
 
-    private static creepValue(source: Source, creep: Creep): number
+    private static harvesterValue(target: Assignable, harvester: Creep): number
     {
-        return creep.workParts * 10 - Paths.cost(creep.pos, source.pos, 1);
+        return 1.0 / Paths.logCost(harvester.pos, target.pos, 1);
     }
 
     private static harvest(): void
     {
-        for (let creep of Creep.ofKind(HARVESTER))
+        for (let harvester of Creep.ofKind(HARVESTER))
         {
-            const source: Opt<Source> = Targets.source(creep.target);
+            const source: Opt<Source> = Targets.source(harvester.target);
 
             if (!source) continue;
 
-            if (creep.pos.inRangeTo(source.pos, 1))
+            if (harvester.pos.inRangeTo(source.pos, 1))
             {
-                if (creep.freeEnergyCapacity < creep.workParts * 2) continue;
+                const energyFree: number = Stores.energyFree(harvester);
 
-                creep.harvest(source);
+                if (energyFree < harvester.workParts * 2) continue;
+
+                harvester.harvest(source);
             }
             else
             {
-                creep.travelTo(source.pos, 1);
+                harvester.travelTo(source.pos, 1);
             }
         }
     }

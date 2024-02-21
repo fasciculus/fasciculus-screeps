@@ -27,6 +27,11 @@ export class Creeps
         return Names.kind(this.name);
     }
 
+    private static hasTarget(this: Creep): boolean
+    {
+        return Targets.hasTarget(this);
+    }
+
     private static getTarget(this: Creep): Opt<Assignable>
     {
         return Targets.getTarget(this);
@@ -45,16 +50,6 @@ export class Creeps
     private static workParts(this: Creep): number
     {
         return BodyInfos.workParts(this);
-    }
-
-    private static energy(this: Creep): number
-    {
-        return this.store.energy;
-    }
-
-    private static freeEnergyCapacity(this: Creep): number
-    {
-        return this.store.getFreeCapacity(RESOURCE_ENERGY);
     }
 
     private static travelTo(this: Creep, goal: RoomPosition, range: number): CreepMoveReturnCode | ERR_NO_PATH
@@ -85,11 +80,10 @@ export class Creeps
     private static _instanceProperties: any =
         {
             "kind": Objects.getter(Creeps.kind),
+            "hasTarget": Objects.getter(Creeps.hasTarget),
             "target": Objects.property(Creeps.getTarget, Creeps.setTarget),
             "blocking": Objects.getter(Creeps.blocking),
             "workParts": Objects.getter(Creeps.workParts),
-            "energy": Objects.getter(Creeps.energy),
-            "freeEnergyCapacity": Objects.getter(Creeps.freeEnergyCapacity),
             "travelTo": Objects.function(Creeps.travelTo),
             "assignees": Objects.getter(Creeps.assignees),
             "assignedCreeps": Objects.getter(Creeps.assignedCreeps),

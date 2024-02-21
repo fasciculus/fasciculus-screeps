@@ -52,6 +52,11 @@ export class Arrays
         return result;
     }
 
+    private static avg<T>(this: Array<T>, toNumber: (value: T) => number): number
+    {
+        return this.sum(toNumber) / Math.max(1.0, this.length);
+    }
+
     private static defined<T>(values: Array<Opt<T>>): Array<T>
     {
         var result: Array<T> = new Array<T>();
@@ -83,6 +88,7 @@ export class Arrays
             "indexBy": Objects.function(Arrays.indexBy),
             "groupBy": Objects.function(Arrays.groupBy),
             "sum": Objects.function(Arrays.sum),
+            "avg": Objects.function(Arrays.avg),
         };
 
     private static _classProperties: any =
