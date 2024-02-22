@@ -3,7 +3,7 @@ import * as FS from "node:fs";
 import * as Path from "node:path";
 import * as TS from "typescript";
 
-const VERSION = "0.1.3";
+const VERSION = "0.2.100";
 
 function unixify(file: string): string
 {
@@ -20,7 +20,7 @@ function fixDirectory(dir: string): string
     return dir;
 }
 
-function getKey(root: string, file: string): string
+function getKey(file: string, root: string): string
 {
     var result: string = unixify(Path.relative(root, file));
 
@@ -28,6 +28,18 @@ function getKey(root: string, file: string): string
     if (result.endsWith(".ts")) result = result.substring(0, result.length - 3);
 
     return result;
+}
+
+function getSourceFileKey(sourceFile: TS.SourceFile, cwd: string, root: string): string
+{
+    var file: string = sourceFile.fileName;
+
+    if (Path.isAbsolute(file))
+    {
+        file = Path.relative(cwd, file);
+    }
+
+    return getKey(file, root);
 }
 
 function newLine(newLine: TS.NewLineKind)
@@ -124,7 +136,7 @@ class ConcatContext
         this.tscFile = tsc.file;
 
         this.mainFile = concatConfig?.main || "index";
-        this.mainKey = getKey("", this.mainFile);
+        this.mainKey = getKey(this.mainFile, "");
         this.types = concatConfig?.types || new Array();
         this.concatDir = concatConfig?.concatDir || "concat";
         this.outDir = concatConfig?.outDir || tsc.outDir;
@@ -158,75 +170,83 @@ class ConcatContext
     }
 }
 
-class Source
+interface SourceEntry
 {
-    readonly file: string;
-    readonly key: string;
-    readonly tsSource: TS.SourceFile;
-
-    constructor(file: string, ctx: ConcatContext)
-    {
-        this.file = file;
-        this.key = getKey(ctx.rootDir, file);
-
-        const program: TS.Program = TS.createProgram([file], ctx.options, ctx.tsHost);
-        const tsSource: TS.SourceFile | undefined = program.getSourceFile(file);
-
-        if (!tsSource) throw new Error("no source");
-
-        this.tsSource = tsSource;
-    }
+    key: string;
+    sourceFile: TS.SourceFile;
 }
 
 class Sources
 {
-    private readonly sources: Source[];
-    private readonly sourceMap: Map<string, Source> = new Map();
+    private readonly map: Map<string, TS.SourceFile> = new Map();
 
     constructor(ctx: ConcatContext)
     {
-        const files: Array<string> = ctx.fileNames.filter(f => Sources.isIncluded(f, ctx));
+        const program: TS.Program = Sources.createProgram(ctx);
+        const cwd: string = program.getCurrentDirectory();
+        const root: string = ctx.rootDir;
 
-        this.sources = files.map(f => new Source(f, ctx));
-        this.sources.forEach(s => this.sourceMap.set(s.key, s));
+        for (let sourceFile of program.getSourceFiles())
+        {
+            if (program.isSourceFileDefaultLibrary(sourceFile)) continue;
+            if (program.isSourceFileFromExternalLibrary(sourceFile)) continue;
+
+            const key: string = getSourceFileKey(sourceFile, cwd, root);
+
+            if (key.startsWith("../")) continue;
+
+            this.map.set(key, sourceFile);
+        }
     }
 
-    private static isIncluded(file: string, ctx: ConcatContext)
+    has(key: string): boolean
     {
-        return !getKey(ctx.rootDir, file).startsWith("../");
+        return this.map.has(key);
     }
 
     keys(): Set<string>
     {
-        return new Set(this.sourceMap.keys());
+        return new Set(this.map.keys());
     }
 
-    forEach(fn: (source: Source) => void): void
+    get(key: string): TS.SourceFile
     {
-        this.sources.forEach(fn);
+        const sourceFile: TS.SourceFile | undefined = this.map.get(key);
+
+        if (!sourceFile) throw new Error(`invalid program state '${key}'`);
+
+        return sourceFile;
     }
 
-    get(key: string): Source
+    all(keys: Array<string>): Array<SourceEntry>
     {
-        const source: Source | undefined = this.sourceMap.get(key);
-
-        if (!source) throw new Error(`invalid program state '${key}'`);
-
-        return source;
-    }
-
-    all(keys: Array<string>): Array<Source>
-    {
-        const result: Array<Source> = new Array();
+        const result: Array<SourceEntry> = new Array();
 
         for (let key of keys)
         {
-            const source: Source | undefined = this.sourceMap.get(key);
+            const sourceFile: TS.SourceFile | undefined = this.map.get(key);
 
-            if (source) result.push(source);
+            if (sourceFile) result.push({ key, sourceFile });
         }
 
         return result;
+    }
+
+    private static createProgram(ctx: ConcatContext): TS.Program
+    {
+        const files: Array<string> = Sources.getFiles(ctx);
+
+        return TS.createProgram(files, ctx.options, ctx.tsHost);
+    }
+
+    private static getFiles(ctx: ConcatContext): Array<string>
+    {
+        return ctx.fileNames.filter(f => Sources.isIncluded(f, ctx));
+    }
+
+    private static isIncluded(file: string, ctx: ConcatContext)
+    {
+        return !getKey(file, ctx.rootDir).startsWith("../");
     }
 }
 
@@ -238,7 +258,7 @@ class Analyzer
         const trimmed: string = specifier.substring(1, specifier.length - 1);
         const combined: string = unixify(Path.join(key, "..", trimmed));
 
-        return getKey("", combined);
+        return getKey(combined, "");
     }
 
     private static hasExport(modifiers: TS.NodeArray<TS.ModifierLike> | undefined): boolean
@@ -335,18 +355,32 @@ class Tree
 class Dependencies
 {
     private readonly sources: Sources;
-    private readonly keys: Set<string>;
     private readonly tree: Tree;
     private readonly resolved: Array<string> = new Array();
 
     constructor(sources: Sources, ctx: ConcatContext)
     {
         this.sources = sources;
-        this.keys = sources.keys();
-        this.tree = this.createTree(ctx.mainKey);
+        this.tree = Dependencies.createTree(sources, ctx.mainKey);
     }
 
-    private createTree(main: string): Tree
+    resolve(): Array<SourceEntry>
+    {
+        const tree: Tree = this.tree;
+        const resolved = this.resolved;
+
+        while (tree.size > 0)
+        {
+            const next: string = tree.next();
+
+            resolved.push(next);
+            tree.delete(next);
+        }
+
+        return this.sources.all(resolved);
+    }
+
+    private static createTree(sources: Sources, main: string): Tree
     {
         const tree: Tree = new Tree(main);
         const todo: Array<string> = Array.from([main]);
@@ -358,16 +392,15 @@ class Dependencies
 
             if (done.has(parent)) continue;
 
-            const source: Source = this.sources.get(parent);
-            const tsSource: TS.SourceFile = source.tsSource;
+            const source: TS.SourceFile = sources.get(parent);
 
-            TS.forEachChild(tsSource, (node) =>
+            TS.forEachChild(source, (node) =>
             {
                 if (TS.isImportDeclaration(node))
                 {
-                    const child = Analyzer.importKey(source.key, tsSource, node);
+                    const child = Analyzer.importKey(parent, source, node);
 
-                    if (this.keys.has(child))
+                    if (sources.has(child))
                     {
                         tree.insert(parent, child);
                         todo.push(child);
@@ -379,22 +412,6 @@ class Dependencies
         }
 
         return tree;
-    }
-
-    resolve(): Source[]
-    {
-        const tree: Tree = this.tree;
-        const resolved: Array<string> = this.resolved;
-
-        while (tree.size > 0)
-        {
-            const next: string = tree.next();
-
-            resolved.push(next);
-            tree.delete(next);
-        }
-
-        return this.sources.all(resolved);
     }
 }
 
@@ -432,26 +449,24 @@ class Transpiler
         return result;
     }
 
-    static sources(sources: Array<Source>, ctx: ConcatContext): string
+    static sources(files: Array<SourceEntry>, keys: Set<string>, ctx: ConcatContext): string
     {
-        const keys: Set<string> = new Set(sources.map(s => s.key));
-
-        return sources.map(s => Transpiler.source(s, keys, ctx)).join(newLine(ctx.newLine));
+        return files.map(f => Transpiler.source(f, keys, ctx)).join(newLine(ctx.newLine));
     }
 
-    private static source(source: Source, keys: Set<string>, ctx: ConcatContext): string
+    private static source(entry: SourceEntry, keys: Set<string>, ctx: ConcatContext): string
     {
-        const tsSource = source.tsSource;
         const result: Array<string> = new Array();
+        const sourceFile: TS.SourceFile = entry.sourceFile;
 
-        TS.forEachChild(tsSource, node =>
+        TS.forEachChild(sourceFile, node =>
         {
             if (TS.isImportDeclaration(node))
             {
-                if (keys.has(Analyzer.importKey(source.key, tsSource, node))) return;
+                if (keys.has(Analyzer.importKey(entry.key, sourceFile, node))) return;
             }
 
-            var text = node.getText(tsSource);
+            var text = node.getText(sourceFile);
 
             if (ctx.removeExports && Analyzer.isExport(node))
             {
@@ -471,16 +486,15 @@ try
 
     const start: number = Date.now();
     const ctx = new ConcatContext();
-    const sources = new Sources(ctx);
+    const sources: Sources = new Sources(ctx);
     const dependencies = new Dependencies(sources, ctx);
-    const sorted: Array<Source> = dependencies.resolve();
-    const tsc: string = Transpiler.tsc(ctx);
-    const ts: string = Transpiler.sources(sorted, ctx);
+    const sorted: Array<SourceEntry> = dependencies.resolve();
+
+    const ts: string = Transpiler.sources(sorted, sources.keys(), ctx);
     const tsFile: string = unixify(Path.join(ctx.concatDir, ctx.mainFile));
 
     FS.mkdirSync(ctx.concatDir, { recursive: true });
     FS.writeFileSync(tsFile, ts, { encoding: "utf-8", flush: true });
-    FS.writeFileSync("tsconfig.concat.json", tsc);
 
     for (let file of ctx.types)
     {
@@ -491,6 +505,10 @@ try
         FS.mkdirSync(dir, { recursive: true });
         FS.copyFileSync(src, dst);
     }
+
+    const tsc: string = Transpiler.tsc(ctx);
+
+    FS.writeFileSync("tsconfig.concat.json", tsc);
 
     const duration: number = Date.now() - start;
 
