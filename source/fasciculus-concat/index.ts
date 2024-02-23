@@ -271,9 +271,9 @@ class Analyzer
     static isExport(node: TS.Node): boolean
     {
         if (node.kind == TS.SyntaxKind.EndOfFileToken) return false;
-        if (node.kind == TS.SyntaxKind.VariableStatement) return false;
         if (node.kind == TS.SyntaxKind.ExpressionStatement) return false;
 
+        if (TS.isVariableStatement(node)) return Analyzer.hasExport(node.modifiers);
         if (TS.isClassDeclaration(node)) return Analyzer.hasExport(node.modifiers);
         if (TS.isInterfaceDeclaration(node)) return Analyzer.hasExport(node.modifiers);
         if (TS.isTypeAliasDeclaration(node)) return Analyzer.hasExport(node.modifiers);
