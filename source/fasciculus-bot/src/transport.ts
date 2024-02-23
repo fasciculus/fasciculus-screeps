@@ -22,12 +22,18 @@ export class Transport
     static more(): boolean
     {
         const transporterCount: number = Creep.ofKind(TRANSPORTER).length;
-        const harvesterCount: number = Creep.ofKind(HARVESTER).length;
-        const sourceCount: number = Source.safe.length;
+        const resourceAmount: number = Resource.safeAmount;
+        const energyFree: number = Transport.energyFree();
+        const transportersRequired: number = Math.min(resourceAmount, energyFree) / 100;
 
         Transport.template = transporterCount > 0 ? Transport.largeTemplate() : Transport.smallTemplate();
 
-        return transporterCount < (harvesterCount / 2) && transporterCount < sourceCount;
+        return transporterCount < transportersRequired;
+    }
+
+    private static energyFree(): number
+    {
+        return Spawn.my.sum(s => Stores.energyFree(s));
     }
 
     static run(): void
@@ -45,28 +51,11 @@ export class Transport
 
             if (!target) continue;
 
-            const harvester: Opt<Creep> = Targets.creep(target);
+            const resource: Opt<Resource> = Targets.resource(target);
 
-            if (harvester)
+            if (resource)
             {
-                if (Stores.energyFree(transporter) == 0)
-                {
-                    transporter.target = undefined;
-                    continue;
-                }
-
-                const cost: Opt<number> = Paths.cost(transporter.pos, harvester.pos, 1);
-
-                if (!cost)
-                {
-                    transporter.target = undefined;
-                    continue;
-                }
-
-                const harvesterEnergy: number = Stores.energy(harvester);
-                const futureHarvesterEnergy: number = harvesterEnergy + harvester.workParts * 2 * cost;
-
-                if (futureHarvesterEnergy < 10)
+                if (Stores.energyFree(transporter) == 0 || resource.amount < 10)
                 {
                     transporter.target = undefined;
                     continue;
@@ -106,17 +95,44 @@ export class Transport
     {
         const result: Array<Assignable> = new Array();
 
-        result.append(Creep.ofKind(HARVESTER));
-        result.append(StructureSpawn.my);
+        Transport.collectResources(result);
+        Transport.collectSpawns(result);
 
         return result;
     }
 
+    private static collectResources(result: Array<Assignable>): void
+    {
+        for (let resource of Resource.safe)
+        {
+            const count = Math.min(3, resource.amount / 100) - resource.assignees.size;
+
+            for (let i = 0; i < count; ++i)
+            {
+                result.push(resource);
+            }
+        }
+    }
+
+    private static collectSpawns(result: Array<Assignable>): void
+    {
+        for (let spawn of Spawn.my)
+        {
+            const energyFree = Stores.energyFree(spawn);
+            const count: number = Math.min(3, energyFree / 100);
+
+            for (let i = 0; i < count; ++i)
+            {
+                result.push(spawn);
+            }
+        }
+    }
+
     private static targetValue(transporter: Creep, target: Assignable): number
     {
-        const harvester: Opt<Creep> = Targets.creep(target);
+        const resource: Opt<Resource> = Targets.resource(target);
 
-        if (harvester) return Transport.harvesterValue(transporter, harvester);
+        if (resource) return Transport.resourceValue(transporter, resource);
 
         const spawn: Opt<StructureSpawn> = Targets.spawn(target);
 
@@ -125,15 +141,11 @@ export class Transport
         return -1;
     }
 
-    private static harvesterValue(transporter: Creep, harvester: Creep): number
+    private static resourceValue(transporter: Creep, resource: Resource): number
     {
         if (Stores.energyFree(transporter) == 0) return -1;
 
-        const harvesterEnergy = Stores.energy(harvester);
-
-        if (harvesterEnergy < 10) return -1;
-
-        return harvesterEnergy / Paths.logCost(transporter.pos, harvester.pos, 1);
+        return resource.amount / Paths.logCost(transporter.pos, resource.pos, 1);
     }
 
     private static spawnValue(transporter: Creep, spawn: StructureSpawn): number
@@ -144,7 +156,7 @@ export class Transport
 
         if (energyFree == 0) return -1;
 
-        return (energyFree / 3) / Paths.logCost(transporter.pos, spawn.pos, 1);
+        return energyFree / Paths.logCost(transporter.pos, spawn.pos, 1);
     }
 
     private static transporterValue(target: Assignable, transporter: Creep): number
@@ -162,11 +174,11 @@ export class Transport
 
             if (transporter.pos.inRangeTo(target.pos, 1))
             {
-                const harvester: Opt<Creep> = Targets.creep(target);
+                const resource: Opt<Resource> = Targets.resource(target);
 
-                if (harvester)
+                if (resource)
                 {
-                    harvester.transfer(transporter, RESOURCE_ENERGY);
+                    transporter.pickup(resource);
                     continue;
                 }
 

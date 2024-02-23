@@ -6,6 +6,7 @@ import { Creeps } from "./creep";
 import { Games } from "./game";
 import { Memories } from "./memory";
 import { RoomPositions } from "./pos";
+import { Resources } from "./resource";
 import { Rooms } from "./room";
 import { Sources } from "./source";
 import { Spawns } from "./spawn";
@@ -20,6 +21,7 @@ export class Screeps
         Creeps.setup();
         Games.setup();
         Memories.setup();
+        Resources.setup();
         Rooms.setup();
         RoomPositions.setup();
         Sources.setup();

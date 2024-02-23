@@ -3,12 +3,13 @@ declare global
 {
     type ControllerId = Id<StructureController>;
     type CreepId = Id<Creep>;
+    type ResourceId = Id<Resource>;
     type SourceId = Id<Source>;
     type SpawnId = Id<StructureSpawn>;
 
     type BodyInfo = { work: number };
 
-    type Assignable = Creep | Source | StructureSpawn;
+    type Assignable = Creep | Resource | Source | StructureSpawn;
     type AssignableId = Id<Assignable>;
 
     interface _Assignable
@@ -65,6 +66,16 @@ declare global
         get<T>(key: string, initial: T): T;
     }
 
+    interface Resource extends _Assignable
+    {
+    }
+
+    interface ResourceConstructor
+    {
+        get safe(): Array<Resource>;
+        get safeAmount(): number;
+    }
+
     interface Room
     {
         get safe(): boolean;
@@ -75,6 +86,7 @@ declare global
         get terrain(): RoomTerrain;
 
         get obstacles(): Array<AnyStructure>;
+        get resources(): Array<Resource>;
         get sources(): Array<Source>;
 
         get roads(): Array<StructureRoad>;

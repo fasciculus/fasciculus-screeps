@@ -1,13 +1,14 @@
-import { HARVESTER } from "./constant";
 import { ES } from "./es/es";
 import { Scheduler } from "./schedule";
 import { Screeps } from "./screeps/screeps";
 
 ES.setup();
 
+const VERSION = "0.1.5";
+
 class Suicide
 {
-    private static done: boolean = true;
+    private static done: boolean = false;
 
     static execute(): boolean
     {
@@ -30,6 +31,8 @@ class Experiments
 
 export const loop = function ()
 {
+    Version.run();
+
     Screeps.setup();
 
     Experiments.run();
@@ -40,4 +43,17 @@ export const loop = function ()
     }
 
     Screeps.cleanup();
+}
+
+class Version
+{
+    private static done: boolean = false;
+
+    static run()
+    {
+        if (Version.done) return;
+
+        console.log(`fasciculus.bot ${VERSION}`);
+        Version.done = true;
+    }
 }

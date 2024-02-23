@@ -8,10 +8,9 @@ import { Targets } from "./screeps/target";
 
 export class Harvest
 {
-    static readonly template = BodyTemplate.createTemplate(HARVESTER, 1, WORK, CARRY, MOVE)
-        .add(1, WORK, MOVE)
-        .add(1, WORK, CARRY, MOVE)
-        .add(2, WORK, MOVE);
+    static readonly template = BodyTemplate.createTemplate(HARVESTER, 1, WORK, WORK, MOVE)
+        .add(1, WORK, MOVE, MOVE)
+        .add(3, WORK, MOVE);
 
     static readonly blockingRegistered: boolean = Blocking.register(HARVESTER, Harvest.blocking);
 
@@ -91,10 +90,6 @@ export class Harvest
 
             if (harvester.pos.inRangeTo(source.pos, 1))
             {
-                const energyFree: number = Stores.energyFree(harvester);
-
-                if (energyFree < harvester.workParts * 2) continue;
-
                 harvester.harvest(source);
             }
             else

@@ -41,6 +41,11 @@ export class Targets
         return target && target instanceof Creep ? target : undefined;
     }
 
+    static resource(target: Opt<Assignable>): Opt<Resource>
+    {
+        return target && target instanceof Resource ? target : undefined;
+    }
+
     static source(target: Opt<Assignable>): Opt<Source>
     {
         return target && target instanceof Source ? target : undefined;

@@ -44,6 +44,11 @@ class Finder
         return room ? room.find<FIND_STRUCTURES, AnyStructure>(FIND_STRUCTURES, Finder._obstacleOpts) : new Array();
     }
 
+    static resources(room: Opt<Room>): Array<Resource>
+    {
+        return room ? room.find<FIND_DROPPED_RESOURCES, Resource>(FIND_DROPPED_RESOURCES) : new Array();
+    }
+
     static sources(room: Opt<Room>): Array<Source>
     {
         return room ? room.find<FIND_SOURCES, Source>(FIND_SOURCES) : new Array();
@@ -76,6 +81,8 @@ export class Rooms
     private static _safe: Cached<Map<string, Room>> = Cached.simple(Rooms.fetchSafe);
 
     private static _obstacles: Cached<Map<string, Array<AnyStructure>>> = Cached.simple(() => new Map());
+    private static _resources: Cached<Map<string, Array<Resource>>> = Cached.simple(() => new Map());
+
     private static _sources: Map<string, Set<SourceId>> = new Map();
 
     private static _roads: Cached<Map<string, Array<StructureRoad>>> = Cached.simple(() => new Map());
@@ -106,6 +113,13 @@ export class Rooms
         const room: Opt<Room> = hint || Rooms._known.value.get(name);
 
         return Finder.obstacles(room);
+    }
+
+    private static findResources(name: string, hint?: Room): Array<Resource>
+    {
+        const room: Opt<Room> = hint || Rooms._known.value.get(name);
+
+        return Finder.resources(room);
     }
 
     private static findSources(name: string, hint?: Room): Set<SourceId>
@@ -175,6 +189,11 @@ export class Rooms
         return Rooms._obstacles.value.ensure(this.name, Rooms.findObstacles, this);
     }
 
+    private static resources(this: Room): Array<Resource>
+    {
+        return Rooms._resources.value.ensure(this.name, Rooms.findResources, this);
+    }
+
     private static sources(this: Room): Array<Source>
     {
         return Game.all(Rooms._sources.ensure(this.name, Rooms.findSources, this));
@@ -227,6 +246,7 @@ export class Rooms
             "energyCapacity": Objects.getter(Rooms.energyCapacity),
             "terrain": Objects.getter(Rooms.terrain),
             "obstacles": Objects.getter(Rooms.obstacles),
+            "resources": Objects.getter(Rooms.resources),
             "sources": Objects.getter(Rooms.sources),
             "myRamparts": Objects.getter(Rooms.myRamparts),
             "roads": Objects.getter(Rooms.roads),
