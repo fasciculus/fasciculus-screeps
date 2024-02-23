@@ -9,7 +9,7 @@ declare global
 
     type BodyInfo = { work: number };
 
-    type Assignable = Creep | Resource | Source | StructureSpawn;
+    type Assignable = Creep | Resource | Source | StructureController | StructureSpawn;
     type AssignableId = Id<Assignable>;
 
     interface _Assignable
@@ -132,9 +132,15 @@ declare global
         get safeWorkFree(): number;
     }
 
-    interface StructureController
+    interface StructureController extends _Assignable
     {
         get safe(): boolean;
+    }
+
+    interface StructureControllerConstructor
+    {
+        get my(): Array<StructureController>;
+        get myReserved(): Array<StructureController>;
     }
 
     interface StructureSpawn extends _Assignable

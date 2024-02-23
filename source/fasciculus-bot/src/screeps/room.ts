@@ -1,5 +1,6 @@
 import { Objects } from "../es/object";
 import { Cached } from "./cache";
+import { Controllers } from "./controller";
 import { Terrains } from "./terrain";
 
 class Finder
@@ -105,7 +106,7 @@ export class Rooms
 
     private static isSafe(name: string, room: Room)
     {
-        return room.controller?.safe || true;
+        return Controllers.isSafe(room.controller);
     }
 
     private static findObstacles(name: string, hint?: Room): Array<AnyStructure>
