@@ -3,7 +3,7 @@ import * as FS from "node:fs";
 import * as Path from "node:path";
 import * as TS from "typescript";
 
-const VERSION = "0.2.100";
+const VERSION = "0.2.102";
 
 function unixify(file: string): string
 {
@@ -468,9 +468,12 @@ class Transpiler
 
             var text = node.getText(sourceFile);
 
-            if (ctx.removeExports && Analyzer.isExport(node))
+            if (entry.key != ctx.mainKey)
             {
-                text = text.trimStart().substring(6).trimStart();
+                if (ctx.removeExports && Analyzer.isExport(node))
+                {
+                    text = text.trimStart().substring(6).trimStart();
+                }
             }
 
             result.push(text);

@@ -27,5 +27,5 @@
     "clean": "tsc --build --clean",
     "experiment": "cd experiment && npm install && npm run build"
   },
-  "version": "0.2.100"
+  "version": "0.2.102"
 }
