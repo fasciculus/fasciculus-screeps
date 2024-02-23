@@ -3,7 +3,6 @@ import { Match, Matcher } from "./match";
 import { Blocking } from "./screeps/block";
 import { BodyTemplate } from "./screeps/body";
 import { Paths } from "./screeps/path";
-import { Stores } from "./screeps/store";
 import { Targets } from "./screeps/target";
 
 export class Harvest

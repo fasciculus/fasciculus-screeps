@@ -73,7 +73,6 @@ declare global
     interface ResourceConstructor
     {
         get safe(): Array<Resource>;
-        get safeAmount(): number;
     }
 
     interface Room

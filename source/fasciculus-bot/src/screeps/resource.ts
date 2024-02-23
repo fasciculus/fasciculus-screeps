@@ -6,7 +6,6 @@ export class Resources
 {
     private static _known: Cached<Map<ResourceId, Resource>> = Cached.simple(Resources.fetchKnown);
     private static _safe: Cached<Map<ResourceId, Resource>> = Cached.simple(Resources.fetchSafe);
-    private static _safeAmount: Cached<number> = Cached.simple(Resources.fetchSafeAmount);
 
     private static fetchKnown(): Map<ResourceId, Resource>
     {
@@ -23,19 +22,9 @@ export class Resources
         return resource.room?.safe || false;
     }
 
-    private static fetchSafeAmount(): number
-    {
-        return Resource.safe.sum(r => r.amount);
-    }
-
     private static safeResources(): Array<Resource>
     {
         return Resources._safe.value.data;
-    }
-
-    private static safeAmount(): number
-    {
-        return Resources._safeAmount.value;
     }
 
     private static assignees(this: Resource): Set<CreepId> { return Assignees.assignees(this.id); }
@@ -56,7 +45,6 @@ export class Resources
     private static _classProperties: any =
         {
             "safe": Objects.getter(Resources.safeResources),
-            "safeAmount": Objects.getter(Resources.safeAmount),
         };
 
 

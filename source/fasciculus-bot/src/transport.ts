@@ -5,6 +5,8 @@ import { Paths } from "./screeps/path";
 import { Stores } from "./screeps/store";
 import { Targets } from "./screeps/target";
 
+const TRANSPORT_MIN_AMOUNT = 20;
+
 export class Transport
 {
     static template = Transport.smallTemplate();
@@ -22,13 +24,18 @@ export class Transport
     static more(): boolean
     {
         const transporterCount: number = Creep.ofKind(TRANSPORTER).length;
-        const resourceAmount: number = Resource.safeAmount;
-        const energyFree: number = Transport.energyFree();
-        const transportersRequired: number = Math.min(resourceAmount, energyFree) / 100;
+        const resourceAmount: number = Transport.resourceAmount() / 100;
+        const energyFree: number = Transport.energyFree() / 50;
+        const transportersRequired: number = Math.min(resourceAmount, energyFree);
 
-        Transport.template = transporterCount > 0 ? Transport.largeTemplate() : Transport.smallTemplate();
+        Transport.template = transporterCount > 1 ? Transport.largeTemplate() : Transport.smallTemplate();
 
         return transporterCount < transportersRequired;
+    }
+
+    private static resourceAmount(): number
+    {
+        return Resource.safe.sum(r => r.amount >= TRANSPORT_MIN_AMOUNT ? r.amount : 0);
     }
 
     private static energyFree(): number
@@ -55,7 +62,7 @@ export class Transport
 
             if (resource)
             {
-                if (Stores.energyFree(transporter) == 0 || resource.amount < 10)
+                if (Stores.energyFree(transporter) == 0 || resource.amount < TRANSPORT_MIN_AMOUNT)
                 {
                     transporter.target = undefined;
                     continue;
@@ -105,6 +112,8 @@ export class Transport
     {
         for (let resource of Resource.safe)
         {
+            if (resource.amount < TRANSPORT_MIN_AMOUNT) continue;
+
             const count = Math.min(3, resource.amount / 100) - resource.assignees.size;
 
             for (let i = 0; i < count; ++i)
@@ -143,6 +152,7 @@ export class Transport
     private static resourceValue(transporter: Creep, resource: Resource): number
     {
         if (Stores.energyFree(transporter) == 0) return -1;
+        if (resource.amount < TRANSPORT_MIN_AMOUNT) return -1;
 
         return resource.amount / Paths.logCost(transporter.pos, resource.pos, 1);
     }
