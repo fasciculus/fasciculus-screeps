@@ -4,11 +4,11 @@ import { Screeps } from "./screeps/screeps";
 
 ES.setup();
 
-const VERSION = "0.1.5";
+const VERSION = "0.2.2";
 
 class Suicide
 {
-    private static done: boolean = false;
+    private static done: boolean = true;
 
     static execute(): boolean
     {

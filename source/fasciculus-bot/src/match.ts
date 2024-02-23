@@ -212,10 +212,20 @@ export class Matcher
         {
             const values: Array<number> = new Array();
             const creep: Creep = creeps[i];
+            const cache: Map<AssignableId, number> = new Map();
 
             for (let j = 0, m = targets.length; j < m; ++j)
             {
-                values.push(fnTargetValue(creep, targets[j]));
+                const target: Assignable = targets[j];
+                const targetId: AssignableId = target.id;
+                var value: Opt<number> = cache.get(targetId);
+
+                if (!value)
+                {
+                    cache.set(targetId, value = fnTargetValue(creep, target));
+                }
+
+                values.push(value);
             }
 
             targetValues.push(values);

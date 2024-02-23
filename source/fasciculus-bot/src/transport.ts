@@ -118,8 +118,7 @@ export class Transport
     {
         for (let spawn of Spawn.my)
         {
-            const energyFree = Stores.energyFree(spawn);
-            const count: number = Math.min(3, energyFree / 100);
+            const count: number = Stores.energyFree(spawn) / 100;
 
             for (let i = 0; i < count; ++i)
             {
