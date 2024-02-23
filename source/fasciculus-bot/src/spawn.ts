@@ -1,7 +1,8 @@
-import { HARVESTER, TRANSPORTER } from "./constant";
+import { HARVESTER, TRANSPORTER, WORKER } from "./constant";
 import { Harvest } from "./harvest";
 import { BodyTemplate } from "./screeps/body";
 import { Transport } from "./transport";
+import { Work } from "./work";
 
 export class Spawning
 {
@@ -14,6 +15,7 @@ export class Spawning
 
         if (Transport.more() && Spawning.spawn(TRANSPORTER, spawn)) return;
         if (Harvest.more() && Spawning.spawn(HARVESTER, spawn)) return;
+        if (Work.more() && Spawning.spawn(WORKER, spawn)) return;
     }
 
     private static spawn(kind: string, spawn: StructureSpawn): boolean
