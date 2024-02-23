@@ -36,6 +36,11 @@ export class Targets
         }
     }
 
+    static controller(target: Opt<Assignable>): Opt<StructureController>
+    {
+        return target && target instanceof StructureController ? target : undefined;
+    }
+
     static creep(target: Opt<Assignable>): Opt<Creep>
     {
         return target && target instanceof Creep ? target : undefined;
