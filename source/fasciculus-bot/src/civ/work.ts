@@ -1,5 +1,6 @@
 import { PATH_COST_OFFSET, WORKER } from "../common/constant";
 import { Matcher } from "../common/match";
+import { Blocking } from "../screeps/block";
 import { BodyTemplate } from "../screeps/body";
 import { Paths } from "../screeps/path";
 import { Stores } from "../screeps/store";
@@ -8,6 +9,8 @@ import { Targets } from "../screeps/target";
 export class Work
 {
     static template: BodyTemplate = BodyTemplate.createTemplate(WORKER, 1, WORK, CARRY, MOVE, MOVE);
+
+    static readonly blockingRegistered: boolean = Blocking.register(WORKER, Work.blocking);
 
     static more(): boolean
     {
@@ -172,5 +175,12 @@ export class Work
         {
             worker.travelTo(controller.pos, 2);
         }
+    }
+
+    private static blocking(creep: Creep): boolean
+    {
+        const target: Opt<Assignable> = creep.target;
+
+        return target !== undefined && creep.pos.inRangeTo(target, 2);
     }
 }
