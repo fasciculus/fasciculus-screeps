@@ -1,9 +1,5 @@
 
-export interface Match
-{
-    readonly creep: Creep;
-    readonly target: Assignable;
-}
+const MATCHER_MAX_ITERATIONS: number = 5;
 
 export type MatcherCreepValue = (target: Assignable, creep: Creep) => number;
 export type MatcherTargetValue = (creep: Creep, target: Assignable) => number;
@@ -29,21 +25,26 @@ export class Matcher
         this.fnTargetValue = fnTargetValue;
     }
 
-    private findMatches(): Array<Match>
+    private match(): void
     {
         const creepCount: number = this.creeps.length;
         const targetCount: number = this.targets.length;
 
-        if (creepCount == 0 || targetCount == 0) return new Array();
-        if (creepCount == 1 && targetCount == 1) return this.singleMatch();
+        if (creepCount == 0 || targetCount == 0) return;
+
+        if (creepCount == 1 && targetCount == 1)
+        {
+            this.creeps[0].target = this.targets[0];
+            return;
+        }
 
         this.populateValues();
         this.populatePrefs();
 
-        return creepCount < targetCount ? this.findCreepMatches() : this.findTargetMatches();
+        creepCount < targetCount ? this.matchCreeps() : this.matchTargets();
     }
 
-    private findCreepMatches(): Array<Match>
+    private matchCreeps(): void
     {
         const creepCount: number = this.creeps.length;
         const targetCount = this.targets.length;
@@ -53,6 +54,7 @@ export class Matcher
         const positions: Array<number> = new Array();
         const creepMatches: Array<number> = new Array();
         const targetMatches: Array<number> = new Array();
+        var iteration: number = 0;
 
         positions.length = creepCount;
         positions.fill(0);
@@ -63,7 +65,7 @@ export class Matcher
         targetMatches.length = targetCount;
         targetMatches.fill(-1);
 
-        for (let iteration = 0; iteration < 5; ++iteration)
+        for (; iteration < MATCHER_MAX_ITERATIONS; ++iteration)
         {
             var changed: boolean = false;
 
@@ -104,15 +106,18 @@ export class Matcher
                 }
             }
 
-            if (!changed) return this.createMatches(creepMatches);
+            if (!changed) break;
         }
 
-        console.log("Matcher exhausted!");
+        if (iteration == MATCHER_MAX_ITERATIONS)
+        {
+            console.log("Matcher exhausted!");
+        }
 
-        return this.createMatches(creepMatches);
+        this.assignMatches(creepMatches);
     }
 
-    private findTargetMatches(): Array<Match>
+    private matchTargets(): void
     {
         const creepCount: number = this.creeps.length;
         const targetCount = this.targets.length;
@@ -122,6 +127,7 @@ export class Matcher
         const positions: Array<number> = new Array();
         const creepMatches: Array<number> = new Array();
         const targetMatches: Array<number> = new Array();
+        var iteration: number = 0;
 
         positions.length = targetCount;
         positions.fill(0);
@@ -132,7 +138,7 @@ export class Matcher
         targetMatches.length = targetCount;
         targetMatches.fill(-1);
 
-        for (let iteration = 0; iteration < 5; ++iteration)
+        for (; iteration < MATCHER_MAX_ITERATIONS; ++iteration)
         {
             var changed: boolean = false;
 
@@ -173,19 +179,21 @@ export class Matcher
                 }
             }
 
-            if (!changed) return this.createMatches(creepMatches);
+            if (!changed) break;
         }
 
-        console.log("Matcher exhausted!");
+        if (iteration == MATCHER_MAX_ITERATIONS)
+        {
+            console.log("Matcher exhausted!");
+        }
 
-        return this.createMatches(creepMatches);
+        this.assignMatches(creepMatches);
     }
 
-    private createMatches(leftMatches: Array<number>): Array<Match>
+    private assignMatches(leftMatches: Array<number>): void
     {
         const creeps = this.creeps;
         const targets = this.targets;
-        const result: Array<Match> = new Array();
 
         for (let creep = 0, n = leftMatches.length; creep < n; ++creep)
         {
@@ -193,10 +201,8 @@ export class Matcher
 
             if (match < 0) continue;
 
-            result.push({ creep: creeps[creep], target: targets[match] });
+            creeps[creep].target = targets[match];
         }
-
-        return result;
     }
 
     private populateValues(): void
@@ -296,25 +302,10 @@ export class Matcher
         }
     }
 
-    private singleMatch(): Array<Match>
-    {
-        const match: Match = { creep: this.creeps[0], target: this.targets[0] };
-
-        return new Array(match);
-    }
-
-    static match(creeps: Array<Creep>, targets: Array<Assignable>, fnTargetValue: MatcherTargetValue, fnCreepValue: MatcherCreepValue): Array<Match>
+    static assign(creeps: Array<Creep>, targets: Array<Assignable>, fnTargetValue: MatcherTargetValue, fnCreepValue: MatcherCreepValue): void
     {
         const matcher: Matcher = new Matcher(creeps, targets, fnTargetValue, fnCreepValue);
 
-        return matcher.findMatches();
-    }
-
-    static assign(matches: Array<Match>): void
-    {
-        for (let match of matches)
-        {
-            match.creep.target = match.target;
-        }
+        matcher.match();
     }
 }

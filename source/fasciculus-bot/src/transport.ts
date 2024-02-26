@@ -92,10 +92,7 @@ export class Transport
 
         if (transporters.length == 0) return;
 
-        const targets: Array<Assignable> = Transport.collectTargets();
-        const matches: Array<Match> = Matcher.match(transporters, targets, Transport.targetValue, Transport.transporterValue);
-
-        Matcher.assign(matches);
+        Matcher.assign(transporters, Transport.collectTargets(), Transport.targetValue, Transport.transporterValue);
     }
 
     private static collectTargets(): Array<Assignable>

@@ -26,14 +26,11 @@ export class Harvest
 
     private static assign(): void
     {
-        const harvesters: Array<Creep> = Creep.ofKind(HARVESTER).filter(c => !c.target);
+        const harvesters: Array<Creep> = Creep.ofKind(HARVESTER).filter(h => !h.hasTarget);
 
         if (harvesters.length == 0) return;
 
-        const targets: Array<Assignable> = Harvest.collectTargets();
-        const matches: Array<Match> = Matcher.match(harvesters, targets, Harvest.targetValue, Harvest.harvesterValue);
-
-        Matcher.assign(matches);
+        Matcher.assign(harvesters, Harvest.collectTargets(), Harvest.targetValue, Harvest.harvesterValue);
     }
 
     private static collectTargets(): Array<Assignable>

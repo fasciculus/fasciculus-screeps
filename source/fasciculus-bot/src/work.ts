@@ -65,14 +65,11 @@ export class Work
 
     private static assign()
     {
-        const workers: Array<Creep> = Creep.ofKind(WORKER).filter(t => !t.hasTarget);
+        const workers: Array<Creep> = Creep.ofKind(WORKER).filter(w => !w.hasTarget);
 
         if (workers.length == 0) return;
 
-        const targets: Array<Assignable> = Work.collectTargets();
-        const matches: Array<Match> = Matcher.match(workers, targets, Work.targetValue, Work.workerValue);
-
-        Matcher.assign(matches);
+        Matcher.assign(workers, Work.collectTargets(), Work.targetValue, Work.workerValue);
     }
 
     private static collectTargets(): Array<Assignable>
