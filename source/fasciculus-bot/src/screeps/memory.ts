@@ -6,7 +6,7 @@ export class Memories
     {
         var result: Opt<any> = Memory[key];
 
-        if (!result)
+        if (result === undefined)
         {
             Memory[key] = result = initial;
         }

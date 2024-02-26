@@ -71,7 +71,7 @@ export class Harvest
     {
         const source: Opt<Source> = Targets.source(target);
 
-        return source ? source.workFree / Paths.logCost(harvester.pos, target.pos, 1) : -1;
+        return source !== undefined ? source.workFree / Paths.logCost(harvester.pos, target.pos, 1) : -1;
     }
 
     private static harvesterValue(target: Assignable, harvester: Creep): number
@@ -85,7 +85,7 @@ export class Harvest
         {
             const source: Opt<Source> = Targets.source(harvester.target);
 
-            if (!source) continue;
+            if (source === undefined) continue;
 
             if (harvester.pos.inRangeTo(source.pos, 1))
             {

@@ -13,13 +13,15 @@ export class Paths
     private static _opts: Cached<Map<string, PathFinderOpts>> = Cached.simple(() => new Map());
     private static _paths: Cached<Map<string, PathFinderPath>> = Cached.simple(() => new Map());
 
-    private static _noPath: PathFinderPath =
-        {
+    private static noPath(): PathFinderPath
+    {
+        return {
             path: new Array(),
             ops: 0,
             cost: 0,
             incomplete: true
         };
+    }
 
     private static createOpts(name: string): PathFinderOpts
     {
@@ -27,7 +29,7 @@ export class Paths
         var swampCost = 10;
         const room: Opt<Room> = Room.get(name);
 
-        if (room && room.attacked)
+        if (room !== undefined && room.attacked)
         {
             plainCost = 3;
             swampCost = 15;
@@ -43,7 +45,7 @@ export class Paths
 
     private static findPath(key: string, hint?: PathSearch): PathFinderPath
     {
-        if (!hint) return Paths._noPath;
+        if (hint === undefined) return Paths.noPath();
 
         const origin: RoomPosition = hint.origin;
         const goal = { pos: hint.goal, range: hint.range }

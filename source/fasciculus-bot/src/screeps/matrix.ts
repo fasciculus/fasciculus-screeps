@@ -9,7 +9,7 @@ export class Matrices
         const matrix: CostMatrix = new PathFinder.CostMatrix();
         const room: Opt<Room> = Room.get(name);
 
-        if (!room) return matrix;
+        if (room === undefined) return matrix;
 
         return room.attacked ? Matrices.populateAttacked(room, matrix) : Matrices.populatePeaceful(room, matrix);
     }

@@ -220,7 +220,7 @@ export class Matcher
                 const targetId: AssignableId = target.id;
                 var value: Opt<number> = cache.get(targetId);
 
-                if (!value)
+                if (value === undefined)
                 {
                     cache.set(targetId, value = fnTargetValue(creep, target));
                 }

@@ -43,7 +43,7 @@ export class Maps
     {
         var result: Opt<V> = this.get(key);
 
-        if (!result)
+        if (result === undefined)
         {
             this.set(key, result = create(key, hint));
         }

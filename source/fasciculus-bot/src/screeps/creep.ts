@@ -58,7 +58,7 @@ export class Creeps
 
         const direction: Opt<DirectionConstant> = Paths.direction(this.pos, goal, range);
 
-        return direction ? this.move(direction) : ERR_NO_PATH;
+        return direction !== undefined ? this.move(direction) : ERR_NO_PATH;
     }
 
     private static assignees(this: Creep): Set<CreepId> { return Assignees.assignees(this.id); }
@@ -74,7 +74,11 @@ export class Creeps
 
     private static ofKind(kind: string): Array<Creep>
     {
-        return Creeps._ofKind.value.get(kind) || new Array();
+        var result: Opt<Array<Creep>> = Creeps._ofKind.value.get(kind);
+
+        if (result === undefined) return new Array();
+
+        return result;
     }
 
     private static _instanceProperties: any =

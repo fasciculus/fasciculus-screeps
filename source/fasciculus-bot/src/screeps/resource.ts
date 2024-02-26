@@ -19,7 +19,11 @@ export class Resources
 
     private static isSafe(id: ResourceId, resource: Resource): boolean
     {
-        return resource.room?.safe || false;
+        const room: Opt<Room> = resource.room;
+
+        if (room === undefined) return false;
+
+        return room.safe;
     }
 
     private static safeResources(): Array<Resource>

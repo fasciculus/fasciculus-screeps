@@ -109,9 +109,9 @@ export class BodyInfos
 
     private static createInfo(id: CreepId, hint?: Creep): BodyInfo
     {
-        const creep: Opt<Creep> = hint || Game.get(id);
+        const creep: Opt<Creep> = hint === undefined ? Game.get(id) : undefined;
 
-        if (!creep) return { work: 0 };
+        if (creep === undefined) return { work: 0 };
 
         var work: number = 0;
 

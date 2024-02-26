@@ -20,14 +20,18 @@ export class Games
 
     private static get<T extends _HasId>(id: Opt<Id<T>>): Opt<T>
     {
-        let result: T | null = id ? Game.getObjectById(id) : null;
+        let result: T | null = id !== undefined ? Game.getObjectById(id) : null;
 
-        return result || undefined;
+        if (result == null) return undefined;
+
+        return result;
     }
 
     private static all<T extends _HasId>(ids: Opt<Set<Id<T>>>): Array<T>
     {
-        return ids ? Array.defined(ids.map(Games.get)) : new Array();
+        if (ids === undefined) return new Array();
+
+        return Array.defined(ids.map(Games.get));
     }
 
     private static existing<T extends _HasId>(ids: Set<Id<T>>): Set<Id<T>>

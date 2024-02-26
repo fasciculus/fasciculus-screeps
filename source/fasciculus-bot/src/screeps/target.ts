@@ -12,7 +12,7 @@ export class Targets
     {
         const id: Opt<AssignableId> = Targets._targets.get(creep.id);
 
-        return id ? Game.get(id) : undefined;
+        return id !== undefined ? Game.get(id) : undefined;
     }
 
     static setTarget(creep: Creep, newTarget: Opt<Assignable>): void
@@ -20,12 +20,12 @@ export class Targets
         const creepId: CreepId = creep.id;
         const oldTarget: Opt<Assignable> = Targets.getTarget(creep);
 
-        if (oldTarget)
+        if (oldTarget !== undefined)
         {
             oldTarget.unassign(creepId);
         }
 
-        if (newTarget)
+        if (newTarget !== undefined)
         {
             Targets._targets.set(creepId, newTarget.id);
             newTarget.assign(creepId);
@@ -38,27 +38,37 @@ export class Targets
 
     static controller(target: Opt<Assignable>): Opt<StructureController>
     {
-        return target && target instanceof StructureController ? target : undefined;
+        if (target === undefined) return undefined;
+
+        return target instanceof StructureController ? target : undefined;
     }
 
     static creep(target: Opt<Assignable>): Opt<Creep>
     {
-        return target && target instanceof Creep ? target : undefined;
+        if (target === undefined) return undefined;
+
+        return target instanceof Creep ? target : undefined;
     }
 
     static resource(target: Opt<Assignable>): Opt<Resource>
     {
-        return target && target instanceof Resource ? target : undefined;
+        if (target === undefined) return undefined;
+
+        return target instanceof Resource ? target : undefined;
     }
 
     static source(target: Opt<Assignable>): Opt<Source>
     {
-        return target && target instanceof Source ? target : undefined;
+        if (target === undefined) return undefined;
+
+        return target instanceof Source ? target : undefined;
     }
 
     static spawn(target: Opt<Assignable>): Opt<StructureSpawn>
     {
-        return target && target instanceof StructureSpawn ? target : undefined;
+        if (target === undefined) return undefined;
+
+        return target instanceof StructureSpawn ? target : undefined;
     }
 
     static cleanup()

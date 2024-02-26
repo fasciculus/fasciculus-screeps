@@ -23,7 +23,11 @@ export class Names
     {
         kind = Names.kind(kind);
 
-        const nextIndex: number = (names[kind] || 0) + 1;
+        var nextIndex: Opt<number> = names[kind];
+
+        if (nextIndex === undefined) nextIndex = 0;
+
+        ++nextIndex;
 
         names[kind] = nextIndex;
 

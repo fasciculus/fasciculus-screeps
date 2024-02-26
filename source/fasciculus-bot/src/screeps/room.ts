@@ -42,37 +42,51 @@ class Finder
 
     static obstacles(room: Opt<Room>): Array<AnyStructure>
     {
-        return room ? room.find<FIND_STRUCTURES, AnyStructure>(FIND_STRUCTURES, Finder._obstacleOpts) : new Array();
+        if (room === undefined) return new Array();
+
+        return room.find<FIND_STRUCTURES, AnyStructure>(FIND_STRUCTURES, Finder._obstacleOpts);
     }
 
     static resources(room: Opt<Room>): Array<Resource>
     {
-        return room ? room.find<FIND_DROPPED_RESOURCES, Resource>(FIND_DROPPED_RESOURCES) : new Array();
+        if (room === undefined) return new Array();
+
+        return room.find<FIND_DROPPED_RESOURCES, Resource>(FIND_DROPPED_RESOURCES);
     }
 
     static sources(room: Opt<Room>): Array<Source>
     {
-        return room ? room.find<FIND_SOURCES, Source>(FIND_SOURCES) : new Array();
+        if (room === undefined) return new Array();
+
+        return room.find<FIND_SOURCES, Source>(FIND_SOURCES);
     }
 
     static roads(room: Opt<Room>): Array<StructureRoad>
     {
-        return room ? room.find<FIND_STRUCTURES, StructureRoad>(FIND_STRUCTURES, Finder._roadOpts) : new Array();
+        if (room === undefined) return new Array();
+
+        return room.find<FIND_STRUCTURES, StructureRoad>(FIND_STRUCTURES, Finder._roadOpts);
     }
 
     static myRamparts(room: Opt<Room>): Array<StructureRampart>
     {
-        return room ? room.find<FIND_MY_STRUCTURES, StructureRampart>(FIND_MY_STRUCTURES, Finder._myRampartOpts) : new Array();
+        if (room === undefined) return new Array();
+
+        return room.find<FIND_MY_STRUCTURES, StructureRampart>(FIND_MY_STRUCTURES, Finder._myRampartOpts);
     }
 
     static creeps(room: Opt<Room>): Array<Creep>
     {
-        return room ? room.find<FIND_CREEPS, Creep>(FIND_CREEPS) : new Array();
+        if (room === undefined) return new Array();
+
+        return room.find<FIND_CREEPS, Creep>(FIND_CREEPS);
     }
 
     static hostileCreeps(room: Opt<Room>): Array<Creep>
     {
-        return room ? room.find<FIND_HOSTILE_CREEPS, Creep>(FIND_HOSTILE_CREEPS) : new Array();
+        if (room === undefined) return new Array();
+
+        return room.find<FIND_HOSTILE_CREEPS, Creep>(FIND_HOSTILE_CREEPS);
     }
 }
 
@@ -111,56 +125,56 @@ export class Rooms
 
     private static findObstacles(name: string, hint?: Room): Array<AnyStructure>
     {
-        const room: Opt<Room> = hint || Rooms._known.value.get(name);
+        const room: Opt<Room> = hint === undefined ? Rooms._known.value.get(name) : hint;
 
         return Finder.obstacles(room);
     }
 
     private static findResources(name: string, hint?: Room): Array<Resource>
     {
-        const room: Opt<Room> = hint || Rooms._known.value.get(name);
+        const room: Opt<Room> = hint === undefined ? Rooms._known.value.get(name) : hint;
 
         return Finder.resources(room);
     }
 
     private static findSources(name: string, hint?: Room): Set<SourceId>
     {
-        const room: Opt<Room> = hint || Rooms._known.value.get(name);
+        const room: Opt<Room> = hint === undefined ? Rooms._known.value.get(name) : hint;
 
         return Set.from(Finder.sources(room).map(s => s.id));
     }
 
     private static findRoads(name: string, hint?: Room): Array<StructureRoad>
     {
-        const room: Opt<Room> = hint || Rooms._known.value.get(name);
+        const room: Opt<Room> = hint === undefined ? Rooms._known.value.get(name) : hint;
 
         return Finder.roads(room);
     }
 
     private static findMyRamparts(name: string, hint?: Room): Array<StructureRampart>
     {
-        const room: Opt<Room> = hint || Rooms._known.value.get(name);
+        const room: Opt<Room> = hint === undefined ? Rooms._known.value.get(name) : hint;
 
         return Finder.myRamparts(room);
     }
 
     private static findCreeps(name: string, hint?: Room): Array<Creep>
     {
-        const room: Opt<Room> = hint || Rooms._known.value.get(name);
+        const room: Opt<Room> = hint === undefined ? Rooms._known.value.get(name) : hint;
 
         return Finder.creeps(room);
     }
 
     private static findHostileCreeps(name: string, hint?: Room): Array<Creep>
     {
-        const room: Opt<Room> = hint || Rooms._known.value.get(name);
+        const room: Opt<Room> = hint === undefined ? Rooms._known.value.get(name) : hint;
 
         return Finder.hostileCreeps(room);
     }
 
     private static isAttacked(name: string, hint?: Room): boolean
     {
-        const room: Opt<Room> = hint || Rooms._known.value.get(name);
+        const room: Opt<Room> = hint === undefined ? Rooms._known.value.get(name) : hint;
 
         return room ? room.safe && room.hostileCreeps.length > 0 : false;
     }
@@ -172,12 +186,16 @@ export class Rooms
 
     private static energy(this: Room): number
     {
-        return this.energyAvailable || 0;
+        const result: Opt<number> = this.energyAvailable;
+
+        return result === undefined ? 0 : result;
     }
 
     private static energyCapacity(this: Room): number
     {
-        return this.energyCapacityAvailable || 0;
+        const result: Opt<number> = this.energyCapacityAvailable;
+
+        return result === undefined ? 0 : result;
     }
 
     private static terrain(this: Room): RoomTerrain

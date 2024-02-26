@@ -7,7 +7,7 @@ export class Objects
 
         const keys = Object.keys(o);
 
-        if (!keys || !Array.isArray(keys) || keys.length == 0) return new Set();
+        if (keys === undefined || !Array.isArray(keys) || keys.length == 0) return new Set();
 
         return new Set(keys);
     }
@@ -18,7 +18,7 @@ export class Objects
 
         const values = Object.values(o);
 
-        if (!values || !Array.isArray(values) || values.length == 0) return new Array<T>();
+        if (values === undefined || !Array.isArray(values) || values.length == 0) return new Array<T>();
 
         return values;
     }

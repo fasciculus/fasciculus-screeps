@@ -26,7 +26,7 @@ export class Terrains
         const name: string = room.name;
         var result: Opt<RoomTerrain> = terrains.get(name);
 
-        if (!result)
+        if (result === undefined)
         {
             terrains.set(name, result = room.getTerrain());
         }
@@ -39,7 +39,7 @@ export class Terrains
         const terrains: Map<string, RoomTerrain> = Terrains._terrains.value;
         var result: Opt<RoomTerrain> = terrains.get(name);
 
-        if (!result)
+        if (result === undefined)
         {
             terrains.set(name, result = new Room.Terrain(name))
         }

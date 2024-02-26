@@ -10,7 +10,7 @@ export class Spawning
     {
         const spawn: Opt<StructureSpawn> = StructureSpawn.best;
 
-        if (!spawn) return;
+        if (spawn === undefined) return;
         if (spawn.roomEnergy < BodyTemplate.minCost) return;
 
         if (Transport.more() && Spawning.spawn(TRANSPORTER, spawn)) return;
@@ -22,7 +22,7 @@ export class Spawning
     {
         const template: Opt<BodyTemplate> = BodyTemplate.get(kind);
 
-        if (!template) return false;
+        if (template === undefined) return false;
 
         const currentEnergy: number = spawn.roomEnergy;
         const maxEnergy: number = spawn.roomEnergyCapacity;

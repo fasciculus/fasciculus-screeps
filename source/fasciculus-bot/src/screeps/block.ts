@@ -16,12 +16,12 @@ export class Blocking
 
     private static getBlocking(id: CreepId, creep?: Creep): boolean
     {
-        if (!creep) return false;
+        if (creep === undefined) return false;
 
         const kind: string = creep.kind;
         const callback: Opt<BlockingCallback> = Blocking._callbacks.get(kind);
 
-        if (!callback) return false;
+        if (callback === undefined) return false;
 
         return callback(creep);
     }

@@ -56,11 +56,11 @@ export class Transport
         {
             const target: Opt<Assignable> = transporter.target;
 
-            if (!target) continue;
+            if (target === undefined) continue;
 
             const resource: Opt<Resource> = Targets.resource(target);
 
-            if (resource)
+            if (resource !== undefined)
             {
                 if (Stores.energyFree(transporter) == 0 || resource.amount < TRANSPORT_MIN_AMOUNT)
                 {
@@ -73,7 +73,7 @@ export class Transport
 
             const spawn: Opt<StructureSpawn> = Targets.spawn(target);
 
-            if (spawn)
+            if (spawn !== undefined)
             {
                 if (Stores.energy(transporter) == 0 || Stores.energyFree(spawn) == 0)
                 {
@@ -140,11 +140,11 @@ export class Transport
     {
         const resource: Opt<Resource> = Targets.resource(target);
 
-        if (resource) return Transport.resourceValue(transporter, resource);
+        if (resource !== undefined) return Transport.resourceValue(transporter, resource);
 
         const spawn: Opt<StructureSpawn> = Targets.spawn(target);
 
-        if (spawn) return Transport.spawnValue(transporter, spawn);
+        if (spawn !== undefined) return Transport.spawnValue(transporter, spawn);
 
         return -1;
     }
@@ -179,13 +179,13 @@ export class Transport
         {
             const target: Opt<Assignable> = transporter.target;
 
-            if (!target) continue;
+            if (target === undefined) continue;
 
             if (transporter.pos.inRangeTo(target.pos, 1))
             {
                 const resource: Opt<Resource> = Targets.resource(target);
 
-                if (resource)
+                if (resource !== undefined)
                 {
                     transporter.pickup(resource);
                     continue;
@@ -193,7 +193,7 @@ export class Transport
 
                 const spawn: Opt<StructureSpawn> = Targets.spawn(target);
 
-                if (spawn)
+                if (spawn !== undefined)
                 {
                     transporter.transfer(spawn, RESOURCE_ENERGY);
                     continue;
