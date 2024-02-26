@@ -1,8 +1,8 @@
-import { HARVESTER, TRANSPORTER, WORKER } from "./constant";
-import { Harvest } from "./harvest";
+import { Harvest } from "./civ/harvest";
 import { BodyTemplate } from "./screeps/body";
-import { Transport } from "./transport";
-import { Work } from "./work";
+import { Transport } from "./civ/transport";
+import { HARVESTER, TRANSPORTER, WORKER } from "./common/constant";
+import { Work } from "./civ/work";
 
 export class Spawning
 {
@@ -31,7 +31,7 @@ export class Spawning
 
         const body: Opt<Array<BodyPartConstant>> = template.createBody(currentEnergy);
 
-        if (!body) return false;
+        if (body === undefined) return false;
 
         return spawn.spawn(kind, body) == OK;
     }

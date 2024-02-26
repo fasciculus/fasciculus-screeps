@@ -1,7 +1,7 @@
-import { Harvest } from "./harvest";
+import { Harvest } from "./civ/harvest";
 import { Spawning } from "./spawn";
-import { Transport } from "./transport";
-import { Work } from "./work";
+import { Transport } from "./civ/transport";
+import { Work } from "./civ/work";
 
 export class Scheduler
 {

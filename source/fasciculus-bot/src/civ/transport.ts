@@ -1,9 +1,9 @@
-import { PATH_COST_OFFSET, TRANSPORTER } from "./constant";
-import { Matcher } from "./match";
-import { BodyTemplate } from "./screeps/body";
-import { Paths } from "./screeps/path";
-import { Stores } from "./screeps/store";
-import { Targets } from "./screeps/target";
+import { PATH_COST_OFFSET, TRANSPORTER } from "../common/constant";
+import { Matcher } from "../common/match";
+import { BodyTemplate } from "../screeps/body";
+import { Paths } from "../screeps/path";
+import { Stores } from "../screeps/store";
+import { Targets } from "../screeps/target";
 
 const TRANSPORT_MIN_AMOUNT = 20;
 

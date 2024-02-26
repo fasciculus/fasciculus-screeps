@@ -1,9 +1,9 @@
-import { PATH_COST_OFFSET, WORKER } from "./constant";
-import { Matcher } from "./match";
-import { BodyTemplate } from "./screeps/body";
-import { Paths } from "./screeps/path";
-import { Stores } from "./screeps/store";
-import { Targets } from "./screeps/target";
+import { PATH_COST_OFFSET, WORKER } from "../common/constant";
+import { Matcher } from "../common/match";
+import { BodyTemplate } from "../screeps/body";
+import { Paths } from "../screeps/path";
+import { Stores } from "../screeps/store";
+import { Targets } from "../screeps/target";
 
 export class Work
 {

@@ -1,9 +1,9 @@
-import { HARVESTER, PATH_COST_OFFSET } from "./constant";
-import { Matcher } from "./match";
-import { Blocking } from "./screeps/block";
-import { BodyTemplate } from "./screeps/body";
-import { Paths } from "./screeps/path";
-import { Targets } from "./screeps/target";
+import { HARVESTER, PATH_COST_OFFSET } from "../common/constant";
+import { Matcher } from "../common/match";
+import { Blocking } from "../screeps/block";
+import { BodyTemplate } from "../screeps/body";
+import { Paths } from "../screeps/path";
+import { Targets } from "../screeps/target";
 
 export class Harvest
 {
