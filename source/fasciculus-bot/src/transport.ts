@@ -1,5 +1,5 @@
-import { HARVESTER, TRANSPORTER } from "./constant";
-import { Match, Matcher } from "./match";
+import { PATH_COST_OFFSET, TRANSPORTER } from "./constant";
+import { Matcher } from "./match";
 import { BodyTemplate } from "./screeps/body";
 import { Paths } from "./screeps/path";
 import { Stores } from "./screeps/store";
@@ -151,7 +151,7 @@ export class Transport
         if (Stores.energyFree(transporter) == 0) return -1;
         if (resource.amount < TRANSPORT_MIN_AMOUNT) return -1;
 
-        return resource.amount / Paths.logCost(transporter.pos, resource.pos, 1);
+        return resource.amount / Paths.cost(transporter.pos, resource.pos, 1, PATH_COST_OFFSET);
     }
 
     private static spawnValue(transporter: Creep, spawn: StructureSpawn): number
@@ -162,12 +162,12 @@ export class Transport
 
         if (energyFree == 0) return -1;
 
-        return energyFree / Paths.logCost(transporter.pos, spawn.pos, 1);
+        return energyFree / Paths.cost(transporter.pos, spawn.pos, 1, PATH_COST_OFFSET);
     }
 
     private static transporterValue(target: Assignable, transporter: Creep): number
     {
-        return Paths.logCost(transporter.pos, target.pos, 1);
+        return Paths.cost(transporter.pos, target.pos, 1, PATH_COST_OFFSET);
     }
 
     private static transport(): void

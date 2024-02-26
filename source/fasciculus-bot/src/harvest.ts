@@ -1,5 +1,5 @@
-import { HARVESTER } from "./constant";
-import { Match, Matcher } from "./match";
+import { HARVESTER, PATH_COST_OFFSET } from "./constant";
+import { Matcher } from "./match";
 import { Blocking } from "./screeps/block";
 import { BodyTemplate } from "./screeps/body";
 import { Paths } from "./screeps/path";
@@ -68,12 +68,12 @@ export class Harvest
     {
         const source: Opt<Source> = Targets.source(target);
 
-        return source !== undefined ? source.workFree / Paths.logCost(harvester.pos, target.pos, 1) : -1;
+        return source !== undefined ? source.workFree / Paths.cost(harvester.pos, target.pos, 1, PATH_COST_OFFSET) : -1;
     }
 
     private static harvesterValue(target: Assignable, harvester: Creep): number
     {
-        return 1.0 / Paths.logCost(harvester.pos, target.pos, 1);
+        return 1.0 / Paths.cost(harvester.pos, target.pos, 1, PATH_COST_OFFSET);
     }
 
     private static harvest(): void

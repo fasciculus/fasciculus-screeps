@@ -1,5 +1,5 @@
-import { WORKER } from "./constant";
-import { Match, Matcher } from "./match";
+import { PATH_COST_OFFSET, WORKER } from "./constant";
+import { Matcher } from "./match";
 import { BodyTemplate } from "./screeps/body";
 import { Paths } from "./screeps/path";
 import { Stores } from "./screeps/store";
@@ -109,19 +109,19 @@ export class Work
     {
         if (Stores.energyFree(worker) == 0) return -1;
 
-        return Stores.energy(spawn) / Paths.logCost(worker.pos, spawn.pos, 1);
+        return Stores.energy(spawn) / Paths.cost(worker.pos, spawn.pos, 1, PATH_COST_OFFSET);
     }
 
     private static controllerValue(worker: Creep, controller: StructureController): number
     {
         if (Stores.energy(worker) == 0) return -1;
 
-        return 1.0 / Paths.logCost(worker.pos, controller.pos, 1);
+        return 1.0 / Paths.cost(worker.pos, controller.pos, 1, PATH_COST_OFFSET);
     }
 
     private static workerValue(target: Assignable, worker: Creep): number
     {
-        return Paths.logCost(worker.pos, target.pos, 1);
+        return Paths.cost(worker.pos, target.pos, 1, PATH_COST_OFFSET);
     }
 
     private static work()

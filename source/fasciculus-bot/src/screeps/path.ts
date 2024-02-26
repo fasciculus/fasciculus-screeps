@@ -125,17 +125,19 @@ export class Paths
         return Paths.dirFromTo(origin, pathPath[0]);
     }
 
-    static cost(origin: RoomPosition, goal: RoomPosition, range: number): Opt<number>
+    static optCost(origin: RoomPosition, goal: RoomPosition, range: number): Opt<number>
     {
         const path: PathFinderPath = Paths.path(origin, goal, range);
 
         return path.incomplete ? undefined : Math.max(0.1, path.cost);
     }
 
-    static logCost(origin: RoomPosition, goal: RoomPosition, range: number): number
+    static cost(origin: RoomPosition, goal: RoomPosition, range: number, offset: number): number
     {
-        const cost: Opt<number> = Paths.cost(origin, goal, range);
+        var cost: Opt<number> = Paths.optCost(origin, goal, range);
 
-        return cost ? Math.log(Math.max(1, cost)) : 999999;
+        if (cost === undefined) cost = 999999;
+
+        return cost + offset;
     }
 }
