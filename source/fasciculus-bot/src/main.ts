@@ -1,26 +1,11 @@
+import { Civilians } from "./civ/civilian";
+import { Suicide } from "./common/suicide";
+import { Version } from "./common/version";
 import { ES } from "./es/es";
-import { Scheduler } from "./schedule";
 import { Screeps } from "./screeps/screeps";
+import { Spawning } from "./spawn";
 
 ES.setup();
-
-const VERSION = "0.4.2";
-
-class Suicide
-{
-    private static done: boolean = true;
-
-    static execute(): boolean
-    {
-        if (Suicide.done) return true;
-
-        Creep.my.forEach(c => c.suicide());
-
-        Suicide.done = true;
-
-        return false;
-    }
-}
 
 class Experiments
 {
@@ -37,23 +22,12 @@ export const loop = function ()
 
     Experiments.run();
 
-    if (Suicide.execute())
+    if (Suicide.survive())
     {
-        Scheduler.run();
+        Civilians.run();
+        Spawning.run();
     }
 
     Screeps.cleanup();
 }
 
-class Version
-{
-    private static done: boolean = false;
-
-    static run()
-    {
-        if (Version.done) return;
-
-        console.log(`fasciculus.bot ${VERSION}`);
-        Version.done = true;
-    }
-}
