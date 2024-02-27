@@ -3,6 +3,7 @@ import { BodyInfos } from "./body";
 import { Cached } from "./cache";
 import { Controllers } from "./controller";
 import { Creeps } from "./creep";
+import { Flags } from "./flag";
 import { Games } from "./game";
 import { Memories } from "./memory";
 import { RoomPositions } from "./pos";
@@ -19,6 +20,7 @@ export class Screeps
     {
         Controllers.setup();
         Creeps.setup();
+        Flags.setup();
         Games.setup();
         Memories.setup();
         Resources.setup();

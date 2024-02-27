@@ -3,6 +3,7 @@ declare global
 {
     type ControllerId = Id<StructureController>;
     type CreepId = Id<Creep>;
+    type FlagId = Id<Flag>;
     type ResourceId = Id<Resource>;
     type SourceId = Id<Source>;
     type SpawnId = Id<StructureSpawn>;
@@ -47,6 +48,11 @@ declare global
         get my(): Array<Creep>;
 
         ofKind(kind: string): Array<Creep>;
+    }
+
+    interface Flag extends _HasId
+    {
+        id: Id<this>;
     }
 
     interface Game

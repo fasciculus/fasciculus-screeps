@@ -1,16 +1,36 @@
 import { Objects } from "../es/object";
 import { Cached } from "./cache";
 
+export class FlagIds
+{
+    static isFlagId(id: string): id is FlagId
+    {
+        return id.startsWith("F_");
+    }
+
+    static flagId(flag: Flag): FlagId
+    {
+        return ("F_" + flag.name) as FlagId;
+    }
+}
+
 export class Games
 {
     private static _unknownUsername: string = "unknown";
     private static _username: Cached<string> = Cached.simple(Games.fetchUsername);
+
+    private static _flags: Cached<Map<FlagId, Flag>> = Cached.simple(Games.fetchFlags);
 
     private static fetchUsername(): string
     {
         const spawns: Array<StructureSpawn> = Objects.values(Game.spawns);
 
         return spawns.length == 0 ? Games._unknownUsername : spawns[0].owner.username;
+    }
+
+    private static fetchFlags(): Map<FlagId, Flag>
+    {
+        return Objects.values(Game.flags).indexBy(f => f.id);
     }
 
     private static username(): string
@@ -20,7 +40,10 @@ export class Games
 
     private static get<T extends _HasId>(id: Opt<Id<T>>): Opt<T>
     {
-        let result: T | null = id !== undefined ? Game.getObjectById(id) : null;
+        if (id === undefined) return undefined;
+        if (FlagIds.isFlagId(id)) return Games._flags.value.get(id) as Opt<T>;
+
+        const result: T | null = Game.getObjectById(id);
 
         if (result == null) return undefined;
 
