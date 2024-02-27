@@ -1,12 +1,12 @@
 import { Objects } from "../es/object";
 import { Assignees } from "./assign";
-import { FlagIds } from "./game";
+import { Ids } from "./id";
 
 export class Flags
 {
     private static id(this: Flag): FlagId
     {
-        return FlagIds.flagId(this);
+        return Ids.flagId(this);
     }
 
     private static assignees(this: Flag): Set<CreepId> { return Assignees.assignees(this.id); }

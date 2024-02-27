@@ -1,18 +1,6 @@
 import { Objects } from "../es/object";
 import { Cached } from "./cache";
-
-export class FlagIds
-{
-    static isFlagId(id: string): id is FlagId
-    {
-        return id.startsWith("F_");
-    }
-
-    static flagId(flag: Flag): FlagId
-    {
-        return ("F_" + flag.name) as FlagId;
-    }
-}
+import { Ids } from "./id";
 
 export class Games
 {
@@ -41,7 +29,7 @@ export class Games
     private static get<T extends _HasId>(id: Opt<Id<T>>): Opt<T>
     {
         if (id === undefined) return undefined;
-        if (FlagIds.isFlagId(id)) return Games._flags.value.get(id) as Opt<T>;
+        if (Ids.isFlagId(id)) return Games._flags.value.get(id) as Opt<T>;
 
         const result: T | null = Game.getObjectById(id);
 
