@@ -54,7 +54,14 @@ declare global
     {
         get id(): Id<this>;
         get kind(): string;
-   }
+    }
+
+    interface FlagConstructor
+    {
+        get my(): Array<Flag>;
+
+        ofKind(kind: string): Array<Flag>;
+    }
 
     interface Game
     {
