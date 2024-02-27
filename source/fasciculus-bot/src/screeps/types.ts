@@ -10,7 +10,7 @@ declare global
 
     type BodyInfo = { work: number };
 
-    type Assignable = Creep | Resource | Source | StructureController | StructureSpawn;
+    type Assignable = Creep | Flag | Resource | Source | StructureController | StructureSpawn;
     type AssignableId = Id<Assignable>;
 
     interface _Assignable
@@ -50,7 +50,7 @@ declare global
         ofKind(kind: string): Array<Creep>;
     }
 
-    interface Flag extends _HasId
+    interface Flag extends _HasId, _Assignable
     {
         id: Id<this>;
     }
