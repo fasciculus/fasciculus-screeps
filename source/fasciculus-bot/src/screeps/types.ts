@@ -52,8 +52,9 @@ declare global
 
     interface Flag extends _HasId, _Assignable
     {
-        id: Id<this>;
-    }
+        get id(): Id<this>;
+        get kind(): string;
+   }
 
     interface Game
     {

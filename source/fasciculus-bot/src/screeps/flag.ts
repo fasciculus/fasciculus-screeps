@@ -1,12 +1,18 @@
 import { Objects } from "../es/object";
 import { Assignees } from "./assign";
 import { Ids } from "./id";
+import { Names } from "./name";
 
 export class Flags
 {
     private static id(this: Flag): FlagId
     {
         return Ids.flagId(this);
+    }
+
+    private static kind(this: Flag): string
+    {
+        return Names.kind(this.name);
     }
 
     private static assignees(this: Flag): Set<CreepId> { return Assignees.assignees(this.id); }
@@ -18,6 +24,7 @@ export class Flags
     private static _instanceProperties: any =
         {
             "id": Objects.getter(Flags.id),
+            "kind": Objects.getter(Flags.kind),
             "assignees": Objects.getter(Flags.assignees),
             "assignedCreeps": Objects.getter(Flags.assignedCreeps),
             "assign": Objects.function(Flags.assign),
