@@ -110,6 +110,7 @@ export class Work
 
     private static spawnValue(worker: Creep, spawn: StructureSpawn): number
     {
+        if (Stores.energy(worker) > 0) return -1;
         if (Stores.energyFree(worker) == 0) return -1;
 
         return Stores.energy(spawn) / Paths.cost(worker.pos, spawn.pos, 1, PATH_COST_OFFSET);
