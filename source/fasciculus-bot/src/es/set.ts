@@ -29,11 +29,6 @@ export class Sets
         return result;
     }
 
-    private static empty<T>(): Set<T>
-    {
-        return new Set();
-    }
-
     private static from<T>(iterable?: Iterable<T> | null): Set<T>
     {
         return iterable !== undefined ? new Set(iterable) : new Set();
@@ -48,7 +43,6 @@ export class Sets
 
     private static _classProperties: any =
         {
-            "empty": Objects.function(Sets.empty),
             "from": Objects.function(Sets.from),
         }
 

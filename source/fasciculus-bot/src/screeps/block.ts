@@ -5,7 +5,7 @@ export type BlockingCallback = (creep: Creep) => boolean;
 export class Blocking
 {
     private static _callbacks: Map<string, BlockingCallback> = new Map();
-    private static _blocking: Cached<Map<CreepId, boolean>> = Cached.simple(Map.empty<CreepId, boolean>);
+    private static _blocking: Cached<Map<CreepId, boolean>> = Cached.simple(() => new Map());
 
     static register(kind: string, callback: BlockingCallback): boolean
     {

@@ -10,8 +10,8 @@ interface PathSearch
 
 export class Paths
 {
-    private static _opts: Cached<Map<string, PathFinderOpts>> = Cached.simple(Map.empty<string, PathFinderOpts>);
-    private static _paths: Cached<Map<string, PathFinderPath>> = Cached.simple(Map.empty<string, PathFinderPath>);
+    private static _opts: Cached<Map<string, PathFinderOpts>> = Cached.simple(() => new Map());
+    private static _paths: Cached<Map<string, PathFinderPath>> = Cached.simple(() => new Map());
 
     private static noPath(): PathFinderPath
     {

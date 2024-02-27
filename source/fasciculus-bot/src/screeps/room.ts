@@ -95,18 +95,18 @@ export class Rooms
     private static _known: Cached<Map<string, Room>> = Cached.simple(Rooms.fetchKnown);
     private static _safe: Cached<Map<string, Room>> = Cached.simple(Rooms.fetchSafe);
 
-    private static _obstacles: Cached<Map<string, Array<AnyStructure>>> = Cached.simple(Map.empty<string, Array<AnyStructure>>);
-    private static _resources: Cached<Map<string, Array<Resource>>> = Cached.simple(Map.empty<string, Array<Resource>>);
+    private static _obstacles: Cached<Map<string, Array<AnyStructure>>> = Cached.simple(() => new Map());
+    private static _resources: Cached<Map<string, Array<Resource>>> = Cached.simple(() => new Map());
 
     private static _sources: Map<string, Set<SourceId>> = new Map();
 
-    private static _roads: Cached<Map<string, Array<StructureRoad>>> = Cached.simple(Map.empty<string, Array<StructureRoad>>);
-    private static _myRamparts: Cached<Map<string, Array<StructureRampart>>> = Cached.simple(Map.empty<string, Array<StructureRampart>>);
+    private static _roads: Cached<Map<string, Array<StructureRoad>>> = Cached.simple(() => new Map());
+    private static _myRamparts: Cached<Map<string, Array<StructureRampart>>> = Cached.simple(() => new Map());
 
-    private static _creeps: Cached<Map<string, Array<Creep>>> = Cached.simple(Map.empty<string, Array<Creep>>);
-    private static _hostileCreeps: Cached<Map<string, Array<Creep>>> = Cached.simple(Map.empty<string, Array<Creep>>);
+    private static _creeps: Cached<Map<string, Array<Creep>>> = Cached.simple(() => new Map());
+    private static _hostileCreeps: Cached<Map<string, Array<Creep>>> = Cached.simple(() => new Map());
 
-    private static _attacked: Cached<Map<string, boolean>> = Cached.simple(Map.empty<string, boolean>);
+    private static _attacked: Cached<Map<string, boolean>> = Cached.simple(() => new Map());
 
     private static fetchKnown(): Map<string, Room>
     {
