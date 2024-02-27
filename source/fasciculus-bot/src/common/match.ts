@@ -213,12 +213,14 @@ export class Matcher
         const fnTargetValue = this.fnTargetValue;
         const creepValues = this.creepValues;
         const targetValues = this.targetValues;
+        const cache: Map<AssignableId, number> = new Map();
 
         for (let i = 0, n = creeps.length; i < n; ++i)
         {
             const values: Array<number> = new Array();
             const creep: Creep = creeps[i];
-            const cache: Map<AssignableId, number> = new Map();
+
+            cache.clear();
 
             for (let j = 0, m = targets.length; j < m; ++j)
             {
