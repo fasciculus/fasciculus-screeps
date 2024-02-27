@@ -51,6 +51,11 @@ export class Maps
         return result;
     }
 
+    private static empty<K, V>(): Map<K, V>
+    {
+        return new Map();
+    }
+
     private static from<V>(o: { [key: string]: V }): Map<string, V>
     {
         const result: Map<string, V> = new Map();
@@ -75,6 +80,7 @@ export class Maps
 
     private static _classProperties: any =
         {
+            "empty": Objects.function(Maps.empty),
             "from": Objects.function(Maps.from),
         };
 

@@ -28,5 +28,5 @@
     "build": "npx fasciculus-concat && tsc --project tsconfig.concat.json",
     "clean": "tsc --build --clean"
   },
-  "version": "0.4.4"
+  "version": "0.4.5"
 }

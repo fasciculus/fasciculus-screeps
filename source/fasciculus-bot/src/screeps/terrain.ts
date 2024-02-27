@@ -3,7 +3,7 @@ import { Cached } from "./cache";
 
 export class Terrains
 {
-    private static _terrains: Cached<Map<string, RoomTerrain>> = Cached.simple(() => new Map());
+    private static _terrains: Cached<Map<string, RoomTerrain>> = Cached.simple(Map.empty<string, RoomTerrain>);
 
     private static getWalkable(x: number, y: number, terrain: RoomTerrain): number
     {

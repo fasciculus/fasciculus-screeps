@@ -57,6 +57,11 @@ export class Arrays
         return this.sum(toNumber) / Math.max(1.0, this.length);
     }
 
+    private static empty<T>(): Array<T>
+    {
+        return new Array();
+    }
+
     private static defined<T>(values: Array<Opt<T>>): Array<T>
     {
         var result: Array<T> = new Array<T>();
@@ -93,6 +98,7 @@ export class Arrays
 
     private static _classProperties: any =
         {
+            "empty": Objects.function(Arrays.empty),
             "defined": Objects.function(Arrays.defined),
             "flatten": Objects.function(Arrays.flatten),
         }

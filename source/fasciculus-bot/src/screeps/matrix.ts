@@ -2,7 +2,7 @@ import { Cached } from "./cache";
 
 export class Matrices
 {
-    private static _matrices: Cached<Map<string, CostMatrix>> = Cached.simple(() => new Map());
+    private static _matrices: Cached<Map<string, CostMatrix>> = Cached.simple(Map.empty<string, CostMatrix>);
 
     private static createMatrix(name: string): CostMatrix
     {

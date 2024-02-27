@@ -17,6 +17,8 @@ declare global
 
     interface ArrayConstructor
     {
+        empty<T>(): Array<T>;
+
         defined<T>(array: Array<Opt<T>>): Array<T>;
         flatten<T>(arrays: Array<Array<T>>): Array<T>;
     }
@@ -31,6 +33,8 @@ declare global
 
     interface SetConstructor
     {
+        empty<T>(): Set<T>;
+
         from<T>(iterable?: Iterable<T> | null): Set<T>;
     }
 
@@ -49,6 +53,8 @@ declare global
 
     interface MapConstructor
     {
+        empty<K, V>(): Map<K, V>;
+
         from<V>(o: { [key: string]: V }): Map<string, V>;
     }
 }

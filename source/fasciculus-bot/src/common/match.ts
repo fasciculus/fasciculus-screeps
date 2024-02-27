@@ -27,21 +27,17 @@ export class Matcher
 
     private match(): void
     {
-        const creepCount: number = this.creeps.length;
-        const targetCount: number = this.targets.length;
-
-        if (creepCount == 0 || targetCount == 0) return;
-
-        if (creepCount == 1 && targetCount == 1)
-        {
-            this.creeps[0].target = this.targets[0];
-            return;
-        }
-
         this.populateValues();
         this.populatePrefs();
 
-        creepCount < targetCount ? this.matchCreeps() : this.matchTargets();
+        if (this.creeps.length < this.targets.length)
+        {
+            this.matchCreeps();
+        }
+        else
+        {
+            this.matchTargets();
+        }
     }
 
     private matchCreeps(): void
@@ -306,6 +302,17 @@ export class Matcher
 
     static assign(creeps: Array<Creep>, targets: Array<Assignable>, fnTargetValue: MatcherTargetValue, fnCreepValue: MatcherCreepValue): void
     {
+        const creepCount: number = creeps.length;
+        const targetCount: number = targets.length;
+
+        if (creepCount == 0 || targetCount == 0) return;
+
+        if (creepCount == 1 && targetCount == 1)
+        {
+            creeps[0].target = targets[0];
+            return;
+        }
+
         const matcher: Matcher = new Matcher(creeps, targets, fnTargetValue, fnCreepValue);
 
         matcher.match();
