@@ -49,7 +49,17 @@ export class Controllers
         if (controller === undefined) return true;
         if (controller.my) return true;
 
-        return Controllers.isMyReserved(controller);
+        return Controllers.isUnreserved(controller) || Controllers.isMyReserved(controller);
+    }
+
+    static isUnreserved(controller: Opt<StructureController>): boolean
+    {
+        if (controller === undefined) return true;
+        if (controller.my) return false;
+
+        const reservation: Opt<ReservationDefinition> = controller.reservation;
+
+        return reservation === undefined;
     }
 
     static isMyReserved(controller: StructureController)

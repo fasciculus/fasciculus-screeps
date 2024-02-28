@@ -12,6 +12,9 @@ class Experiments
 {
     static run()
     {
+        console.log("--------");
+        console.log(`safeWorkFree = ${Source.safeWorkFree}`);
+        console.log(`safe rooms = ${Room.safe}`);
     }
 }
 
