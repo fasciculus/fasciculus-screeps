@@ -1,8 +1,6 @@
-import { Harvest } from "./civ/harvest";
+import { Civil } from "./civ/civil";
+import { Military } from "./mil/military";
 import { BodyTemplate } from "./screeps/body";
-import { Transport } from "./civ/transport";
-import { HARVESTER, TRANSPORTER, WORKER } from "./common/constant";
-import { Work } from "./civ/work";
 
 export class Spawning
 {
@@ -13,26 +11,37 @@ export class Spawning
         if (spawn === undefined) return;
         if (spawn.roomEnergy < BodyTemplate.minCost) return;
 
-        if (Transport.more() && Spawning.spawn(TRANSPORTER, spawn)) return;
-        if (Harvest.more() && Spawning.spawn(HARVESTER, spawn)) return;
-        if (Work.more() && Spawning.spawn(WORKER, spawn)) return;
+        const kind: Opt<string> = Spawning.next();
+
+        if (kind === undefined) return;
+
+        Spawning.spawn(kind, spawn);
     }
 
-    private static spawn(kind: string, spawn: StructureSpawn): boolean
+    private static next(): Opt<string>
+    {
+        var kind: Opt<string> = Military.next();
+
+        if (kind === undefined) kind = Civil.next();
+
+        return kind;
+    }
+
+    private static spawn(kind: string, spawn: StructureSpawn): void
     {
         const template: Opt<BodyTemplate> = BodyTemplate.get(kind);
 
-        if (template === undefined) return false;
+        if (template === undefined) return;
 
         const currentEnergy: number = spawn.roomEnergy;
         const maxEnergy: number = spawn.roomEnergyCapacity;
 
-        if (template.wait(currentEnergy, maxEnergy)) return false;
+        if (template.wait(currentEnergy, maxEnergy)) return;
 
         const body: Opt<Array<BodyPartConstant>> = template.createBody(currentEnergy);
 
-        if (body === undefined) return false;
+        if (body === undefined) return;
 
-        return spawn.spawn(kind, body) == OK;
+        spawn.spawn(kind, body);
     }
 }

@@ -1,5 +1,5 @@
 
-export const VERSION = "0.4.9";
+export const VERSION = "0.4.10";
 export const SUICIDE = false;
 
 export const HARVESTER: string = "H";

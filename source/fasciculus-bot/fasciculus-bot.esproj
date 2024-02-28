@@ -3,4 +3,7 @@
   <PropertyGroup>
     <CommitToPServer>true</CommitToPServer>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="src\mil\" />
+  </ItemGroup>
 </Project>

@@ -1,7 +1,8 @@
-import { Civilians } from "./civ/civilian";
+import { Civil } from "./civ/civil";
 import { Suicide } from "./common/suicide";
 import { Version } from "./common/version";
 import { ES } from "./es/es";
+import { Military } from "./mil/military";
 import { Screeps } from "./screeps/screeps";
 import { Spawning } from "./spawn";
 
@@ -24,7 +25,8 @@ export const loop = function ()
 
     if (Suicide.survive())
     {
-        Civilians.run();
+        Military.run();
+        Civil.run();
         Spawning.run();
     }
 
