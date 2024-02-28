@@ -23,24 +23,39 @@ export class Transport
 
     static more(): boolean
     {
-        const transporterCount: number = Creep.ofKind(TRANSPORTER).length;
-        const resourceAmount: number = Transport.resourceAmount() / 100;
-        const energyFree: number = Transport.energyFree() / 50;
-        const transportersRequired: number = Math.min(resourceAmount, energyFree);
+        Transport.adjustTemplate();
 
-        Transport.template = transporterCount > 1 ? Transport.largeTemplate() : Transport.smallTemplate();
+        const available: number = Transport.carryCapacity();
+        const required: number = Transport.carryCapacityRequired();
 
-        return transporterCount < transportersRequired;
+        return available < required;
     }
 
-    private static resourceAmount(): number
+    private static adjustTemplate(): void
     {
-        return Resource.safe.sum(r => r.amount >= TRANSPORT_MIN_AMOUNT ? r.amount : 0);
+        Transport.template = Creep.ofKind(TRANSPORTER).length > 1 ? Transport.largeTemplate() : Transport.smallTemplate();
     }
 
-    private static energyFree(): number
+    static carryCapacity(): number
     {
-        return Spawn.my.sum(s => Stores.energyFree(s));
+        return Creep.ofKind(TRANSPORTER).sum(t => t.carryParts) * 50;
+    }
+
+    static carryCapacityRequired(): number
+    {
+        var result: number = 0;
+
+        for (let resource of Resource.safe)
+        {
+            const customer: Opt<ResourceCustomer> = resource.customer;
+
+            if (customer === undefined) continue;
+
+            result += resource.amount * customer.cost / 1000;
+        }
+
+        return result;
+
     }
 
     static run(): void

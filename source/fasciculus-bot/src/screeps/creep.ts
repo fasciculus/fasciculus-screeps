@@ -47,6 +47,11 @@ export class Creeps
         return Blocking.blocking(this);
     }
 
+    private static carryParts(this: Creep): number
+    {
+        return BodyInfos.carryParts(this);
+    }
+
     private static workParts(this: Creep): number
     {
         return BodyInfos.workParts(this);
@@ -87,6 +92,7 @@ export class Creeps
             "hasTarget": Objects.getter(Creeps.hasTarget),
             "target": Objects.property(Creeps.getTarget, Creeps.setTarget),
             "blocking": Objects.getter(Creeps.blocking),
+            "carryParts": Objects.getter(Creeps.carryParts),
             "workParts": Objects.getter(Creeps.workParts),
             "travelTo": Objects.function(Creeps.travelTo),
             "assignees": Objects.getter(Creeps.assignees),

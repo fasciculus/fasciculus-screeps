@@ -109,29 +109,36 @@ export class BodyInfos
 
     private static createInfo(id: CreepId, hint?: Creep): BodyInfo
     {
-        const creep: Opt<Creep> = hint === undefined ? Game.get(id) : undefined;
+        const creep: Opt<Creep> = hint === undefined ? Game.get(id) : hint;
 
-        if (creep === undefined) return { work: 0 };
+        if (creep === undefined) return { carry: 0, work: 0 };
 
+        var carry: number = 0;
         var work: number = 0;
 
         creep.body.forEach(d =>
         {
             switch (d.type)
             {
+                case CARRY: ++carry; break;
                 case WORK: ++work; break;
             }
         });
 
-        return { work };
+        return { carry, work };
     }
 
-    static workParts(creep: Creep)
+    static carryParts(creep: Creep): number
+    {
+        return BodyInfos._infos.ensure(creep.id, BodyInfos.createInfo, creep).carry;
+    }
+
+    static workParts(creep: Creep): number
     {
         return BodyInfos._infos.ensure(creep.id, BodyInfos.createInfo, creep).work;
     }
 
-    static cleanup()
+    static setup()
     {
         const infos = BodyInfos._infos;
 

@@ -8,7 +8,7 @@ declare global
     type SourceId = Id<Source>;
     type SpawnId = Id<StructureSpawn>;
 
-    type BodyInfo = { work: number };
+    type BodyInfo = { carry: number, work: number };
 
     type Assignable = Creep | Flag | Resource | Source | StructureController | StructureSpawn;
     type AssignableId = Id<Assignable>;
@@ -38,6 +38,7 @@ declare global
 
         get blocking(): boolean;
 
+        get carryParts(): number;
         get workParts(): number;
 
         travelTo(goal: RoomPosition, range: number): CreepMoveReturnCode | ERR_NO_PATH;
@@ -82,11 +83,18 @@ declare global
 
     interface Resource extends _Assignable
     {
+        customer: Opt<ResourceCustomer>;
     }
 
     interface ResourceConstructor
     {
         get safe(): Array<Resource>;
+    }
+
+    interface ResourceCustomer
+    {
+        id: AssignableId;
+        cost: number;
     }
 
     interface Room

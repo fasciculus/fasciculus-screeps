@@ -140,4 +140,17 @@ export class Paths
 
         return cost + offset;
     }
+
+    static sort<T extends _HasRoomPosition>(origin: RoomPosition, goals: Array<T>, range: number): Array<T>
+    {
+        return goals.sort((a, b) => Paths.compare(a, b, origin, range));
+    }
+
+    static compare<T extends _HasRoomPosition>(a: T, b: T, origin: RoomPosition, range: number): number
+    {
+        const aCost: number = Paths.cost(origin, a.pos, range, 0);
+        const bCost: number = Paths.cost(origin, b.pos, range, 0);
+
+        return aCost - bCost;
+    }
 }

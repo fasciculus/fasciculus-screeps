@@ -39,13 +39,18 @@ export class Maps
         return result;
     }
 
-    private static ensure<K, V, H>(this: Map<K, V>, key: K, create: (key: K, hint?: H) => V, hint?: H): V
+    private static ensure<K, V, H>(this: Map<K, V>, key: K, create: (key: K, hint?: H) => V, hint?: H): Opt<V>
     {
         var result: Opt<V> = this.get(key);
 
         if (result === undefined)
         {
-            this.set(key, result = create(key, hint));
+            result = create(key, hint);
+
+            if (result !== undefined)
+            {
+                this.set(key, result);
+            }
         }
 
         return result;

@@ -13,8 +13,7 @@ class Experiments
 {
     static run()
     {
-        console.log("--------");
-        console.log(`more = ${Transport.more()}`);
+        console.log(`${Game.time}: ${Transport.carryCapacity()} / ${Transport.carryCapacityRequired().toFixed(0)}`);
     }
 }
 

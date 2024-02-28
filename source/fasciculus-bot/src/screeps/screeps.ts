@@ -31,13 +31,13 @@ export class Screeps
         Terrains.setup();
 
         Assignees.setup();
+        BodyInfos.setup();
     }
 
     static cleanup()
     {
         Cached.cleanup();
 
-        BodyInfos.cleanup();
         Targets.cleanup();
     }
 }

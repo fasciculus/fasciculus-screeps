@@ -1,11 +1,13 @@
 import { Objects } from "../es/object";
 import { Assignees } from "./assign";
 import { Cached } from "./cache";
+import { Paths } from "./path";
 
 export class Resources
 {
     private static _known: Cached<Map<ResourceId, Resource>> = Cached.simple(Resources.fetchKnown);
     private static _safe: Cached<Map<ResourceId, Resource>> = Cached.simple(Resources.fetchSafe);
+    private static _customers: Cached<Map<ResourceId, ResourceCustomer>> = Cached.simple(Resources.fetchCustomers);
 
     private static fetchKnown(): Map<ResourceId, Resource>
     {
@@ -26,6 +28,30 @@ export class Resources
         return room.safe;
     }
 
+    private static fetchCustomers(): Map<ResourceId, ResourceCustomer>
+    {
+        const result: Map<ResourceId, ResourceCustomer> = new Map();
+        const candidates: Array<Assignable> = Spawn.my;
+
+        for (let resource of Resources._known.value.values())
+        {
+            Paths.sort(resource.pos, candidates, 1);
+
+            const customer: Assignable = candidates[0];
+            const id: AssignableId = customer.id;
+            const cost: number = Paths.cost(resource.pos, customer.pos, 1, 0);
+
+            result.set(resource.id, { id, cost });
+        }
+
+        return result;
+    }
+
+    private static customer(this: Resource): Opt<ResourceCustomer>
+    {
+        return Resources._customers.value.get(this.id);
+    }
+
     private static safeResources(): Array<Resource>
     {
         return Resources._safe.value.data;
@@ -39,6 +65,7 @@ export class Resources
 
     private static _instanceProperties: any =
         {
+            "customer": Objects.getter(Resources.customer),
             "assignees": Objects.getter(Resources.assignees),
             "assignedCreeps": Objects.getter(Resources.assignedCreeps),
             "assign": Objects.function(Resources.assign),
