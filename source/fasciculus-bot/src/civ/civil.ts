@@ -7,8 +7,8 @@ export class Civil
 {
     static next(): Opt<string>
     {
-        if (Harvest.more()) return HARVESTER;
         if (Transport.more()) return TRANSPORTER;
+        if (Harvest.more()) return HARVESTER;
         if (Work.more()) return WORKER;
 
         return undefined;
