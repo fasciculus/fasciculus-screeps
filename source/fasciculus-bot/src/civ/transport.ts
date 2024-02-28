@@ -178,7 +178,7 @@ export class Transport
 
             if (target === undefined) continue;
 
-            if (transporter.pos.inRangeTo(target.pos, 1))
+            if (transporter.pos.isNearTo(target.pos))
             {
                 const resource: Opt<Resource> = Targets.resource(target);
 

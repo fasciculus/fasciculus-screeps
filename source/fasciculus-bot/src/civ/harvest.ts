@@ -84,7 +84,7 @@ export class Harvest
 
             if (source === undefined) continue;
 
-            if (harvester.pos.inRangeTo(source.pos, 1))
+            if (harvester.pos.isNearTo(source.pos))
             {
                 harvester.harvest(source);
             }
@@ -99,6 +99,6 @@ export class Harvest
     {
         const target: Opt<Assignable> = creep.target;
 
-        return target !== undefined && creep.pos.inRangeTo(target, 1);
+        return target !== undefined && creep.pos.isNearTo(target.pos);
     }
 }

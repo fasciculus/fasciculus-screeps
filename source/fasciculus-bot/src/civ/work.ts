@@ -156,7 +156,7 @@ export class Work
 
     private static workSpawn(worker: Creep, spawn: StructureSpawn)
     {
-        if (worker.pos.inRangeTo(spawn.pos, 1))
+        if (worker.pos.isNearTo(spawn.pos))
         {
             worker.withdraw(spawn, RESOURCE_ENERGY);
         }

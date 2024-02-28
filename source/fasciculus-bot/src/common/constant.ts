@@ -1,6 +1,8 @@
 
-export const VERSION = "0.4.10";
+export const VERSION = "0.4.11";
 export const SUICIDE = false;
+
+export const GUARD: string = "G";
 
 export const HARVESTER: string = "H";
 export const TRANSPORTER: string = "T";

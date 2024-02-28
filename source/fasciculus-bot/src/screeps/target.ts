@@ -50,6 +50,13 @@ export class Targets
         return target instanceof Creep ? target : undefined;
     }
 
+    static flag(target: Opt<Assignable>): Opt<Flag>
+    {
+        if (target === undefined) return undefined;
+
+        return target instanceof Flag ? target : undefined;
+    }
+
     static resource(target: Opt<Assignable>): Opt<Resource>
     {
         if (target === undefined) return undefined;
