@@ -32,14 +32,13 @@ export class Screeps
         Spawns.setup();
         Terrains.setup();
 
-        Assignees.setup();
         BodyInfos.setup();
+        Assignees.setup();
+        Targets.setup();
     }
 
     static cleanup()
     {
         Cached.cleanup();
-
-        Targets.cleanup();
     }
 }

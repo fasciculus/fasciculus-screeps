@@ -33,14 +33,14 @@ export class Transport
         return available < required;
     }
 
-    private static hasIdle(): boolean
-    {
-        return Creep.ofKind(TRANSPORTER).any(t => t.idle);
-    }
-
     private static adjustTemplate(): void
     {
         Transport.template = Creep.ofKind(TRANSPORTER).length > 1 ? Transport.largeTemplate() : Transport.smallTemplate();
+    }
+
+    private static hasIdle(): boolean
+    {
+        return Creep.ofKind(TRANSPORTER).any(t => t.idle);
     }
 
     static carryCapacity(): number
@@ -84,12 +84,7 @@ export class Transport
 
             if (resource !== undefined)
             {
-                if (Stores.energyFree(transporter) == 0 || resource.amount < TRANSPORT_MIN_AMOUNT)
-                {
-                    transporter.target = undefined;
-                    continue;
-                }
-
+                Transport.unassignResource(transporter, resource);
                 continue;
             }
 
@@ -97,14 +92,35 @@ export class Transport
 
             if (spawn !== undefined)
             {
-                if (Stores.energy(transporter) == 0 || Stores.energyFree(spawn) == 0)
-                {
-                    transporter.target = undefined;
-                    continue;
-                }
-
+                Transport.unassignSpawn(transporter, spawn);
                 continue;
             }
+        }
+    }
+
+    private static unassignResource(transporter: Creep, resource: Resource): void
+    {
+        var unassign: boolean = false;
+
+        unassign ||= Stores.energyFree(transporter) == 0;
+        unassign ||= resource.amount < TRANSPORT_MIN_AMOUNT;
+
+        if (unassign)
+        {
+            transporter.target = undefined;
+        }
+    }
+
+    private static unassignSpawn(transporter: Creep, spawn: StructureSpawn): void
+    {
+        var unassign: boolean = false;
+
+        unassign ||= Stores.energy(transporter) == 0;
+        unassign ||= Stores.energyFree(spawn) == 0;
+
+        if (unassign)
+        {
+            transporter.target = undefined;
         }
     }
 
@@ -146,7 +162,8 @@ export class Transport
     {
         for (let spawn of Spawn.my)
         {
-            const count: number = Stores.energyFree(spawn) / 100;
+            const assigned: number = spawn.assignedCreeps.filter(c => c.kind == TRANSPORTER).length;
+            const count: number = Stores.energyFree(spawn) / 100 - assigned;
 
             for (let i = 0; i < count; ++i)
             {
@@ -200,28 +217,45 @@ export class Transport
 
             if (target === undefined) continue;
 
-            if (transporter.pos.isNearTo(target.pos))
+            const resource: Opt<Resource> = Targets.resource(target);
+
+            if (resource !== undefined)
             {
-                const resource: Opt<Resource> = Targets.resource(target);
-
-                if (resource !== undefined)
-                {
-                    transporter.pickup(resource);
-                    continue;
-                }
-
-                const spawn: Opt<StructureSpawn> = Targets.spawn(target);
-
-                if (spawn !== undefined)
-                {
-                    transporter.transfer(spawn, RESOURCE_ENERGY);
-                    continue;
-                }
+                Transport.pickup(transporter, resource);
+                continue;
             }
-            else
+
+            const spawn: Opt<StructureSpawn> = Targets.spawn(target);
+
+            if (spawn !== undefined)
             {
-                transporter.travelTo(target.pos, 1)
+                Transport.transfer(transporter, spawn);
+                continue;
             }
+        }
+    }
+
+    private static pickup(transporter: Creep, resource: Resource): void
+    {
+        if (transporter.pos.isNearTo(resource.pos))
+        {
+            transporter.pickup(resource);
+        }
+        else
+        {
+            transporter.travelTo(resource.pos, 1)
+        }
+    }
+
+    private static transfer(transporter: Creep, spawn: StructureSpawn): void
+    {
+        if (transporter.pos.isNearTo(spawn.pos))
+        {
+            transporter.transfer(spawn, RESOURCE_ENERGY);
+        }
+        else
+        {
+            transporter.travelTo(spawn.pos, 1)
         }
     }
 }

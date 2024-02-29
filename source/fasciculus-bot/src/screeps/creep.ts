@@ -34,6 +34,15 @@ export class Creeps
 
     private static setTarget(this: Creep, value: Opt<Assignable>): void
     {
+        if (this.kind == "X")
+        {
+            const oldTarget: Opt<Assignable> = this.target;
+            const oldTargetText: string = oldTarget === undefined ? "undefined" : oldTarget.id;
+            const newTargetText: string = value === undefined ? "undefined" : value.id;
+
+            console.log(`${Game.time}: ${this.name}: ${oldTargetText} -> ${newTargetText}`);
+        }
+
         Targets.setTarget(this, value);
     }
 

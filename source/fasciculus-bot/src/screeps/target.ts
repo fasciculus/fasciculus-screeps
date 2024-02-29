@@ -85,10 +85,23 @@ export class Targets
         return target instanceof StructureSpawn ? target : undefined;
     }
 
-    static cleanup()
+    static setup()
     {
         const targets = Targets._targets;
 
         targets.keep(Game.existing(targets.ids));
+
+        for (let entry of targets.entries())
+        {
+            const creep: Opt<Creep> = Game.get(entry[0]);
+            const target: Opt<Assignable> = Game.get(entry[1]);
+
+            if (creep === undefined) continue;
+
+            if (target === undefined)
+            {
+                creep.target = undefined;
+            }
+        }
     }
 }

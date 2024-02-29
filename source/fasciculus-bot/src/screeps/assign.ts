@@ -28,7 +28,5 @@ export class Assignees
         const assignees = Assignees._assignees;
 
         assignees.keep(Game.existing(assignees.ids));
-
-        Assignees._assignees = assignees.map((k, v) => Game.existing(v));
     }
 }
