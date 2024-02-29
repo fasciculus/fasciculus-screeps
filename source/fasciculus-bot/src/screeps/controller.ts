@@ -8,6 +8,8 @@ export class Controllers
     private static _my: Cached<Map<ControllerId, StructureController>> = Cached.simple(Controllers.fetchMy);
     private static _myReserved: Cached<Map<ControllerId, StructureController>> = Cached.simple(Controllers.fetchMyReserved);
 
+    private static _slots: Map<ControllerId, number> = new Map();
+
     private static fetchKnown(): Map<ControllerId, StructureController>
     {
         return Array.defined(Room.known.map(r => r.controller)).indexBy(c => c.id);
@@ -21,6 +23,11 @@ export class Controllers
     private static fetchMyReserved(): Map<ControllerId, StructureController>
     {
         return Controllers._known.value.filter((k, v) => Controllers.isMyReserved(v));
+    }
+
+    private static getSlots(id: ControllerId, controller: Opt<StructureController>): number
+    {
+        return controller !== undefined ? controller.room.terrain.walkableAtRange(controller.pos, 2) : 0;
     }
 
     private static safe(this: StructureController): boolean
@@ -37,6 +44,16 @@ export class Controllers
         return upgradeBlocked > 0;
     }
     
+    private static slotsCount(this: StructureController): number
+    {
+        return Controllers._slots.ensure(this.id, Controllers.getSlots, this);
+    }
+
+    private static slotsFree(this: StructureController): number
+    {
+        return this.slotsCount - this.assignees.size;
+    }
+
     private static assignees(this: StructureController): Set<CreepId> { return Assignees.assignees(this.id); }
     private static assignedCreeps(this: StructureController): Array<Creep> { return Game.all(this.assignees); }
     private static assign(this: StructureController, creep: CreepId): void { Assignees.assign(this.id, creep); }
@@ -87,6 +104,8 @@ export class Controllers
         {
             "safe": Objects.getter(Controllers.safe),
             "blocked": Objects.getter(Controllers.blocked),
+            "slotsCount": Objects.getter(Controllers.slotsCount),
+            "slotsFree": Objects.getter(Controllers.slotsFree),
             "assignees": Objects.getter(Controllers.assignees),
             "assignedCreeps": Objects.getter(Controllers.assignedCreeps),
             "assign": Objects.function(Controllers.assign),

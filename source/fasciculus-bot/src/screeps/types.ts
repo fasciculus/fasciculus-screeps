@@ -154,6 +154,7 @@ declare global
     interface RoomTerrain
     {
         walkableAround(pos: RoomPosition, range: number): number;
+        walkableAtRange(pos: RoomPosition, range: number): number;
     }
 
     interface Source extends _Assignable
@@ -177,6 +178,9 @@ declare global
         get safe(): boolean;
 
         get blocked(): boolean;
+
+        get slotsCount(): number;
+        get slotsFree(): number;
     }
 
     interface StructureControllerConstructor

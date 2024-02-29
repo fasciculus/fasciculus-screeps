@@ -20,6 +20,16 @@ export class Terrains
         return result;
     }
 
+    private static walkableAtRange(pos: RoomPosition, range: number): number
+    {
+        const terrain: RoomTerrain = Terrains.ofName(pos.roomName);
+        var result: number = 0;
+
+        pos.forEachAtRange(range, (x, y) => result += Terrains.getWalkable(x, y, terrain))
+
+        return result;
+    }
+
     static ofRoom(room: Room): RoomTerrain
     {
         const terrains: Map<string, RoomTerrain> = Terrains._terrains.value;
@@ -50,6 +60,7 @@ export class Terrains
     private static _instanceProperties: any =
         {
             "walkableAround": Objects.function(Terrains.walkableAround),
+            "walkableAtRange": Objects.function(Terrains.walkableAtRange),
         }
 
     static setup()

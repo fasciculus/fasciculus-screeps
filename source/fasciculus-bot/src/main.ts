@@ -13,6 +13,11 @@ class Experiments
     static run()
     {
         // console.log(`${Game.time}: ${Transport.carryCapacity()} / ${Transport.carryCapacityRequired().toFixed(0)}`);
+
+        for (let controller of StructureController.my)
+        {
+            console.log(`${Game.time}: ${controller.slotsFree} / ${controller.slotsCount}`);
+        }
     }
 }
 

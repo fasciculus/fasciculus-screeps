@@ -29,7 +29,7 @@ export class Sources
         return source !== undefined ? source.room.terrain.walkableAround(source.pos, 1) : 0;
     }
 
-    private static slotsCount(this: Source)
+    private static slotsCount(this: Source): number
     {
         return Sources._slots.ensure(this.id, Sources.getSlots, this);
     }
