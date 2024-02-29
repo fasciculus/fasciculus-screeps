@@ -72,6 +72,11 @@ export class Work
         {
             worker.target = undefined;
         }
+
+        if (controller.blocked)
+        {
+            worker.target = undefined;
+        }
     }
 
     private static unassignSite(worker: Creep, site: ConstructionSite): void
@@ -144,6 +149,7 @@ export class Work
 
     private static controllerValue(worker: Creep, controller: StructureController): number
     {
+        if (controller.blocked) return -1;
         if (Stores.energy(worker) == 0) return -1;
 
         return 1.0 / Paths.cost(worker.pos, controller.pos, 2, PATH_COST_OFFSET);

@@ -175,6 +175,8 @@ declare global
     interface StructureController extends _Assignable
     {
         get safe(): boolean;
+
+        get blocked(): boolean;
     }
 
     interface StructureControllerConstructor

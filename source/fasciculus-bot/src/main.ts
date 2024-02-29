@@ -1,5 +1,4 @@
 import { Civil } from "./civ/civil";
-import { Transport } from "./civ/transport";
 import { Suicide } from "./common/suicide";
 import { Version } from "./common/version";
 import { ES } from "./es/es";
@@ -13,7 +12,7 @@ class Experiments
 {
     static run()
     {
-        console.log(`${Game.time}: ${Transport.carryCapacity()} / ${Transport.carryCapacityRequired().toFixed(0)}`);
+        // console.log(`${Game.time}: ${Transport.carryCapacity()} / ${Transport.carryCapacityRequired().toFixed(0)}`);
     }
 }
 

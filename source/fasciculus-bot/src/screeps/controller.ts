@@ -27,6 +27,15 @@ export class Controllers
     {
         return Controllers.isSafe(this);
     }
+
+    private static blocked(this: StructureController): boolean
+    {
+        const upgradeBlocked: Opt<number> = this.upgradeBlocked;
+
+        if (upgradeBlocked === undefined) return false;
+
+        return upgradeBlocked > 0;
+    }
     
     private static assignees(this: StructureController): Set<CreepId> { return Assignees.assignees(this.id); }
     private static assignedCreeps(this: StructureController): Array<Creep> { return Game.all(this.assignees); }
@@ -77,6 +86,7 @@ export class Controllers
     private static _instanceProperties: any =
         {
             "safe": Objects.getter(Controllers.safe),
+            "blocked": Objects.getter(Controllers.blocked),
             "assignees": Objects.getter(Controllers.assignees),
             "assignedCreeps": Objects.getter(Controllers.assignedCreeps),
             "assign": Objects.function(Controllers.assign),
