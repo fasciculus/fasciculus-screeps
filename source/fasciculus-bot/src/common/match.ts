@@ -87,9 +87,13 @@ export class Matcher
 
                 if (prevCreep == -1)
                 {
-                    creepMatches[creep] = target;
-                    targetMatches[target] = creep;
-                    changed = true;
+                    if (creepValues[target][creep] >= 0)
+                    {
+                        creepMatches[creep] = target;
+                        targetMatches[target] = creep;
+                        changed = true;
+                    }
+
                     continue;
                 }
 
@@ -160,9 +164,13 @@ export class Matcher
 
                 if (prevTarget == -1)
                 {
-                    creepMatches[creep] = target;
-                    targetMatches[target] = creep;
-                    changed = true;
+                    if (targetValues[creep][target] >= 0)
+                    {
+                        creepMatches[creep] = target;
+                        targetMatches[target] = creep;
+                        changed = true;
+                    }
+
                     continue;
                 }
 

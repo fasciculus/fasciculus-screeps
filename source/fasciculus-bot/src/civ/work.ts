@@ -1,10 +1,11 @@
-import { PATH_COST_OFFSET, WORKER } from "../common/constant";
+import { PATH_COST_OFFSET, WORKER, WORKER_ENERGY_SHARE } from "../common/constant";
 import { Matcher } from "../common/match";
 import { Blocking } from "../screeps/block";
 import { BodyTemplate } from "../screeps/body";
 import { Paths } from "../screeps/path";
 import { Stores } from "../screeps/store";
 import { Targets } from "../screeps/target";
+import { Harvest } from "./harvest";
 
 export class Work
 {
@@ -14,7 +15,54 @@ export class Work
 
     static more(): boolean
     {
-        return Creep.ofKind(WORKER).length < 1;
+        if (Work.hasIdle()) return false;
+
+        const energyUsed: number = Work.energyUsed();
+        const energyAvailable: number = Work.energyAvailable();
+
+        console.log(`${Game.time}: Work.more ${energyUsed} / ${energyAvailable}`);
+
+        return energyUsed < energyAvailable;
+    }
+
+    private static hasIdle(): boolean
+    {
+        return Creep.ofKind(WORKER).any(w => w.idle);
+    }
+
+    private static energyUsed(): number
+    {
+        var result: number = 0;
+
+        for (let worker of Creep.ofKind(WORKER))
+        {
+            const target: Opt<Assignable> = worker.target;
+
+            if (target === undefined) continue;
+
+            const controller: Opt<StructureController> = Targets.controller(target);
+
+            if (controller !== undefined)
+            {
+                result += worker.workParts;
+                continue;
+            }
+
+            const site: Opt<ConstructionSite> = Targets.site(target);
+
+            if (site !== undefined)
+            {
+                result += worker.workParts;
+                continue;
+            }
+        }
+
+        return result;
+    }
+
+    private static energyAvailable(): number
+    {
+        return Harvest.energyHarvested() * WORKER_ENERGY_SHARE;
     }
 
     static run()
@@ -55,6 +103,8 @@ export class Work
                 Work.unassignSite(worker, site);
                 continue;
             }
+
+            worker.target = undefined;
         }
     }
 
@@ -159,6 +209,7 @@ export class Work
     {
         if (controller.blocked) return -1;
         if (Stores.energy(worker) == 0) return -1;
+        if (controller.slotsFree == 0) return -1;
 
         return 1.0 / Paths.cost(worker.pos, controller.pos, 2, PATH_COST_OFFSET);
     }

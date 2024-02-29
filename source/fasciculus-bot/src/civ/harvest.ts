@@ -24,6 +24,25 @@ export class Harvest
         Harvest.harvest();
     }
 
+    static energyHarvested(): number
+    {
+        var result: number = 0;
+
+        for (let harvester of Creep.ofKind(HARVESTER))
+        {
+            const target: Opt<Assignable> = harvester.target;
+
+            if (target === undefined) continue;
+
+            if (harvester.pos.inRangeTo(target.pos, 1))
+            {
+                result += harvester.workParts * 2 - 1;
+            }
+        }
+
+        return result;
+    }
+
     private static assign(): void
     {
         const harvesters: Array<Creep> = Creep.ofKind(HARVESTER).filter(h => h.idle);
