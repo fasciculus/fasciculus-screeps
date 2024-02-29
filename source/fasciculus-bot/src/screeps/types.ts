@@ -10,7 +10,15 @@ declare global
 
     type BodyInfo = { carry: number, work: number };
 
-    type Assignable = Creep | Flag | Resource | Source | StructureController | StructureSpawn;
+    type Assignable =
+        | Creep
+        | ConstructionSite
+        | Flag
+        | Resource
+        | Source
+        | StructureController
+        | StructureSpawn;
+
     type AssignableId = Id<Assignable>;
 
     interface _Assignable
@@ -26,6 +34,10 @@ declare global
     interface _HasStore
     {
         store: StoreDefinition;
+    }
+
+    interface ConstructionSite extends _Assignable
+    {
     }
 
     interface Creep extends _Assignable

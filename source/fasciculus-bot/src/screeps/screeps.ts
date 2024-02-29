@@ -9,6 +9,7 @@ import { Memories } from "./memory";
 import { RoomPositions } from "./pos";
 import { Resources } from "./resource";
 import { Rooms } from "./room";
+import { Sites } from "./site";
 import { Sources } from "./source";
 import { Spawns } from "./spawn";
 import { Targets } from "./target";
@@ -26,6 +27,7 @@ export class Screeps
         Resources.setup();
         Rooms.setup();
         RoomPositions.setup();
+        Sites.setup();
         Sources.setup();
         Spawns.setup();
         Terrains.setup();
