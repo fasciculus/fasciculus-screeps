@@ -47,6 +47,14 @@ export class Work
                 Work.unassignController(worker, controller);
                 continue;
             }
+
+            const site: Opt<ConstructionSite> = Targets.site(target);
+
+            if (site !== undefined)
+            {
+                Work.unassignSite(worker, site);
+                continue;
+            }
         }
     }
 
@@ -59,6 +67,14 @@ export class Work
     }
 
     private static unassignController(worker: Creep, controller: StructureController): void
+    {
+        if (Stores.energy(worker) == 0)
+        {
+            worker.target = undefined;
+        }
+    }
+
+    private static unassignSite(worker: Creep, site: ConstructionSite): void
     {
         if (Stores.energy(worker) == 0)
         {
@@ -81,6 +97,7 @@ export class Work
 
         Work.collectSpawns(result);
         Work.collectControllers(result);
+        Work.collectSites(result);
 
         return result;
     }
@@ -90,9 +107,14 @@ export class Work
         result.append(Spawn.my);
     }
 
-    private static collectControllers(result: Array<Assignable>)
+    private static collectControllers(result: Array<Assignable>): void
     {
         result.append(StructureController.my);
+    }
+
+    private static collectSites(result: Array<Assignable>): void
+    {
+        result.append(ConstructionSite.my);
     }
 
     private static targetValue(worker: Creep, target: Assignable): number
@@ -104,6 +126,10 @@ export class Work
         const controller: Opt<StructureController> = Targets.controller(target);
 
         if (controller !== undefined) return Work.controllerValue(worker, controller);
+
+        const site: Opt<ConstructionSite> = Targets.site(target);
+
+        if (site !== undefined) return Work.siteValue(worker, site);
 
         return -1;
     }
@@ -120,7 +146,14 @@ export class Work
     {
         if (Stores.energy(worker) == 0) return -1;
 
-        return 1.0 / Paths.cost(worker.pos, controller.pos, 1, PATH_COST_OFFSET);
+        return 1.0 / Paths.cost(worker.pos, controller.pos, 2, PATH_COST_OFFSET);
+    }
+
+    private static siteValue(worker: Creep, site: ConstructionSite): number
+    {
+        if (Stores.energy(worker) == 0) return -1;
+
+        return 1.0 / Paths.cost(worker.pos, site.pos, 2, PATH_COST_OFFSET);
     }
 
     private static workerValue(target: Assignable, worker: Creep): number
@@ -151,10 +184,18 @@ export class Work
                 Work.workController(worker, controller);
                 continue;
             }
+
+            const site: Opt<ConstructionSite> = Targets.site(target);
+
+            if (site !== undefined)
+            {
+                Work.workSite(worker, site);
+                continue;
+            }
         }
     }
 
-    private static workSpawn(worker: Creep, spawn: StructureSpawn)
+    private static workSpawn(worker: Creep, spawn: StructureSpawn): void
     {
         if (worker.pos.isNearTo(spawn.pos))
         {
@@ -166,7 +207,7 @@ export class Work
         }
     }
 
-    private static workController(worker: Creep, controller: StructureController)
+    private static workController(worker: Creep, controller: StructureController): void
     {
         if (worker.pos.inRangeTo(controller.pos, 2))
         {
@@ -175,6 +216,18 @@ export class Work
         else
         {
             worker.travelTo(controller.pos, 2);
+        }
+    }
+
+    private static workSite(worker: Creep, site: ConstructionSite): void
+    {
+        if (worker.pos.inRangeTo(site.pos, 2))
+        {
+            worker.build(site);
+        }
+        else
+        {
+            worker.travelTo(site.pos, 2);
         }
     }
 

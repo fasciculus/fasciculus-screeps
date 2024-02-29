@@ -5,6 +5,7 @@ declare global
     type CreepId = Id<Creep>;
     type FlagId = Id<Flag>;
     type ResourceId = Id<Resource>;
+    type SiteId = Id<ConstructionSite>;
     type SourceId = Id<Source>;
     type SpawnId = Id<StructureSpawn>;
 
@@ -38,6 +39,11 @@ declare global
 
     interface ConstructionSite extends _Assignable
     {
+    }
+
+    interface ConstructionSiteConstructor
+    {
+        get my(): Array<ConstructionSite>;
     }
 
     interface Creep extends _Assignable

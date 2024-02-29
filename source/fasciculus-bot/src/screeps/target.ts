@@ -64,6 +64,13 @@ export class Targets
         return target instanceof Resource ? target : undefined;
     }
 
+    static site(target: Opt<Assignable>): Opt<ConstructionSite>
+    {
+        if (target === undefined) return undefined;
+
+        return target instanceof ConstructionSite ? target : undefined;
+    }
+
     static source(target: Opt<Assignable>): Opt<Source>
     {
         if (target === undefined) return undefined;
