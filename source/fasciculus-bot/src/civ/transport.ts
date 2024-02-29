@@ -25,10 +25,17 @@ export class Transport
     {
         Transport.adjustTemplate();
 
+        if (Transport.hasIdle()) return false;
+
         const available: number = Transport.carryCapacity();
         const required: number = Transport.carryCapacityRequired();
 
         return available < required;
+    }
+
+    private static hasIdle(): boolean
+    {
+        return Creep.ofKind(TRANSPORTER).any(t => t.idle);
     }
 
     private static adjustTemplate(): void
@@ -103,7 +110,7 @@ export class Transport
 
     private static assign(): void
     {
-        const transporters: Array<Creep> = Creep.ofKind(TRANSPORTER).filter(t => !t.hasTarget);
+        const transporters: Array<Creep> = Creep.ofKind(TRANSPORTER).filter(t => t.idle);
 
         if (transporters.length == 0) return;
 

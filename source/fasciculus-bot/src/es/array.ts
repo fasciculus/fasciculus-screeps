@@ -43,6 +43,16 @@ export class Arrays
         return result;
     }
 
+    private static any<T>(this: Array<T>, predicate: (value: T) => boolean): boolean
+    {
+        for (const value of this)
+        {
+            if (predicate(value)) return true;
+        }
+
+        return false;
+    }
+
     private static sum<T>(this: Array<T>, toNumber: (value: T) => number): number
     {
         var result: number = 0;
@@ -87,6 +97,7 @@ export class Arrays
             "take": Objects.function(Arrays.take),
             "indexBy": Objects.function(Arrays.indexBy),
             "groupBy": Objects.function(Arrays.groupBy),
+            "any": Objects.function(Arrays.any),
             "sum": Objects.function(Arrays.sum),
             "avg": Objects.function(Arrays.avg),
         };

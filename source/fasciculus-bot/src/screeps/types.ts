@@ -50,9 +50,9 @@ declare global
     {
         get kind(): string;
 
-        get hasTarget(): boolean;
         get target(): Opt<Assignable>;
         set target(value: Opt<Assignable>);
+        get idle(): boolean;
 
         get blocking(): boolean;
 

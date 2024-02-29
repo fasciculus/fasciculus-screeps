@@ -3,11 +3,6 @@ export class Targets
 {
     private static _targets: Map<CreepId, AssignableId> = new Map();
 
-    static hasTarget(creep: Creep): boolean
-    {
-        return Targets._targets.has(creep.id);
-    }
-
     static getTarget(creep: Creep): Opt<Assignable>
     {
         const id: Opt<AssignableId> = Targets._targets.get(creep.id);
@@ -34,6 +29,11 @@ export class Targets
         {
             Targets._targets.delete(creepId);
         }
+    }
+
+    static isIdle(creep: Creep): boolean
+    {
+        return !Targets._targets.has(creep.id);
     }
 
     static controller(target: Opt<Assignable>): Opt<StructureController>

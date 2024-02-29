@@ -26,7 +26,7 @@ export class Harvest
 
     private static assign(): void
     {
-        const harvesters: Array<Creep> = Creep.ofKind(HARVESTER).filter(h => !h.hasTarget);
+        const harvesters: Array<Creep> = Creep.ofKind(HARVESTER).filter(h => h.idle);
 
         if (harvesters.length == 0) return;
 

@@ -84,7 +84,7 @@ export class Work
 
     private static assign()
     {
-        const workers: Array<Creep> = Creep.ofKind(WORKER).filter(w => !w.hasTarget);
+        const workers: Array<Creep> = Creep.ofKind(WORKER).filter(w => w.idle);
 
         if (workers.length == 0) return;
 

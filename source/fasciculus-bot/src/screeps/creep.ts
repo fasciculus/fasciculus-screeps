@@ -27,11 +27,6 @@ export class Creeps
         return Names.kind(this.name);
     }
 
-    private static hasTarget(this: Creep): boolean
-    {
-        return Targets.hasTarget(this);
-    }
-
     private static getTarget(this: Creep): Opt<Assignable>
     {
         return Targets.getTarget(this);
@@ -40,6 +35,11 @@ export class Creeps
     private static setTarget(this: Creep, value: Opt<Assignable>): void
     {
         Targets.setTarget(this, value);
+    }
+
+    private static idle(this: Creep): boolean
+    {
+        return Targets.isIdle(this);
     }
 
     private static blocking(this: Creep): boolean
@@ -89,8 +89,8 @@ export class Creeps
     private static _instanceProperties: any =
         {
             "kind": Objects.getter(Creeps.kind),
-            "hasTarget": Objects.getter(Creeps.hasTarget),
             "target": Objects.property(Creeps.getTarget, Creeps.setTarget),
+            "idle": Objects.getter(Creeps.idle),
             "blocking": Objects.getter(Creeps.blocking),
             "carryParts": Objects.getter(Creeps.carryParts),
             "workParts": Objects.getter(Creeps.workParts),

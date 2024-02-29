@@ -24,7 +24,7 @@ export class Guards
 
     private static assign(): void
     {
-        const guards: Array<Creep> = Creep.ofKind(GUARD).filter(g => !g.hasTarget);
+        const guards: Array<Creep> = Creep.ofKind(GUARD).filter(g => g.idle);
 
         if (guards.length == 0) return;
 

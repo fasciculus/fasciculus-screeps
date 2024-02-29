@@ -11,6 +11,8 @@ declare global
         indexBy<K>(toKey: (value: T) => K): Map<K, T>;
         groupBy<K>(toKey: (value: T) => K): Map<K, Array<T>>;
 
+        any(predicate: (value: T) => boolean): boolean;
+
         sum(toNumber: (value: T) => number): number;
         avg(toNumber: (value: T) => number): number;
     }
