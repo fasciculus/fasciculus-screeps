@@ -114,7 +114,15 @@ export class Work
 
     private static collectControllers(result: Array<Assignable>): void
     {
-        result.append(StructureController.my);
+        for (let controller of StructureController.my)
+        {
+            const count: number = controller.slotsFree;
+
+            for (let i = 0; i < count; ++i)
+            {
+                result.push(controller);
+            }
+        }
     }
 
     private static collectSites(result: Array<Assignable>): void
