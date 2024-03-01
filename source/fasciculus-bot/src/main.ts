@@ -1,8 +1,10 @@
 import { Civil } from "./civ/civil";
+import { Logistics } from "./common/logistic";
 import { Suicide } from "./common/suicide";
 import { Version } from "./common/version";
 import { ES } from "./es/es";
 import { Military } from "./mil/military";
+import { Scheduler } from "./schedule";
 import { Screeps } from "./screeps/screeps";
 import { Spawning } from "./spawn";
 
@@ -12,25 +14,15 @@ class Experiments
 {
     static run()
     {
-        // console.log(`${Game.time}: ${Transport.carryCapacity()} / ${Transport.carryCapacityRequired().toFixed(0)}`);
     }
 }
 
 export const loop = function ()
 {
     Version.run();
-
     Screeps.setup();
-
     Experiments.run();
-
-    if (Suicide.survive())
-    {
-        Military.run();
-        Civil.run();
-        Spawning.run();
-    }
-
+    Scheduler.run();
     Screeps.cleanup();
 }
 

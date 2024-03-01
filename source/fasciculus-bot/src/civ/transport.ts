@@ -1,4 +1,5 @@
-import { PATH_COST_OFFSET, TRANSPORTER } from "../common/constant";
+import { PATH_COST_OFFSET, TRANSPORTER, TRANSPORTER_MAX_IDLE_PERCENTAGE } from "../common/constant";
+import { Logistics } from "../common/logistic";
 import { Matcher } from "../common/match";
 import { BodyTemplate } from "../screeps/body";
 import { Paths } from "../screeps/path";
@@ -25,12 +26,14 @@ export class Transport
     {
         Transport.adjustTemplate();
 
-        if (Transport.hasIdle()) return false;
+        if (Transport.idlePercentage > TRANSPORTER_MAX_IDLE_PERCENTAGE) return false;
 
-        const available: number = Transport.carryCapacity();
-        const required: number = Transport.carryCapacityRequired();
+        const transporterCount: number = Creep.ofKind(TRANSPORTER).length;
+        const resourceCount: number = Resource.safe.length;
 
-        return available < required;
+        if (transporterCount < 1 && resourceCount > 0) return true;
+
+        return Logistics.performance < 1;
     }
 
     private static adjustTemplate(): void
@@ -38,31 +41,12 @@ export class Transport
         Transport.template = Creep.ofKind(TRANSPORTER).length > 1 ? Transport.largeTemplate() : Transport.smallTemplate();
     }
 
-    private static hasIdle(): boolean
+    static get idlePercentage(): number
     {
-        return Creep.ofKind(TRANSPORTER).any(t => t.idle);
-    }
+        const all: Array<Creep> = Creep.ofKind(TRANSPORTER);
+        const idle: Array<Creep> = all.filter(t => t.idle);
 
-    static carryCapacity(): number
-    {
-        return Creep.ofKind(TRANSPORTER).sum(t => t.carryParts) * 50;
-    }
-
-    static carryCapacityRequired(): number
-    {
-        var result: number = 0;
-
-        for (let resource of Resource.safe)
-        {
-            const customer: Opt<ResourceCustomer> = resource.customer;
-
-            if (customer === undefined) continue;
-
-            result += resource.amount * customer.cost / 1000;
-        }
-
-        return result;
-
+        return idle.length / Math.max(1, all.length);
     }
 
     static run(): void
@@ -163,7 +147,7 @@ export class Transport
         for (let spawn of Spawn.my)
         {
             const assigned: number = spawn.assignedCreeps.filter(c => c.kind == TRANSPORTER).length;
-            const count: number = Stores.energyFree(spawn) / 100 - assigned;
+            const count: number = Stores.energyFree(spawn) / 50 - assigned;
 
             for (let i = 0; i < count; ++i)
             {
@@ -251,7 +235,14 @@ export class Transport
     {
         if (transporter.pos.isNearTo(spawn.pos))
         {
-            transporter.transfer(spawn, RESOURCE_ENERGY);
+            const available: number = Stores.energy(transporter);
+            const requested: number = Stores.energyFree(spawn);
+            const amount: number = Math.min(available, requested);
+
+            if (transporter.transfer(spawn, RESOURCE_ENERGY, amount) == OK)
+            {
+                Logistics.delivered(amount);
+            }
         }
         else
         {

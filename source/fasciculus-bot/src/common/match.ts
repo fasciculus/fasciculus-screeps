@@ -109,11 +109,7 @@ export class Matcher
             if (!changed) break;
         }
 
-        if (iteration == MATCHER_MAX_ITERATIONS)
-        {
-            console.log("Matcher exhausted!");
-        }
-
+        this.logExhaustion(iteration);
         this.assignMatches(creepMatches);
     }
 
@@ -186,12 +182,15 @@ export class Matcher
             if (!changed) break;
         }
 
-        if (iteration == MATCHER_MAX_ITERATIONS)
-        {
-            console.log("Matcher exhausted!");
-        }
-
+        this.logExhaustion(iteration);
         this.assignMatches(creepMatches);
+    }
+
+    private logExhaustion(iterations: number): void
+    {
+        if (iterations < MATCHER_MAX_ITERATIONS) return;
+
+        console.log(`Matcher exhausted (${this.creeps[0].kind})!`);
     }
 
     private assignMatches(leftMatches: Array<number>): void
