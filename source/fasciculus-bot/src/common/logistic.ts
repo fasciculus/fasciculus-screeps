@@ -60,6 +60,11 @@ export class Logistics
 
     static setup()
     {
+        if (Logistics._performance < 0.01)
+        {
+            Logistics._performance = LOGISTICS_INITIAL_PERFORMANCE;
+        }
+
         Logistics._delivered = 0;
     }
 
