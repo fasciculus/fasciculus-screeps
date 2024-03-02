@@ -1,5 +1,4 @@
 import { PATH_COST_OFFSET, TRANSPORTER, TRANSPORTER_MAX_IDLE_PERCENTAGE } from "../common/constant";
-import { Logistics } from "../common/logistic";
 import { Matcher } from "../common/match";
 import { BodyTemplate } from "../screeps/body";
 import { Paths } from "../screeps/path";
@@ -31,14 +30,12 @@ export class Transport
         const transporterCount: number = Creep.ofKind(TRANSPORTER).length;
         const resourceCount: number = Resource.safe.length;
 
-        if (transporterCount < 1 && resourceCount > 0) return true;
-
-        return Logistics.performance < 1;
+        return transporterCount < (resourceCount / 2);
     }
 
     private static adjustTemplate(): void
     {
-        Transport.template = Creep.ofKind(TRANSPORTER).length > 1 ? Transport.largeTemplate() : Transport.smallTemplate();
+        Transport.template = Creep.ofKind(TRANSPORTER).length > 0 ? Transport.largeTemplate() : Transport.smallTemplate();
     }
 
     static get idlePercentage(): number
@@ -235,14 +232,7 @@ export class Transport
     {
         if (transporter.pos.isNearTo(spawn.pos))
         {
-            const available: number = Stores.energy(transporter);
-            const requested: number = Stores.energyFree(spawn);
-            const amount: number = Math.min(available, requested);
-
-            if (transporter.transfer(spawn, RESOURCE_ENERGY, amount) == OK)
-            {
-                Logistics.delivered(amount);
-            }
+            transporter.transfer(spawn, RESOURCE_ENERGY)
         }
         else
         {

@@ -1,9 +1,8 @@
 import { Civil } from "./civ/civil";
-import { Military } from "./mil/military";
-import { Spawning } from "./spawn";
-import { Logistics } from "./common/logistic";
 import { Suicide } from "./common/suicide";
 import { Infos } from "./info";
+import { Military } from "./mil/military";
+import { Spawning } from "./spawn";
 
 export class Scheduler
 {
@@ -11,13 +10,9 @@ export class Scheduler
     {
         if (!Suicide.survive()) return;
 
-        Logistics.setup();
-
         Military.run();
         Civil.run();
         Spawning.run();
         Infos.run();
-
-        Logistics.update();
     }
 }

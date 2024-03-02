@@ -110,7 +110,12 @@ export class Work
 
     private static unassignSpawn(worker: Creep, spawn: StructureSpawn): void
     {
-        if (Stores.energyFree(worker) == 0)
+        var unassign: boolean = false;
+
+        unassign ||= Stores.energyFree(worker) == 0;
+        unassign ||= Stores.energy(spawn) == 0;
+
+        if (unassign)
         {
             worker.target = undefined;
         }
@@ -118,12 +123,12 @@ export class Work
 
     private static unassignController(worker: Creep, controller: StructureController): void
     {
-        if (Stores.energy(worker) == 0)
-        {
-            worker.target = undefined;
-        }
+        var unassign: boolean = false;
 
-        if (controller.blocked)
+        unassign ||= controller.blocked;
+        unassign ||= Stores.energy(worker) == 0;
+
+        if (unassign)
         {
             worker.target = undefined;
         }
@@ -201,6 +206,7 @@ export class Work
     {
         if (Stores.energy(worker) > 0) return -1;
         if (Stores.energyFree(worker) == 0) return -1;
+        if (Stores.energy(spawn) == 0) return -1;
 
         return Stores.energy(spawn) / Paths.cost(worker.pos, spawn.pos, 1, PATH_COST_OFFSET);
     }
@@ -209,7 +215,6 @@ export class Work
     {
         if (controller.blocked) return -1;
         if (Stores.energy(worker) == 0) return -1;
-        if (controller.slotsFree == 0) return -1;
 
         return 1.0 / Paths.cost(worker.pos, controller.pos, 2, PATH_COST_OFFSET);
     }
