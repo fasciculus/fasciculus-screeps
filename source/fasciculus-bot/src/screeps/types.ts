@@ -111,6 +111,7 @@ declare global
 
     interface ResourceOptions
     {
+        targets?: Array<StructureConstant>;
     }
 
     interface Room

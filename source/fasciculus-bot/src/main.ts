@@ -9,7 +9,10 @@ ES.setup();
 
 const SCREEPS_OPTIONS: ScreepsOptions =
 {
-
+    resource:
+    {
+        targets: [STRUCTURE_SPAWN]
+    }
 };
 
 class Experiments
