@@ -52,6 +52,11 @@ export class Resources
         return Resources._customers.value.get(this.id);
     }
 
+    private static knownResources(): Array<Resource>
+    {
+        return Resources._known.value.data;
+    }
+
     private static safeResources(): Array<Resource>
     {
         return Resources._safe.value.data;
@@ -75,6 +80,7 @@ export class Resources
 
     private static _classProperties: any =
         {
+            "known": Objects.getter(Resources.knownResources),
             "safe": Objects.getter(Resources.safeResources),
         };
 

@@ -106,6 +106,7 @@ declare global
 
     interface ResourceConstructor
     {
+        get known(): Array<Resource>;
         get safe(): Array<Resource>;
     }
 
