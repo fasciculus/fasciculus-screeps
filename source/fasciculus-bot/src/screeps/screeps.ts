@@ -1,6 +1,7 @@
 import { Assignees } from "./assign";
 import { BodyInfos } from "./body";
 import { Cached } from "./cache";
+import { ScreepsConfig } from "./config";
 import { Controllers } from "./controller";
 import { Creeps } from "./creep";
 import { Flags } from "./flag";
@@ -17,8 +18,10 @@ import { Terrains } from "./terrain";
 
 export class Screeps
 {
-    static setup()
+    static setup(opts: ScreepsOptions)
     {
+        ScreepsConfig.setup(opts);
+
         Controllers.setup();
         Creeps.setup();
         Flags.setup();

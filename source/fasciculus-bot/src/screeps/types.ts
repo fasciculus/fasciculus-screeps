@@ -109,6 +109,10 @@ declare global
         get safe(): Array<Resource>;
     }
 
+    interface ResourceOptions
+    {
+    }
+
     interface Room
     {
         get safe(): boolean;
@@ -149,6 +153,12 @@ declare global
     {
         walkableAround(pos: RoomPosition, range: number): number;
         walkableAtRange(pos: RoomPosition, range: number): number;
+    }
+
+    interface ScreepsOptions
+    {
+        resource?: ResourceOptions;
+        transport?: TransportOptions;
     }
 
     interface Source extends _Assignable
@@ -197,6 +207,10 @@ declare global
         get idle(): Array<StructureSpawn>;
 
         get best(): Opt<StructureSpawn>;
+    }
+
+    interface TransportOptions
+    {
     }
 }
 

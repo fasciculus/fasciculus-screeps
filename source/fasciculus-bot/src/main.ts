@@ -7,6 +7,11 @@ import { W7N3 } from "./w7n3";
 
 ES.setup();
 
+const SCREEPS_OPTIONS: ScreepsOptions =
+{
+
+};
+
 class Experiments
 {
     static run()
@@ -17,7 +22,7 @@ class Experiments
 export const loop = function ()
 {
     Version.run();
-    Screeps.setup();
+    Screeps.setup(SCREEPS_OPTIONS);
     Experiments.run();
     W7N3.run();
     Scheduler.run();

@@ -5,7 +5,7 @@ export class Visuals
 {
     private static _visuals: Cached<Map<string, RoomVisual>> = Cached.simple(() => new Map());
 
-    private static _pathStyle: LineStyle = { width: 0.035, lineStyle: "dashed" };
+    private static _pathStyle: LineStyle = { width: 0.035, lineStyle: "dashed", opacity: 0.25 };
 
     static paint(): void
     {
