@@ -12,6 +12,12 @@ const SCREEPS_OPTIONS: ScreepsOptions =
     resource:
     {
         targets: [STRUCTURE_SPAWN]
+    },
+
+    visual:
+    {
+        paths: false,
+        resources: true
     }
 };
 

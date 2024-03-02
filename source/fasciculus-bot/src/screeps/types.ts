@@ -161,6 +161,7 @@ declare global
     {
         resource?: ResourceOptions;
         transport?: TransportOptions;
+        visual?: VisualOptions;
     }
 
     interface Source extends _Assignable
@@ -213,6 +214,12 @@ declare global
 
     interface TransportOptions
     {
+    }
+
+    interface VisualOptions
+    {
+        paths?: boolean;
+        resources?: boolean;
     }
 }
 

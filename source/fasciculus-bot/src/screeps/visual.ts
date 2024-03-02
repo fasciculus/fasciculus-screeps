@@ -1,4 +1,5 @@
 import { Cached } from "./cache";
+import { ScreepsConfig, VisualConfig } from "./config";
 import { Paths } from "./path";
 
 export class Visuals
@@ -9,8 +10,10 @@ export class Visuals
 
     static paint(): void
     {
-        Visuals.paintResources();
-        Visuals.paintPaths();
+        const config: VisualConfig = ScreepsConfig.visual;
+
+        if (config.paths) Visuals.paintPaths();
+        if (config.resources) Visuals.paintResources();
     }
 
     static paintResources(): void
