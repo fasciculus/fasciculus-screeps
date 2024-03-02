@@ -101,19 +101,12 @@ declare global
 
     interface Resource extends _Assignable
     {
-        customer: Opt<ResourceCustomer>;
     }
 
     interface ResourceConstructor
     {
         get known(): Array<Resource>;
         get safe(): Array<Resource>;
-    }
-
-    interface ResourceCustomer
-    {
-        id: AssignableId;
-        cost: number;
     }
 
     interface Room

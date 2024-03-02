@@ -1,7 +1,7 @@
 import { Cached } from "./cache"
 import { Matrices } from "./matrix";
 
-interface PathSearch
+interface PathKey
 {
     origin: RoomPosition;
     goal: RoomPosition;
@@ -43,7 +43,7 @@ export class Paths
         return Paths._opts.value.ensure(name, Paths.createOpts);
     }
 
-    private static findPath(key: string, hint?: PathSearch): PathFinderPath
+    private static findPath(key: string, hint?: PathKey): PathFinderPath
     {
         if (hint === undefined) return Paths.noPath();
 
@@ -54,9 +54,29 @@ export class Paths
         return PathFinder.search(origin, goal, opts);
     }
 
-    private static createKey(o: RoomPosition, g: RoomPosition, range: number): string
+    private static encodeKey(key: PathKey): string
     {
-        return o.roomName + "_" + o.x + "_" + o.y + "_" + g.roomName + "_" + g.x + "_" + g.y + "_" + range;
+        const o: RoomPosition = key.origin;
+        const g: RoomPosition = key.goal;
+        const r: number = key.range;
+
+        return o.roomName + "_" + o.x + "_" + o.y + "_" + g.roomName + "_" + g.x + "_" + g.y + "_" + r;
+    }
+
+    private static decodeKey(encoded: string): PathKey
+    {
+        const parts: Array<string> = encoded.split("_");
+        const originName: string = parts[0];
+        const originX: number = Number.parseInt(parts[1]);
+        const originY: number = Number.parseInt(parts[2]);
+        const origin: RoomPosition = new RoomPosition(originX, originY, originName);
+        const goalName: string = parts[3];
+        const goalX: number = Number.parseInt(parts[4]);
+        const goalY: number = Number.parseInt(parts[5]);
+        const goal: RoomPosition = new RoomPosition(goalX, goalY, goalName);
+        const range: number = Number.parseInt(parts[6]);
+
+        return { origin, goal, range };
     }
 
     private static cache(goal: RoomPosition, range: number, fullPath: PathFinderPath)
@@ -72,24 +92,25 @@ export class Paths
         while (path.length > 0)
         {
             const origin: RoomPosition = path[0];
-            const key: string = Paths.createKey(origin, goal, range);
+            const key: PathKey = { origin, goal, range };
+            const encoded: string = Paths.encodeKey(key);
 
-            if (paths.has(key)) break;
+            if (paths.has(encoded)) break;
 
             path = path.slice(1);
             cost = Math.max(0, cost - costDelta);
 
             const newPath: PathFinderPath = { path, ops, cost, incomplete: false };
 
-            paths.set(key, newPath);
+            paths.set(encoded, newPath);
         }
     }
 
     private static path(origin: RoomPosition, goal: RoomPosition, range: number): PathFinderPath
     {
-        const key: string = Paths.createKey(origin, goal, range);
-        const hint: PathSearch = { origin, goal, range };
-        const path: PathFinderPath = Paths._paths.value.ensure(key, Paths.findPath, hint);
+        const key: PathKey = { origin, goal, range };
+        const encoded: string = Paths.encodeKey(key);
+        const path: PathFinderPath = Paths._paths.value.ensure(encoded, Paths.findPath, key);
 
         Paths.cache(goal, range, path);
 
@@ -152,5 +173,15 @@ export class Paths
         const bCost: number = Paths.cost(origin, b.pos, range, 0);
 
         return aCost - bCost;
+    }
+
+    static forEach(fn: (origin: RoomPosition, path: Array<RoomPosition>) => void): void
+    {
+        Paths._paths.value.forEach((path, encodedKey) =>
+        {
+            const key: PathKey = Paths.decodeKey(encodedKey);
+
+            fn(key.origin, path.path);
+        });
     }
 }
