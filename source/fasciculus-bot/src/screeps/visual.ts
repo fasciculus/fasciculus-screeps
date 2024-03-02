@@ -19,12 +19,16 @@ export class Visuals
         {
             const pos: RoomPosition = resource.pos;
             const visual = Visuals.getVisual(pos.roomName);
-            const text: string = `${resource.amount}`;
+            const cost: string = `${resource.cost}`;
+            const amount: string = `${resource.amount}`;
             const x: number = pos.x;
-            const y: number = pos.y + 0.35;
-            const style: TextStyle = { font: 0.35, color: "#ffff00", align: "center" };
+            const y: number = pos.y;
 
-            visual.text(text, x, y, style);
+            const costStyle: TextStyle = { font: 0.35, color: "#ffffff", align: "center" };
+            const amountStyle: TextStyle = { font: 0.35, color: "#ffff00", align: "center" };
+
+            visual.text(cost, x, y + 0.00, costStyle);
+            visual.text(amount, x, y + 0.35, amountStyle);
         }
     }
 

@@ -38,7 +38,7 @@ export class ScreepsConfig
 {
     private static _resource: ResourceConfig = new ResourceConfig();
 
-    get resource(): ResourceConfig { return ScreepsConfig._resource; }
+    static get resource(): ResourceConfig { return ScreepsConfig._resource; }
 
     static setup(opts: ScreepsOptions)
     {

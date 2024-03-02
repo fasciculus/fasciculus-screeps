@@ -10,6 +10,8 @@ interface PathKey
 
 export class Paths
 {
+    static readonly NO_PATH_COST: number = 999999;
+
     private static _opts: Cached<Map<string, PathFinderOpts>> = Cached.simple(() => new Map());
     private static _paths: Cached<Map<string, PathFinderPath>> = Cached.simple(() => new Map());
 
@@ -157,7 +159,7 @@ export class Paths
     {
         var cost: Opt<number> = Paths.optCost(origin, goal, range);
 
-        if (cost === undefined) cost = 999999;
+        if (cost === undefined) cost = Paths.NO_PATH_COST;
 
         return cost + offset;
     }

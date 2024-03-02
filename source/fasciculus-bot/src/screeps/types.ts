@@ -101,6 +101,7 @@ declare global
 
     interface Resource extends _Assignable
     {
+        get cost(): Opt<number>;
     }
 
     interface ResourceConstructor
