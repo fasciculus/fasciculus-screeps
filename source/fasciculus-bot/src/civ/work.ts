@@ -1,4 +1,4 @@
-import { PATH_COST_OFFSET, WORKER, WORKER_ENERGY_SHARE } from "../common/constant";
+import { HARVESTER, PATH_COST_OFFSET, WORKER, WORKER_ENERGY_SHARE, WORKER_HARVESTER_RATIO } from "../common/constant";
 import { Matcher } from "../common/match";
 import { Blocking } from "../screeps/block";
 import { BodyTemplate } from "../screeps/body";
@@ -16,6 +16,11 @@ export class Work
     static more(): boolean
     {
         if (Work.hasIdle()) return false;
+
+        const workerCount: number = Creep.ofKind(WORKER).length;
+        const harvesterCount: number = Creep.ofKind(HARVESTER).length;
+
+        if (workerCount >= harvesterCount * WORKER_HARVESTER_RATIO) return false;
 
         const energyUsed: number = Work.energyUsed();
         const energyAvailable: number = Work.energyAvailable();

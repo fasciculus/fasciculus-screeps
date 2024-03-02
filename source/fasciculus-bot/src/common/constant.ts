@@ -1,5 +1,5 @@
 
-export const VERSION = "0.5.12";
+export const VERSION = "0.5.13";
 export const SUICIDE = false;
 
 export const INFO: string = "I";
@@ -17,4 +17,5 @@ export const LOGISTICS_DELIVERY_TIME = 30;
 
 export const TRANSPORTER_MAX_IDLE_PERCENTAGE = 0.5;
 
+export const WORKER_HARVESTER_RATIO = 0.5;
 export const WORKER_ENERGY_SHARE = 0.25;
