@@ -23,6 +23,9 @@ export class Infos
 
             visual.text(`I: ${idleTransporters.toFixed(0)} % of ${transporters}`, x, y, INFO_STYLE);
             ++y;
+
+            visual.text(`B: ${Game.cpu.bucket}`, x, y, INFO_STYLE);
+            ++y;
         }
     }
 }

@@ -130,12 +130,7 @@ export class Transport
         {
             if (resource.amount < TRANSPORT_MIN_AMOUNT) continue;
 
-            const count = Math.min(3, resource.amount / 100) - resource.assignees.size;
-
-            for (let i = 0; i < count; ++i)
-            {
-                result.push(resource);
-            }
+            result.push(resource);
         }
     }
 
