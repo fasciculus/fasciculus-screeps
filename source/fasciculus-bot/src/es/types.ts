@@ -25,6 +25,8 @@ declare global
 
     interface Set<T>
     {
+        addAll(values: Iterable<T>): this;
+
         keep(values: Set<T>): Set<T>;
 
         filter(predicate: (value: T) => boolean): Set<T>;

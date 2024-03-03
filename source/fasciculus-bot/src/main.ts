@@ -1,3 +1,4 @@
+import { TRANSPORTER } from "./common/constant";
 import { Version } from "./common/version";
 import { ES } from "./es/es";
 import { Scheduler } from "./schedule";
@@ -11,7 +12,9 @@ const SCREEPS_OPTIONS: ScreepsOptions =
 {
     resource:
     {
-        targets: [STRUCTURE_SPAWN]
+        targets: [STRUCTURE_SPAWN],
+        transporters: [TRANSPORTER],
+        speed: 1
     },
 
     visual:

@@ -2,6 +2,16 @@ import { Objects } from "./object";
 
 export class Sets
 {
+    private static addAll<T>(this: Set<T>, values: Iterable<T>): Set<T>
+    {
+        for (let value of values)
+        {
+            this.add(value);
+        }
+
+        return this;
+    }
+
     private static keep<T>(this: Set<T>, values: Set<T>): Set<T>
     {
         const toDelete: Set<T> = this.filter(v => !values.has(v));
@@ -36,6 +46,7 @@ export class Sets
 
     private static _instanceProperties: any =
         {
+            "addAll": Objects.function(Sets.addAll),
             "keep": Objects.function(Sets.keep),
             "filter": Objects.function(Sets.filter),
             "map": Objects.function(Sets.map),

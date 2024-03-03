@@ -113,6 +113,8 @@ declare global
     interface ResourceOptions
     {
         targets?: Array<StructureConstant>;
+        transporters?: Array<string>;
+        speed?: number;
     }
 
     interface Room
@@ -160,7 +162,6 @@ declare global
     interface ScreepsOptions
     {
         resource?: ResourceOptions;
-        transport?: TransportOptions;
         visual?: VisualOptions;
     }
 
@@ -210,10 +211,6 @@ declare global
         get idle(): Array<StructureSpawn>;
 
         get best(): Opt<StructureSpawn>;
-    }
-
-    interface TransportOptions
-    {
     }
 
     interface VisualOptions

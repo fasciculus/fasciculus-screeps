@@ -2,6 +2,8 @@
 export class ResourceConfig
 {
     private _targets: Set<StructureConstant> = new Set();
+    private _transporters: Set<string> = new Set();
+    private _speed: number = 1;
 
     constructor()
     {
@@ -16,6 +18,8 @@ export class ResourceConfig
     private reset()
     {
         this._targets.clear();
+        this._transporters.clear();
+        this._speed = 1;
     }
 
     setup(opts: Opt<ResourceOptions>)
@@ -24,13 +28,9 @@ export class ResourceConfig
 
         if (opts === undefined) return;
 
-        if (opts.targets !== undefined)
-        {
-            for (let target of opts.targets)
-            {
-                this._targets.add(target);
-            }
-        }
+        if (opts.targets !== undefined) this._targets.addAll(opts.targets);
+        if (opts.transporters !== undefined) this._transporters.addAll(opts.transporters);
+        if (opts.speed !== undefined) this._speed = opts.speed;
     }
 }
 
