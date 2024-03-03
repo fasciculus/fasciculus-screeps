@@ -3,24 +3,40 @@ export class Assignees
 {
     private static _assignees: Map<AssignableId, Set<CreepId>> = new Map();
 
-    static assignees(assignable: AssignableId): Set<CreepId>
+    static assignedCount(assignableId: AssignableId): number
     {
-        return Assignees._assignees.ensure(assignable, () => new Set());
+        const ids: Opt<Set<CreepId>> = Assignees._assignees.get(assignableId);
+
+        return ids === undefined ? 0 : ids.size;
     }
 
-    static assign(assignable: AssignableId, creep: CreepId): void
+    static assignedCreeps(assignableId: AssignableId): Array<Creep>
     {
-        Assignees.assignees(assignable).add(creep);
+        const ids: Opt<Set<CreepId>> = Assignees._assignees.get(assignableId);
+
+        if (ids === undefined) return new Array();
+
+        return Game.all(ids);
     }
 
-    static unassign(assignable: AssignableId, creep: CreepId): void
+    private static assignees(assignableId: AssignableId): Set<CreepId>
     {
-        Assignees.assignees(assignable).delete(creep);
+        return Assignees._assignees.ensure(assignableId, () => new Set());
     }
 
-    static unassignAll(assignable: AssignableId): void
+    static assign(assignableId: AssignableId, creep: CreepId): void
     {
-        Assignees._assignees.delete(assignable);
+        Assignees.assignees(assignableId).add(creep);
+    }
+
+    static unassign(assignableId: AssignableId, creep: CreepId): void
+    {
+        Assignees.assignees(assignableId).delete(creep);
+    }
+
+    static unassignAll(assignableId: AssignableId): void
+    {
+        Assignees._assignees.delete(assignableId);
     }
 
     static setup()

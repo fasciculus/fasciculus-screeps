@@ -35,8 +35,8 @@ export class Spawns
         return this.spawnCreep(body, name);
     }
 
-    private static assignees(this: StructureSpawn): Set<CreepId> { return Assignees.assignees(this.id); }
-    private static assignedCreeps(this: StructureSpawn): Array<Creep> { return Game.all(this.assignees); }
+    private static assignedCount(this: StructureSpawn): number { return Assignees.assignedCount(this.id); }
+    private static assignedCreeps(this: StructureSpawn): Array<Creep> { return Assignees.assignedCreeps(this.id); }
     private static assign(this: StructureSpawn, creep: CreepId): void { Assignees.assign(this.id, creep); }
     private static unassign(this: StructureSpawn, creep: CreepId): void { Assignees.unassign(this.id, creep); }
     private static unassignAll(this: StructureSpawn): void { Assignees.unassignAll(this.id); }
@@ -74,7 +74,7 @@ export class Spawns
             "roomEnergy": Objects.getter(Spawns.roomEnergy),
             "roomEnergyCapacity": Objects.getter(Spawns.roomEnergyCapacity),
             "spawn": Objects.function(Spawns.spawn),
-            "assignees": Objects.getter(Spawns.assignees),
+            "assignedCount": Objects.getter(Spawns.assignedCount),
             "assignedCreeps": Objects.getter(Spawns.assignedCreeps),
             "assign": Objects.function(Spawns.assign),
             "unassign": Objects.function(Spawns.unassign),

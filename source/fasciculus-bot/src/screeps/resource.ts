@@ -96,11 +96,11 @@ export class Resources
 
     private static transportersFree(this: Resource): number
     {
-        return Math.max(0, this.transportersRequired - this.assignees.size);
+        return Math.max(0, this.transportersRequired - this.assignedCount);
     }
 
-    private static assignees(this: Resource): Set<CreepId> { return Assignees.assignees(this.id); }
-    private static assignedCreeps(this: Resource): Array<Creep> { return Game.all(this.assignees); }
+    private static assignedCount(this: Resource): number { return Assignees.assignedCount(this.id); }
+    private static assignedCreeps(this: Resource): Array<Creep> { return Assignees.assignedCreeps(this.id); }
     private static assign(this: Resource, creep: CreepId): void { Assignees.assign(this.id, creep); }
     private static unassign(this: Resource, creep: CreepId): void { Assignees.unassign(this.id, creep); }
     private static unassignAll(this: Resource): void { Assignees.unassignAll(this.id); }
@@ -120,7 +120,7 @@ export class Resources
             "cost": Objects.getter(Resources.cost),
             "transportersRequired": Objects.getter(Resources.transportersRequired),
             "transportersFree": Objects.getter(Resources.transportersFree),
-            "assignees": Objects.getter(Resources.assignees),
+            "assignedCount": Objects.getter(Resources.assignedCount),
             "assignedCreeps": Objects.getter(Resources.assignedCreeps),
             "assign": Objects.function(Resources.assign),
             "unassign": Objects.function(Resources.unassign),

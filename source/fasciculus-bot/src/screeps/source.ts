@@ -36,7 +36,7 @@ export class Sources
 
     private static slotsFree(this: Source): number
     {
-        return this.slotsCount - this.assignees.size;
+        return this.slotsCount - this.assignedCount;
     }
 
     private static workCapacity(this: Source): number
@@ -56,8 +56,8 @@ export class Sources
         return Math.max(0, this.workCapacity - this.workAssigned);
     }
 
-    private static assignees(this: Source): Set<CreepId> { return Assignees.assignees(this.id); }
-    private static assignedCreeps(this: Source): Array<Creep> { return Game.all(this.assignees); }
+    private static assignedCount(this: Source): number { return Assignees.assignedCount(this.id); }
+    private static assignedCreeps(this: Source): Array<Creep> { return Assignees.assignedCreeps(this.id); }
     private static assign(this: Source, creep: CreepId): void { Assignees.assign(this.id, creep); }
     private static unassign(this: Source, creep: CreepId): void { Assignees.unassign(this.id, creep); }
     private static unassignAll(this: Source): void { Assignees.unassignAll(this.id); }
@@ -79,7 +79,7 @@ export class Sources
             "workCapacity": Objects.getter(Sources.workCapacity),
             "workAssigned": Objects.getter(Sources.workAssigned),
             "workFree": Objects.getter(Sources.workFree),
-            "assignees": Objects.getter(Sources.assignees),
+            "assignedCount": Objects.getter(Sources.assignedCount),
             "assignedCreeps": Objects.getter(Sources.assignedCreeps),
             "assign": Objects.function(Sources.assign),
             "unassign": Objects.function(Sources.unassign),

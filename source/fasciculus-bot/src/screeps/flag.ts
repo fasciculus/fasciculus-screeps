@@ -29,8 +29,8 @@ export class Flags
         return Names.kind(this.name);
     }
 
-    private static assignees(this: Flag): Set<CreepId> { return Assignees.assignees(this.id); }
-    private static assignedCreeps(this: Flag): Array<Creep> { return Game.all(this.assignees); }
+    private static assignedCount(this: Flag): number { return Assignees.assignedCount(this.id); }
+    private static assignedCreeps(this: Flag): Array<Creep> { return Assignees.assignedCreeps(this.id); }
     private static assign(this: Flag, creep: CreepId): void { Assignees.assign(this.id, creep); }
     private static unassign(this: Flag, creep: CreepId): void { Assignees.unassign(this.id, creep); }
     private static unassignAll(this: Flag): void { Assignees.unassignAll(this.id); }
@@ -53,7 +53,7 @@ export class Flags
         {
             "id": Objects.getter(Flags.id),
             "kind": Objects.getter(Flags.kind),
-            "assignees": Objects.getter(Flags.assignees),
+            "assignedCount": Objects.getter(Flags.assignedCount),
             "assignedCreeps": Objects.getter(Flags.assignedCreeps),
             "assign": Objects.function(Flags.assign),
             "unassign": Objects.function(Flags.unassign),

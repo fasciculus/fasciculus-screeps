@@ -75,8 +75,8 @@ export class Creeps
         return direction !== undefined ? this.move(direction) : ERR_NO_PATH;
     }
 
-    private static assignees(this: Creep): Set<CreepId> { return Assignees.assignees(this.id); }
-    private static assignedCreeps(this: Creep): Array<Creep> { return Game.all(this.assignees); }
+    private static assignedCount(this: Creep): number { return Assignees.assignedCount(this.id); }
+    private static assignedCreeps(this: Creep): Array<Creep> { return Assignees.assignedCreeps(this.id); }
     private static assign(this: Creep, creep: CreepId): void { Assignees.assign(this.id, creep); }
     private static unassign(this: Creep, creep: CreepId): void { Assignees.unassign(this.id, creep); }
     private static unassignAll(this: Creep): void { Assignees.unassignAll(this.id); }
@@ -104,7 +104,7 @@ export class Creeps
             "carryParts": Objects.getter(Creeps.carryParts),
             "workParts": Objects.getter(Creeps.workParts),
             "travelTo": Objects.function(Creeps.travelTo),
-            "assignees": Objects.getter(Creeps.assignees),
+            "assignedCount": Objects.getter(Creeps.assignedCount),
             "assignedCreeps": Objects.getter(Creeps.assignedCreeps),
             "assign": Objects.function(Creeps.assign),
             "unassign": Objects.function(Creeps.unassign),

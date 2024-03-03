@@ -33,7 +33,7 @@ export class Guards
 
     private static collectTargets(): Array<Assignable>
     {
-        return Flag.ofKind(GUARD).filter(f => f.assignees.size == 0);
+        return Flag.ofKind(GUARD).filter(f => f.assignedCount == 0);
     }
 
     private static targetValue(guard: Creep, target: Assignable): number

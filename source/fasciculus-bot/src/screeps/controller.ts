@@ -51,11 +51,11 @@ export class Controllers
 
     private static slotsFree(this: StructureController): number
     {
-        return this.slotsCount - this.assignees.size;
+        return this.slotsCount - this.assignedCount;
     }
 
-    private static assignees(this: StructureController): Set<CreepId> { return Assignees.assignees(this.id); }
-    private static assignedCreeps(this: StructureController): Array<Creep> { return Game.all(this.assignees); }
+    private static assignedCount(this: StructureController): number { return Assignees.assignedCount(this.id); }
+    private static assignedCreeps(this: StructureController): Array<Creep> { return Assignees.assignedCreeps(this.id); }
     private static assign(this: StructureController, creep: CreepId): void { Assignees.assign(this.id, creep); }
     private static unassign(this: StructureController, creep: CreepId): void { Assignees.unassign(this.id, creep); }
     private static unassignAll(this: StructureController): void { Assignees.unassignAll(this.id); }
@@ -106,7 +106,7 @@ export class Controllers
             "blocked": Objects.getter(Controllers.blocked),
             "slotsCount": Objects.getter(Controllers.slotsCount),
             "slotsFree": Objects.getter(Controllers.slotsFree),
-            "assignees": Objects.getter(Controllers.assignees),
+            "assignedCount": Objects.getter(Controllers.assignedCount),
             "assignedCreeps": Objects.getter(Controllers.assignedCreeps),
             "assign": Objects.function(Controllers.assign),
             "unassign": Objects.function(Controllers.unassign),

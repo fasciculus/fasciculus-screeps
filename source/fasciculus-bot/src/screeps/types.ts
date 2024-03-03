@@ -24,7 +24,7 @@ declare global
 
     interface _Assignable
     {
-        get assignees(): Set<CreepId>;
+        get assignedCount(): number;
         get assignedCreeps(): Array<Creep>;
 
         assign(creep: CreepId): void;
