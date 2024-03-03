@@ -4,6 +4,8 @@ import { Cached } from "./cache";
 import { ResourceConfig, ScreepsConfig } from "./config";
 import { PathResult, Paths } from "./path";
 
+export const TRANSPORTER_DIVISOR: number = 5000;
+
 export class Resources
 {
     private static _known: Cached<Map<ResourceId, Resource>> = Cached.simple(Resources.fetchKnown);
@@ -13,6 +15,7 @@ export class Resources
     private static _costMap: Cached<Map<ResourceId, number>> = Cached.simple(() => new Map());
     private static _costFetched: Cached<Set<ResourceId>> = Cached.simple(() => new Set());
 
+    private static _transporters: Cached<Array<Creep>> = Cached.simple(Resources.fetchTransporters);
     private static _avgCarryParts: Cached<number> = Cached.simple(Resources.fetchAvgCarryParts);
 
     private static fetchKnown(): Map<ResourceId, Resource>
@@ -52,10 +55,16 @@ export class Resources
         return closest === undefined ? undefined : closest.cost;
     }
 
-    private static fetchAvgCarryParts(): number
+    private static fetchTransporters(): Array<Creep>
     {
         const config: ResourceConfig = ScreepsConfig.resource;
-        const transporters: Array<Creep> = Creep.my.filter(c => config.isTransporter(c));
+
+        return Creep.my.filter(c => config.isTransporter(c));
+    }
+
+    private static fetchAvgCarryParts(): number
+    {
+        const transporters: Array<Creep> = Resources._transporters.value;
         const carryParts: number = transporters.sum(c => c.carryParts);
 
         return Math.max(1, carryParts / Math.max(1, transporters.length));
@@ -91,7 +100,7 @@ export class Resources
         const speed: number = ScreepsConfig.resource.speed;
         const avgCarryParts: number = Resources._avgCarryParts.value;
 
-        return Math.ceil(this.amount * cost * speed / avgCarryParts / 5000);
+        return Math.ceil(this.amount * cost * speed / avgCarryParts / TRANSPORTER_DIVISOR);
     }
 
     private static transportersFree(this: Resource): number

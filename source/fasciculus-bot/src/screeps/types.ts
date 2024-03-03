@@ -206,6 +206,7 @@ declare global
         get roomEnergyCapacity(): number;
 
         get transportersAssigned(): number;
+        get transportersRequired(): number;
 
         spawn(kind: string, body: Array<BodyPartConstant>): ScreepsReturnCode;
     }

@@ -3,11 +3,15 @@ import { Assignees } from "./assign";
 import { Cached } from "./cache";
 import { ResourceConfig, ScreepsConfig } from "./config";
 import { Names } from "./name";
+import { PathResult, Paths } from "./path";
+import { Stores } from "./store";
 
 export class Spawns
 {
     private static _my: Cached<Map<SpawnId, StructureSpawn>> = Cached.simple(Spawns.fetchMy);
     private static _idle: Cached<Map<SpawnId, StructureSpawn>> = Cached.simple(Spawns.fetchIdle);
+
+    private static _transportersRequired: Cached<Map<SpawnId, number>> = Cached.simple(() => new Map());
 
     private static fetchMy(): Map<SpawnId, StructureSpawn>
     {
@@ -17,6 +21,30 @@ export class Spawns
     private static fetchIdle(): Map<SpawnId, StructureSpawn>
     {
         return Spawns._my.value.filter((id, spawn) => !spawn.spawning);
+    }
+
+    private static getTransportersRequired(id: SpawnId, spawn?: StructureSpawn): number
+    {
+        if (spawn === undefined) return 0;
+
+        var result: number = 0;
+        var energyRequired: number = Stores.energyFree(spawn);
+        const resources: Map<ResourceId, Resource> = Resource.safe.indexBy(r => r.id);
+
+        while (energyRequired > 0 && resources.size > 0)
+        {
+            const pathResult: Opt<PathResult<Resource>> = Paths.closest(spawn.pos, resources.data, 1);
+
+            if (pathResult === undefined) break;
+
+            const resource: Resource = pathResult.goal;
+
+            result += resource.transportersRequired;
+            energyRequired -= resource.amount;
+            resources.delete(resource.id);
+        }
+
+        return result;
     }
 
     private static roomEnergy(this: StructureSpawn): number
@@ -34,6 +62,11 @@ export class Spawns
         const config: ResourceConfig = ScreepsConfig.resource;
 
         return this.assignedCreeps.filter(c => config.isTransporter(c)).length;
+    }
+
+    private static transportersRequired(this: StructureSpawn): number
+    {
+        return Spawns._transportersRequired.value.ensure(this.id, Spawns.getTransportersRequired, this);
     }
 
     private static spawn(this: StructureSpawn, kind: string, body: Array<BodyPartConstant>): ScreepsReturnCode
@@ -82,6 +115,7 @@ export class Spawns
             "roomEnergy": Objects.getter(Spawns.roomEnergy),
             "roomEnergyCapacity": Objects.getter(Spawns.roomEnergyCapacity),
             "transportersAssigned": Objects.getter(Spawns.transportersAssigned),
+            "transportersRequired": Objects.getter(Spawns.transportersRequired),
             "spawn": Objects.function(Spawns.spawn),
             "assignedCount": Objects.getter(Spawns.assignedCount),
             "assignedCreeps": Objects.getter(Spawns.assignedCreeps),

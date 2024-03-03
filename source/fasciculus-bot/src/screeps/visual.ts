@@ -70,7 +70,7 @@ export class Visuals
             const x: number = pos.x;
             const y: number = pos.y;
             const visual = Visuals.getVisual(pos.roomName);
-            const transport: string = `${spawn.transportersAssigned} / ?`;
+            const transport: string = `${spawn.transportersAssigned} / ${spawn.transportersRequired}`;
 
             visual.text(transport, x, y - 0.10, Visuals._spawnTransportStyle);
         }
