@@ -8,6 +8,9 @@ export class Visuals
 
     private static _pathStyle: LineStyle = { width: 0.035, lineStyle: "dashed", opacity: 0.25 };
 
+    private static _resourceAssignmentStyle: TextStyle = { font: 0.35, color: "#ffc000", align: "center" };
+    private static _resourceAmountStyle: TextStyle = { font: 0.35, color: "#ffff00", align: "center" };
+
     static paint(): void
     {
         const config: VisualConfig = ScreepsConfig.visual;
@@ -21,18 +24,14 @@ export class Visuals
         for (let resource of Resource.known)
         {
             const pos: RoomPosition = resource.pos;
-            const visual = Visuals.getVisual(pos.roomName);
-            const assignment: string = `${resource.assignees.size} / ?`;
-            const cost: string = `${resource.cost}`;
-            const amount: string = `${resource.amount}`;
             const x: number = pos.x;
             const y: number = pos.y;
+            const visual = Visuals.getVisual(pos.roomName);
+            const assignment: string = `${resource.assignees.size} / ?`;
+            const amount: string = `${resource.amount}`;
 
-            const assignmentStyle: TextStyle = { font: 0.35, color: "#ffc000", align: "center" };
-            const amountStyle: TextStyle = { font: 0.35, color: "#ffff00", align: "center" };
-
-            visual.text(assignment, x, y - 0.10, assignmentStyle);
-            visual.text(amount, x, y + 0.35, amountStyle);
+            visual.text(assignment, x, y - 0.10, Visuals._resourceAssignmentStyle);
+            visual.text(amount, x, y + 0.35, Visuals._resourceAmountStyle);
         }
     }
 
