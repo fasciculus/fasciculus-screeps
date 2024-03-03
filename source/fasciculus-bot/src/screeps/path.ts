@@ -8,10 +8,14 @@ interface PathKey
     range: number;
 }
 
+export interface PathResult<T>
+{
+    goal: T;
+    cost: number;
+}
+
 export class Paths
 {
-    static readonly NO_PATH_COST: number = 999999;
-
     private static _opts: Cached<Map<string, PathFinderOpts>> = Cached.simple(() => new Map());
     private static _paths: Cached<Map<string, PathFinderPath>> = Cached.simple(() => new Map());
 
@@ -159,22 +163,28 @@ export class Paths
     {
         var cost: Opt<number> = Paths.optCost(origin, goal, range);
 
-        if (cost === undefined) cost = Paths.NO_PATH_COST;
+        if (cost === undefined) return Number.MAX_SAFE_INTEGER;;
 
         return cost + offset;
     }
 
-    static sort<T extends _HasRoomPosition>(origin: RoomPosition, goals: Array<T>, range: number): Array<T>
+    static closest<T extends _HasRoomPosition>(origin: RoomPosition, goals: Array<T>, range: number): Opt<PathResult<T>>
     {
-        return goals.sort((a, b) => Paths.compare(a, b, origin, range));
-    }
+        var result: Opt<PathResult<T>> = undefined;
+        var bestCost: number = Number.MAX_SAFE_INTEGER;
 
-    static compare<T extends _HasRoomPosition>(a: T, b: T, origin: RoomPosition, range: number): number
-    {
-        const aCost: number = Paths.cost(origin, a.pos, range, 0);
-        const bCost: number = Paths.cost(origin, b.pos, range, 0);
+        for (let goal of goals)
+        {
+            const cost: Opt<number> = Paths.optCost(origin, goal.pos, 1);
 
-        return aCost - bCost;
+            if (cost === undefined) continue;
+            if (cost > bestCost) continue;
+
+            result = { goal, cost };
+            bestCost = cost;
+        }
+
+        return result;
     }
 
     static forEach(fn: (origin: RoomPosition, path: Array<RoomPosition>) => void): void

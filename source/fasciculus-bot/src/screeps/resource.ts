@@ -2,7 +2,7 @@ import { Objects } from "../es/object";
 import { Assignees } from "./assign";
 import { Cached } from "./cache";
 import { ResourceConfig, ScreepsConfig } from "./config";
-import { Paths } from "./path";
+import { PathResult, Paths } from "./path";
 
 export class Resources
 {
@@ -45,14 +45,9 @@ export class Resources
     private static fetchCost(resource: Resource): Opt<number>
     {
         const targets: Array<Assignable> = Resources._targets.value;
+        const closest: Opt<PathResult<Assignable>> = Paths.closest(resource.pos, targets, 1);
 
-        if (targets.length == 0) return undefined;
-
-        Paths.sort(resource.pos, targets, 1);
-
-        const target: Assignable = targets[0];
-
-        return Paths.optCost(resource.pos, target.pos, 1);
+        return closest === undefined ? undefined : closest.cost;
     }
 
     private static cost(this: Resource): Opt<number>
