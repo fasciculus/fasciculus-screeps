@@ -11,28 +11,15 @@ export class Visuals
     private static _resourceAssignmentStyle: TextStyle = { font: 0.35, color: "#ffc000", align: "center" };
     private static _resourceAmountStyle: TextStyle = { font: 0.35, color: "#ffff00", align: "center" };
 
+    private static _spawnTransportStyle: TextStyle = { font: 0.5, color: "#c08000", align: "center" };
+
     static paint(): void
     {
         const config: VisualConfig = ScreepsConfig.visual;
 
         if (config.paths) Visuals.paintPaths();
         if (config.resources) Visuals.paintResources();
-    }
-
-    static paintResources(): void
-    {
-        for (let resource of Resource.known)
-        {
-            const pos: RoomPosition = resource.pos;
-            const x: number = pos.x;
-            const y: number = pos.y;
-            const visual = Visuals.getVisual(pos.roomName);
-            const assignment: string = `${resource.assignedCount} / ${resource.transportersRequired}`;
-            const amount: string = `${resource.amount}`;
-
-            visual.text(assignment, x, y - 0.10, Visuals._resourceAssignmentStyle);
-            visual.text(amount, x, y + 0.35, Visuals._resourceAmountStyle);
-        }
+        if (config.spawns) Visuals.paintSpawns();
     }
 
     static paintPaths(): void
@@ -56,6 +43,36 @@ export class Visuals
             }
 
             p1 = p2;
+        }
+    }
+
+    static paintResources(): void
+    {
+        for (let resource of Resource.known)
+        {
+            const pos: RoomPosition = resource.pos;
+            const x: number = pos.x;
+            const y: number = pos.y;
+            const visual = Visuals.getVisual(pos.roomName);
+            const assignment: string = `${resource.assignedCount} / ${resource.transportersRequired}`;
+            const amount: string = `${resource.amount}`;
+
+            visual.text(assignment, x, y - 0.10, Visuals._resourceAssignmentStyle);
+            visual.text(amount, x, y + 0.35, Visuals._resourceAmountStyle);
+        }
+    }
+
+    static paintSpawns(): void
+    {
+        for (let spawn of StructureSpawn.my)
+        {
+            const pos: RoomPosition = spawn.pos;
+            const x: number = pos.x;
+            const y: number = pos.y;
+            const visual = Visuals.getVisual(pos.roomName);
+            const transport: string = `${spawn.transportersAssigned} / ?`;
+
+            visual.text(transport, x, y - 0.10, Visuals._spawnTransportStyle);
         }
     }
 

@@ -1,5 +1,5 @@
 
-export const VERSION = "0.5.19";
+export const VERSION = "0.5.20";
 export const SUICIDE = false;
 
 export const INFO: string = "I";
@@ -19,3 +19,20 @@ export const TRANSPORTER_MAX_IDLE_PERCENTAGE = 0.5;
 
 export const WORKER_HARVESTER_RATIO = 0.5;
 export const WORKER_ENERGY_SHARE = 0.25;
+
+export const SCREEPS_OPTIONS: ScreepsOptions =
+{
+    resource:
+    {
+        targets: [STRUCTURE_SPAWN],
+        transporters: [TRANSPORTER],
+        speed: 1
+    },
+
+    visual:
+    {
+        paths: false,
+        resources: true,
+        spawns: true,
+    }
+};

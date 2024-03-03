@@ -1,29 +1,12 @@
-import { TRANSPORTER } from "./common/constant";
+import { SCREEPS_OPTIONS } from "./common/constant";
 import { Version } from "./common/version";
 import { ES } from "./es/es";
 import { Scheduler } from "./schedule";
-import { Resources } from "./screeps/resource";
 import { Screeps } from "./screeps/screeps";
 import { Visuals } from "./screeps/visual";
 import { W7N3 } from "./w7n3";
 
 ES.setup();
-
-const SCREEPS_OPTIONS: ScreepsOptions =
-{
-    resource:
-    {
-        targets: [STRUCTURE_SPAWN],
-        transporters: [TRANSPORTER],
-        speed: 1
-    },
-
-    visual:
-    {
-        paths: false,
-        resources: true
-    }
-};
 
 class Experiments
 {

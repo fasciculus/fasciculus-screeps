@@ -205,6 +205,8 @@ declare global
         get roomEnergy(): number;
         get roomEnergyCapacity(): number;
 
+        get transportersAssigned(): number;
+
         spawn(kind: string, body: Array<BodyPartConstant>): ScreepsReturnCode;
     }
 
@@ -220,6 +222,7 @@ declare global
     {
         paths?: boolean;
         resources?: boolean;
+        spawns?: boolean;
     }
 }
 

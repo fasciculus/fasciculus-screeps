@@ -48,9 +48,11 @@ export class VisualConfig
 {
     private _paths: boolean = false;
     private _resources: boolean = false;
+    private _spawns: boolean = false;
 
     get paths(): boolean { return this._paths; }
     get resources(): boolean { return this._resources; }
+    get spawns(): boolean { return this._spawns; }
 
     constructor()
     {
@@ -61,6 +63,7 @@ export class VisualConfig
     {
         this._paths = false;
         this._resources = false;
+        this._spawns = false;
     }
 
     setup(opts: Opt<VisualOptions>): void
@@ -71,6 +74,7 @@ export class VisualConfig
 
         this._paths = opts.paths === undefined ? false : opts.paths;
         this._resources = opts.resources === undefined ? false : opts.resources;
+        this._spawns = opts.spawns === undefined ? false : opts.spawns;
     }
 }
 

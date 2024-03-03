@@ -1,6 +1,7 @@
 import { Objects } from "../es/object";
 import { Assignees } from "./assign";
 import { Cached } from "./cache";
+import { ResourceConfig, ScreepsConfig } from "./config";
 import { Names } from "./name";
 
 export class Spawns
@@ -26,6 +27,13 @@ export class Spawns
     private static roomEnergyCapacity(this: StructureSpawn): number
     {
         return this.room.energyCapacity;
+    }
+
+    private static transportersAssigned(this: StructureSpawn): number
+    {
+        const config: ResourceConfig = ScreepsConfig.resource;
+
+        return this.assignedCreeps.filter(c => config.isTransporter(c)).length;
     }
 
     private static spawn(this: StructureSpawn, kind: string, body: Array<BodyPartConstant>): ScreepsReturnCode
@@ -73,6 +81,7 @@ export class Spawns
         {
             "roomEnergy": Objects.getter(Spawns.roomEnergy),
             "roomEnergyCapacity": Objects.getter(Spawns.roomEnergyCapacity),
+            "transportersAssigned": Objects.getter(Spawns.transportersAssigned),
             "spawn": Objects.function(Spawns.spawn),
             "assignedCount": Objects.getter(Spawns.assignedCount),
             "assignedCreeps": Objects.getter(Spawns.assignedCreeps),
