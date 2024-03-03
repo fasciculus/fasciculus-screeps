@@ -28,12 +28,10 @@ export class Visuals
             const x: number = pos.x;
             const y: number = pos.y;
 
-            const assignmentStyle: TextStyle = { font: 0.30, color: "#ffc000", align: "center" };
-            const costStyle: TextStyle = { font: 0.30, color: "#ffffff", align: "center" };
-            const amountStyle: TextStyle = { font: 0.30, color: "#ffff00", align: "center" };
+            const assignmentStyle: TextStyle = { font: 0.35, color: "#ffc000", align: "center" };
+            const amountStyle: TextStyle = { font: 0.35, color: "#ffff00", align: "center" };
 
-            visual.text(assignment, x, y - 0.25, assignmentStyle);
-            visual.text(cost, x, y + 0.05, costStyle);
+            visual.text(assignment, x, y - 0.10, assignmentStyle);
             visual.text(amount, x, y + 0.35, amountStyle);
         }
     }
