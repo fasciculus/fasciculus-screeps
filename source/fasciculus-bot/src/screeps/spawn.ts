@@ -38,13 +38,14 @@ export class Spawns
             if (pathResult === undefined) break;
 
             const resource: Resource = pathResult.goal;
+            const factor: number = Math.min(1, energyRequired / Math.max(1, resource.amount));
 
-            result += resource.transportersRequired;
+            result += resource.transportersRequired * factor;
             energyRequired -= resource.amount;
             resources.delete(resource.id);
         }
 
-        return result;
+        return Math.ceil(result);
     }
 
     private static roomEnergy(this: StructureSpawn): number
@@ -110,6 +111,11 @@ export class Spawns
         return b.roomEnergy - a.roomEnergy;
     }
 
+    private static transportersRequiredSum(): number
+    {
+        return StructureSpawn.my.sum(s => s.transportersRequired);
+    }
+
     private static _instanceProperties: any =
         {
             "roomEnergy": Objects.getter(Spawns.roomEnergy),
@@ -129,6 +135,7 @@ export class Spawns
             "my": Objects.getter(Spawns.my),
             "idle": Objects.getter(Spawns.idle),
             "best": Objects.getter(Spawns.best),
+            "transportersRequired": Objects.getter(Spawns.transportersRequiredSum),
         };
 
     static setup()

@@ -27,10 +27,10 @@ export class Transport
 
         if (Transport.idlePercentage > TRANSPORTER_MAX_IDLE_PERCENTAGE) return false;
 
-        const transporterCount: number = Creep.ofKind(TRANSPORTER).length;
-        const resourceCount: number = Resource.safe.length;
+        const existing: number = Creep.ofKind(TRANSPORTER).length;
+        const required: number = StructureSpawn.transportersRequired;
 
-        return transporterCount < (resourceCount / 2);
+        return existing < required;
     }
 
     private static adjustTemplate(): void

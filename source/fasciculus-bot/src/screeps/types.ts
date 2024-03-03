@@ -217,6 +217,8 @@ declare global
         get idle(): Array<StructureSpawn>;
 
         get best(): Opt<StructureSpawn>;
+
+        get transportersRequired(): number;
     }
 
     interface VisualOptions
