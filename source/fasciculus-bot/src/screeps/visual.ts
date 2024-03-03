@@ -27,7 +27,7 @@ export class Visuals
             const x: number = pos.x;
             const y: number = pos.y;
             const visual = Visuals.getVisual(pos.roomName);
-            const assignment: string = `${resource.assignees.size} / ?`;
+            const assignment: string = `${resource.assignees.size} / ${resource.transportersRequired}`;
             const amount: string = `${resource.amount}`;
 
             visual.text(assignment, x, y - 0.10, Visuals._resourceAssignmentStyle);

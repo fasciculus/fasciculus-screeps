@@ -126,12 +126,9 @@ export class Transport
 
     private static collectResources(result: Array<Assignable>): void
     {
-        for (let resource of Resource.safe)
-        {
-            if (resource.amount < TRANSPORT_MIN_AMOUNT) continue;
+        const resources: Array<Resource> = Resource.safe.filter(r => r.amount >= TRANSPORT_MIN_AMOUNT && r.transportersFree > 0);
 
-            result.push(resource);
-        }
+        result.append(resources);
     }
 
     private static collectSpawns(result: Array<Assignable>): void

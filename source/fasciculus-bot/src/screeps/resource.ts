@@ -13,6 +13,8 @@ export class Resources
     private static _costMap: Cached<Map<ResourceId, number>> = Cached.simple(() => new Map());
     private static _costFetched: Cached<Set<ResourceId>> = Cached.simple(() => new Set());
 
+    private static _avgCarryParts: Cached<number> = Cached.simple(Resources.fetchAvgCarryParts);
+
     private static fetchKnown(): Map<ResourceId, Resource>
     {
         return Array.flatten(Room.known.map(r => r.resources)).indexBy(r => r.id);
@@ -50,6 +52,15 @@ export class Resources
         return closest === undefined ? undefined : closest.cost;
     }
 
+    private static fetchAvgCarryParts(): number
+    {
+        const config: ResourceConfig = ScreepsConfig.resource;
+        const transporters: Array<Creep> = Creep.my.filter(c => config.isTransporter(c));
+        const carryParts: number = transporters.sum(c => c.carryParts);
+
+        return Math.max(1, carryParts / Math.max(1, transporters.length));
+    }
+
     private static cost(this: Resource): Opt<number>
     {
         const id: ResourceId = this.id;
@@ -71,6 +82,23 @@ export class Resources
         return costMap.get(id);
     }
 
+    private static transportersRequired(this: Resource): number
+    {
+        const cost: Opt<number> = this.cost;
+
+        if (cost === undefined) return 0;
+
+        const speed: number = ScreepsConfig.resource.speed;
+        const avgCarryParts: number = Resources._avgCarryParts.value;
+
+        return Math.ceil(this.amount * cost * speed / avgCarryParts / 5000);
+    }
+
+    private static transportersFree(this: Resource): number
+    {
+        return Math.max(0, this.transportersRequired - this.assignees.size);
+    }
+
     private static assignees(this: Resource): Set<CreepId> { return Assignees.assignees(this.id); }
     private static assignedCreeps(this: Resource): Array<Creep> { return Game.all(this.assignees); }
     private static assign(this: Resource, creep: CreepId): void { Assignees.assign(this.id, creep); }
@@ -90,6 +118,8 @@ export class Resources
     private static _instanceProperties: any =
         {
             "cost": Objects.getter(Resources.cost),
+            "transportersRequired": Objects.getter(Resources.transportersRequired),
+            "transportersFree": Objects.getter(Resources.transportersFree),
             "assignees": Objects.getter(Resources.assignees),
             "assignedCreeps": Objects.getter(Resources.assignedCreeps),
             "assign": Objects.function(Resources.assign),

@@ -10,16 +10,26 @@ export class ResourceConfig
         this.reset();
     }
 
-    hasTarget(kind: StructureConstant): boolean
-    {
-        return this._targets.has(kind);
-    }
-
     private reset()
     {
         this._targets.clear();
         this._transporters.clear();
         this._speed = 1;
+    }
+
+    hasTarget(kind: StructureConstant): boolean
+    {
+        return this._targets.has(kind);
+    }
+
+    isTransporter(creep: Creep): boolean
+    {
+        return this._transporters.has(creep.kind);
+    }
+
+    get speed(): number
+    {
+        return this._speed;
     }
 
     setup(opts: Opt<ResourceOptions>)
