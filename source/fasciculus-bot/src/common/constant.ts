@@ -21,7 +21,7 @@ export const SCREEPS_OPTIONS: ScreepsOptions =
 {
     transport:
     {
-        speed: 0.8,
+        speed: 1.0,
         transporters: [TRANSPORTER],
 
         goals:

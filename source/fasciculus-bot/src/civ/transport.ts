@@ -126,19 +126,20 @@ export class Transport
 
     private static collectResources(result: Array<Assignable>): void
     {
-        const resources: Array<Resource> = Resource.safe.filter(r => r.amount >= TRANSPORT_MIN_AMOUNT && r.transportersFree > 0);
+        for (let resource of Resource.safe)
+        {
+            if (resource.amount < TRANSPORT_MIN_AMOUNT) continue;
+            if (resource.transportersFree == 0) continue;
 
-        result.append(resources);
+            result.push(resource);
+        }
     }
 
     private static collectSpawns(result: Array<Assignable>): void
     {
         for (let spawn of Spawn.my)
         {
-            const assigned: number = spawn.assignedCreeps.filter(c => c.kind == TRANSPORTER).length;
-            const count: number = Stores.energyFree(spawn) / 50 - assigned;
-
-            for (let i = 0; i < count; ++i)
+            for (let i = 0, n = spawn.transportersFree; i < n; ++i)
             {
                 result.push(spawn);
             }
@@ -161,7 +162,6 @@ export class Transport
     private static resourceValue(transporter: Creep, resource: Resource): number
     {
         if (Stores.energyFree(transporter) == 0) return -1;
-        if (resource.amount < TRANSPORT_MIN_AMOUNT) return -1;
 
         return resource.amount / Paths.cost(transporter.pos, resource.pos, 1, PATH_COST_OFFSET);
     }
