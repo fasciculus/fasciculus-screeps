@@ -25,7 +25,7 @@ export class Transports
         const transporters: Array<Creep> = Transports._transporters.value;
         const carryParts: number = transporters.sum(c => c.carryParts);
 
-        return carryParts / Math.max(1, transporters.length);
+        return Math.max(1, carryParts / Math.max(1, transporters.length));
     }
 
     private static fetchGoals(): Array<Assignable>

@@ -43,7 +43,7 @@ export class Spawns
             energyRequired -= resource.amount;
         }
 
-        return Math.ceil(result * ScreepsConfig.transport.speed);
+        return result * ScreepsConfig.transport.speed;
     }
 
     private static roomEnergy(this: StructureSpawn): number
