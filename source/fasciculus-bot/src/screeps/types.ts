@@ -102,8 +102,7 @@ declare global
 
     interface Resource extends _Assignable
     {
-        get cost(): Opt<number>;
-
+        get transportersAssigned(): number;
         get transportersRequired(): number;
         get transportersFree(): number;
     }
@@ -201,6 +200,7 @@ declare global
 
         get transportersAssigned(): number;
         get transportersRequired(): number;
+        get transportersFree(): number;
 
         spawn(kind: string, body: Array<BodyPartConstant>): ScreepsReturnCode;
     }

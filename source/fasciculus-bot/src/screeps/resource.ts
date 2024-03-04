@@ -1,18 +1,41 @@
-import { Transport } from "../civ/transport";
 import { Objects } from "../es/object";
 import { Assignees } from "./assign";
 import { Cached } from "./cache";
-import { ScreepsConfig, TransportConfig } from "./config";
-import { PathResult, Paths } from "./path";
+import { ScreepsConfig } from "./config";
+import { PathResult } from "./path";
 import { TRANSPORTER_DIVISOR, Transports } from "./transport";
+
+class ResourceCosts
+{
+    private static _fetched: Cached<Set<ResourceId>> = Cached.simple(() => new Set());
+    private static _costs: Cached<Map<ResourceId, number>> = Cached.simple(() => new Map());
+
+    static cost(resource: Resource): Opt<number>
+    {
+        const id: ResourceId = resource.id;
+        const fetched: Set<ResourceId> = ResourceCosts._fetched.value;
+        const costs: Map<ResourceId, number> = ResourceCosts._costs.value;
+
+        if (!fetched.has(id))
+        {
+            const closest: Opt<PathResult<Assignable>> = Transports.closestGoal(resource);
+
+            if (closest !== undefined)
+            {
+                costs.set(id, closest.cost);
+            }
+
+            fetched.add(id);
+        }
+
+        return costs.get(id);
+    }
+}
 
 export class Resources
 {
     private static _known: Cached<Map<ResourceId, Resource>> = Cached.simple(Resources.fetchKnown);
     private static _safe: Cached<Map<ResourceId, Resource>> = Cached.simple(Resources.fetchSafe);
-
-    private static _costMap: Cached<Map<ResourceId, number>> = Cached.simple(() => new Map());
-    private static _costFetched: Cached<Set<ResourceId>> = Cached.simple(() => new Set());
 
     private static fetchKnown(): Map<ResourceId, Resource>
     {
@@ -33,34 +56,18 @@ export class Resources
         return room.safe;
     }
 
-    private static cost(this: Resource): Opt<number>
+    private static transportersAssigned(this: Resource): number
     {
-        const id: ResourceId = this.id;
-        const costMap: Map<ResourceId, number> = Resources._costMap.value;
-        const costFetched: Set<ResourceId> = Resources._costFetched.value;
-
-        if (!costFetched.has(id))
-        {
-            const closest: Opt<PathResult<Assignable>> = Transports.closestGoal(this);
-
-            costFetched.add(id);
-
-            if (closest !== undefined)
-            {
-                costMap.set(id, closest.cost);
-            }
-        }
-
-        return costMap.get(id);
+        return Transports.assigned(this);
     }
 
     private static transportersRequired(this: Resource): number
     {
-        const cost: Opt<number> = this.cost;
+        const cost: Opt<number> = ResourceCosts.cost(this);
 
         if (cost === undefined) return 0;
 
-        const speed: number = ScreepsConfig.transport.speed;
+        const speed: number = Transports.speed;
         const avgCarryParts: number = Transports.avgCarryParts;
 
         return Math.ceil(this.amount * cost * speed / avgCarryParts / TRANSPORTER_DIVISOR);
@@ -89,7 +96,7 @@ export class Resources
 
     private static _instanceProperties: any =
         {
-            "cost": Objects.getter(Resources.cost),
+            "transportersAssigned": Objects.getter(Resources.transportersAssigned),
             "transportersRequired": Objects.getter(Resources.transportersRequired),
             "transportersFree": Objects.getter(Resources.transportersFree),
             "assignedCount": Objects.getter(Resources.assignedCount),

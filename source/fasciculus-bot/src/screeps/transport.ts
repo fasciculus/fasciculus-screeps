@@ -11,6 +11,8 @@ export class Transports
 
     private static _goals: Cached<Array<Assignable>> = Cached.simple(Transports.fetchGoals);
 
+    private static _assigned: Cached<Map<AssignableId, number>> = Cached.simple(() => new Map());
+
     private static fetchTransporters(): Array<Creep>
     {
         const config: TransportConfig = ScreepsConfig.transport;
@@ -36,9 +38,28 @@ export class Transports
         return result;
     }
 
+    private static fetchAssigned(id: AssignableId, assignable?: Assignable): number
+    {
+        if (assignable === undefined) return 0;
+
+        const config: TransportConfig = ScreepsConfig.transport;
+
+        return assignable.assignedCreeps.filter(c => config.isTransporter(c)).length;
+    }
+
+    static get speed(): number
+    {
+        return ScreepsConfig.transport.speed;
+    }
+
     static get avgCarryParts(): number
     {
         return Transports._avgCarryParts.value;
+    }
+
+    static assigned(assignable: Assignable): number
+    {
+        return Transports._assigned.value.ensure(assignable.id, Transports.fetchAssigned, assignable);
     }
 
     static closestGoal<T extends _HasRoomPosition>(origin: T): Opt<PathResult<Assignable>>

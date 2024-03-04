@@ -5,6 +5,7 @@ import { ScreepsConfig, TransportConfig } from "./config";
 import { Names } from "./name";
 import { PathResult, Paths } from "./path";
 import { Stores } from "./store";
+import { Transports } from "./transport";
 
 export class Spawns
 {
@@ -23,7 +24,7 @@ export class Spawns
         return Spawns._my.value.filter((id, spawn) => !spawn.spawning);
     }
 
-    private static getTransportersRequired(id: SpawnId, spawn?: StructureSpawn): number
+    private static fetchTransportersRequired(id: SpawnId, spawn?: StructureSpawn): number
     {
         if (spawn === undefined) return 0;
 
@@ -57,14 +58,17 @@ export class Spawns
 
     private static transportersAssigned(this: StructureSpawn): number
     {
-        const config: TransportConfig = ScreepsConfig.transport;
-
-        return this.assignedCreeps.filter(c => config.isTransporter(c)).length;
+        return Transports.assigned(this);
     }
 
     private static transportersRequired(this: StructureSpawn): number
     {
-        return Spawns._transportersRequired.value.ensure(this.id, Spawns.getTransportersRequired, this);
+        return Spawns._transportersRequired.value.ensure(this.id, Spawns.fetchTransportersRequired, this);
+    }
+
+    private static transportersFree(this: StructureSpawn): number
+    {
+        return Math.max(0, this.transportersRequired - this.transportersAssigned);
     }
 
     private static spawn(this: StructureSpawn, kind: string, body: Array<BodyPartConstant>): ScreepsReturnCode
@@ -119,6 +123,7 @@ export class Spawns
             "roomEnergyCapacity": Objects.getter(Spawns.roomEnergyCapacity),
             "transportersAssigned": Objects.getter(Spawns.transportersAssigned),
             "transportersRequired": Objects.getter(Spawns.transportersRequired),
+            "transportersFree": Objects.getter(Spawns.transportersFree),
             "spawn": Objects.function(Spawns.spawn),
             "assignedCount": Objects.getter(Spawns.assignedCount),
             "assignedCreeps": Objects.getter(Spawns.assignedCreeps),
