@@ -187,6 +187,22 @@ export class Paths
         return result;
     }
 
+    static sorted<T extends _HasRoomPosition>(origin: RoomPosition, goals: Array<T>, range: number): Array<PathResult<T>>
+    {
+        var result: Array<PathResult<T>> = new Array();
+
+        for (let goal of goals)
+        {
+            const cost: Opt<number> = Paths.optCost(origin, goal.pos, 1);
+
+            if (cost === undefined) continue;
+
+            result.push({ goal, cost });
+        }
+
+        return result.sort((a, b) => a.cost - b.cost);
+    }
+
     static forEach(fn: (origin: RoomPosition, path: Array<RoomPosition>) => void): void
     {
         Paths._paths.value.forEach((path, encodedKey) =>

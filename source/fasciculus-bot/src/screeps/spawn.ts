@@ -29,20 +29,17 @@ export class Spawns
 
         var result: number = 0;
         var energyRequired: number = Stores.energyFree(spawn);
-        const resources: Map<ResourceId, Resource> = Resource.safe.indexBy(r => r.id);
+        const resources: Array<PathResult<Resource>> = Paths.sorted(spawn.pos, Resource.safe, 1);
 
-        while (energyRequired > 0 && resources.size > 0)
+        for (let i = 0, n = resources.length; i < n; ++i)
         {
-            const pathResult: Opt<PathResult<Resource>> = Paths.closest(spawn.pos, resources.data, 1);
+            if (energyRequired <= 0) break;
 
-            if (pathResult === undefined) break;
-
-            const resource: Resource = pathResult.goal;
+            const resource: Resource = resources[i].goal;
             const factor: number = Math.min(1, energyRequired / Math.max(1, resource.amount));
 
             result += resource.transportersRequired * factor;
             energyRequired -= resource.amount;
-            resources.delete(resource.id);
         }
 
         return Math.ceil(result);
