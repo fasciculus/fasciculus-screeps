@@ -2,6 +2,7 @@ import { HARVESTER, PATH_COST_OFFSET } from "../common/constant";
 import { Matcher } from "../common/match";
 import { Blocking } from "../screeps/block";
 import { BodyTemplate } from "../screeps/body";
+import { Cached } from "../screeps/cache";
 import { Paths } from "../screeps/path";
 import { Targets } from "../screeps/target";
 
@@ -13,6 +14,8 @@ export class Harvest
 
     static readonly blockingRegistered: boolean = Blocking.register(HARVESTER, Harvest.blocking);
 
+    private static _energyHarvested: Cached<number> = Cached.simple(Harvest.fetchEnergyHarvested);
+
     static more(): boolean
     {
         return Source.safeWorkFree > 0;
@@ -20,11 +23,12 @@ export class Harvest
 
     static run(): void
     {
+        Harvest.unassign();
         Harvest.assign();
         Harvest.harvest();
     }
 
-    static energyHarvested(): number
+    private static fetchEnergyHarvested(): number
     {
         var result: number = 0;
 
@@ -41,6 +45,24 @@ export class Harvest
         }
 
         return result;
+    }
+
+    static energyHarvested(): number
+    {
+        return Harvest._energyHarvested.value;
+    }
+
+    private static unassign()
+    {
+        for (let harvester of Creep.ofKind(HARVESTER))
+        {
+            const resource: Opt<Resource> = Targets.resource(harvester.target);
+
+            if (resource !== undefined && !resource.safe)
+            {
+                harvester.target = undefined;
+            }
+        }
     }
 
     private static assign(): void
@@ -85,9 +107,7 @@ export class Harvest
 
     private static targetValue(harvester: Creep, target: Assignable): number
     {
-        const source: Opt<Source> = Targets.source(target);
-
-        return source !== undefined ? source.workFree / Paths.cost(harvester.pos, target.pos, 1, PATH_COST_OFFSET) : -1;
+        return 1.0 / Paths.cost(harvester.pos, target.pos, 1, PATH_COST_OFFSET);
     }
 
     private static harvesterValue(target: Assignable, harvester: Creep): number

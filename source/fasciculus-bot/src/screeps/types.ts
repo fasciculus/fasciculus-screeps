@@ -102,6 +102,8 @@ declare global
 
     interface Resource extends _Assignable
     {
+        get safe(): boolean;
+
         get transportersAssigned(): number;
         get transportersRequired(): number;
         get transportersFree(): number;

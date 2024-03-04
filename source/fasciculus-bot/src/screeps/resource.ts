@@ -56,6 +56,11 @@ export class Resources
         return room.safe;
     }
 
+    private static safe(this: Resource): boolean
+    {
+        return Resources._safe.value.has(this.id);
+    }
+
     private static transportersAssigned(this: Resource): number
     {
         return Transports.assigned(this);
@@ -96,6 +101,7 @@ export class Resources
 
     private static _instanceProperties: any =
         {
+            "safe": Objects.getter(Resources.safe),
             "transportersAssigned": Objects.getter(Resources.transportersAssigned),
             "transportersRequired": Objects.getter(Resources.transportersRequired),
             "transportersFree": Objects.getter(Resources.transportersFree),
