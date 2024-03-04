@@ -1,22 +1,18 @@
+import { Transport } from "../civ/transport";
 import { Objects } from "../es/object";
 import { Assignees } from "./assign";
 import { Cached } from "./cache";
 import { ScreepsConfig, TransportConfig } from "./config";
 import { PathResult, Paths } from "./path";
-
-export const TRANSPORTER_DIVISOR: number = 5000;
+import { TRANSPORTER_DIVISOR, Transports } from "./transport";
 
 export class Resources
 {
     private static _known: Cached<Map<ResourceId, Resource>> = Cached.simple(Resources.fetchKnown);
     private static _safe: Cached<Map<ResourceId, Resource>> = Cached.simple(Resources.fetchSafe);
 
-    private static _targets: Cached<Array<Assignable>> = Cached.simple(Resources.fetchTargets);
     private static _costMap: Cached<Map<ResourceId, number>> = Cached.simple(() => new Map());
     private static _costFetched: Cached<Set<ResourceId>> = Cached.simple(() => new Set());
-
-    private static _transporters: Cached<Array<Creep>> = Cached.simple(Resources.fetchTransporters);
-    private static _avgCarryParts: Cached<number> = Cached.simple(Resources.fetchAvgCarryParts);
 
     private static fetchKnown(): Map<ResourceId, Resource>
     {
@@ -37,39 +33,6 @@ export class Resources
         return room.safe;
     }
 
-    private static fetchTargets(): Array<Assignable>
-    {
-        const result: Array<Assignable> = new Array();
-        const config: TransportConfig = ScreepsConfig.transport;
-
-        if (config.goals.spawns) result.append(StructureSpawn.my);
-
-        return result;
-    }
-
-    private static fetchCost(resource: Resource): Opt<number>
-    {
-        const targets: Array<Assignable> = Resources._targets.value;
-        const closest: Opt<PathResult<Assignable>> = Paths.closest(resource.pos, targets, 1);
-
-        return closest === undefined ? undefined : closest.cost;
-    }
-
-    private static fetchTransporters(): Array<Creep>
-    {
-        const config: TransportConfig = ScreepsConfig.transport;
-
-        return Creep.my.filter(c => config.isTransporter(c));
-    }
-
-    private static fetchAvgCarryParts(): number
-    {
-        const transporters: Array<Creep> = Resources._transporters.value;
-        const carryParts: number = transporters.sum(c => c.carryParts);
-
-        return Math.max(1, carryParts / Math.max(1, transporters.length));
-    }
-
     private static cost(this: Resource): Opt<number>
     {
         const id: ResourceId = this.id;
@@ -78,13 +41,13 @@ export class Resources
 
         if (!costFetched.has(id))
         {
-            const cost: Opt<number> = Resources.fetchCost(this);
+            const closest: Opt<PathResult<Assignable>> = Transports.closestGoal(this);
 
             costFetched.add(id);
 
-            if (cost !== undefined)
+            if (closest !== undefined)
             {
-                costMap.set(id, cost);
+                costMap.set(id, closest.cost);
             }
         }
 
@@ -98,7 +61,7 @@ export class Resources
         if (cost === undefined) return 0;
 
         const speed: number = ScreepsConfig.transport.speed;
-        const avgCarryParts: number = Resources._avgCarryParts.value;
+        const avgCarryParts: number = Transports.avgCarryParts;
 
         return Math.ceil(this.amount * cost * speed / avgCarryParts / TRANSPORTER_DIVISOR);
     }
