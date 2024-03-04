@@ -1,7 +1,7 @@
 import { Objects } from "../es/object";
 import { Assignees } from "./assign";
 import { Cached } from "./cache";
-import { ResourceConfig, ScreepsConfig } from "./config";
+import { ScreepsConfig, TransportConfig } from "./config";
 import { Names } from "./name";
 import { PathResult, Paths } from "./path";
 import { Stores } from "./store";
@@ -42,7 +42,7 @@ export class Spawns
             energyRequired -= resource.amount;
         }
 
-        return Math.ceil(result);
+        return Math.ceil(result * ScreepsConfig.transport.speed);
     }
 
     private static roomEnergy(this: StructureSpawn): number
@@ -57,7 +57,7 @@ export class Spawns
 
     private static transportersAssigned(this: StructureSpawn): number
     {
-        const config: ResourceConfig = ScreepsConfig.resource;
+        const config: TransportConfig = ScreepsConfig.transport;
 
         return this.assignedCreeps.filter(c => config.isTransporter(c)).length;
     }

@@ -1,7 +1,7 @@
 import { Objects } from "../es/object";
 import { Assignees } from "./assign";
 import { Cached } from "./cache";
-import { ResourceConfig, ScreepsConfig } from "./config";
+import { ScreepsConfig, TransportConfig } from "./config";
 import { PathResult, Paths } from "./path";
 
 export const TRANSPORTER_DIVISOR: number = 5000;
@@ -40,9 +40,9 @@ export class Resources
     private static fetchTargets(): Array<Assignable>
     {
         const result: Array<Assignable> = new Array();
-        const config: ResourceConfig = ScreepsConfig.resource;
+        const config: TransportConfig = ScreepsConfig.transport;
 
-        if (config.hasTarget(STRUCTURE_SPAWN)) result.append(StructureSpawn.my);
+        if (config.goals.spawns) result.append(StructureSpawn.my);
 
         return result;
     }
@@ -57,7 +57,7 @@ export class Resources
 
     private static fetchTransporters(): Array<Creep>
     {
-        const config: ResourceConfig = ScreepsConfig.resource;
+        const config: TransportConfig = ScreepsConfig.transport;
 
         return Creep.my.filter(c => config.isTransporter(c));
     }
@@ -97,7 +97,7 @@ export class Resources
 
         if (cost === undefined) return 0;
 
-        const speed: number = ScreepsConfig.resource.speed;
+        const speed: number = ScreepsConfig.transport.speed;
         const avgCarryParts: number = Resources._avgCarryParts.value;
 
         return Math.ceil(this.amount * cost * speed / avgCarryParts / TRANSPORTER_DIVISOR);

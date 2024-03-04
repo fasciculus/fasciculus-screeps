@@ -1,3 +1,4 @@
+import { TranspileOptions } from "typescript";
 
 declare global
 {
@@ -113,13 +114,6 @@ declare global
         get safe(): Array<Resource>;
     }
 
-    interface ResourceOptions
-    {
-        targets?: Array<StructureConstant>;
-        transporters?: Array<string>;
-        speed?: number;
-    }
-
     interface Room
     {
         get safe(): boolean;
@@ -164,7 +158,7 @@ declare global
 
     interface ScreepsOptions
     {
-        resource?: ResourceOptions;
+        transport?: TransportOptions;
         visual?: VisualOptions;
     }
 
@@ -219,6 +213,19 @@ declare global
         get best(): Opt<StructureSpawn>;
 
         get transportersRequired(): number;
+    }
+
+    interface TransportGoalOptions
+    {
+        spawns?: boolean;
+    }
+
+    interface TransportOptions
+    {
+        speed?: number;
+        transporters?: Array<string>;
+
+        goals?: TransportGoalOptions;
     }
 
     interface VisualOptions

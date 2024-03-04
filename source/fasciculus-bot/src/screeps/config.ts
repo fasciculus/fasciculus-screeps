@@ -1,9 +1,31 @@
 
-export class ResourceConfig
+export class TransportGoalsConfig
 {
-    private _targets: Set<StructureConstant> = new Set();
-    private _transporters: Set<string> = new Set();
+    private _spawns: boolean = false;
+
+    private reset()
+    {
+        this._spawns = false;
+    }
+
+    get spawns(): boolean { return this._spawns; }
+
+    setup(opts: Opt<TransportGoalOptions>)
+    {
+        this.reset();
+
+        if (opts === undefined) return;
+
+        if (opts.spawns !== undefined) this._spawns = opts.spawns;
+    }
+}
+
+export class TransportConfig
+{
     private _speed: number = 1;
+    private _transporters: Set<string> = new Set();
+
+    private _goals: TransportGoalsConfig = new TransportGoalsConfig();
 
     constructor()
     {
@@ -12,35 +34,25 @@ export class ResourceConfig
 
     private reset()
     {
-        this._targets.clear();
-        this._transporters.clear();
         this._speed = 1;
+        this._transporters.clear();
     }
 
-    hasTarget(kind: StructureConstant): boolean
-    {
-        return this._targets.has(kind);
-    }
+    get speed(): number { return this._speed; }
+    isTransporter(creep: Creep): boolean { return this._transporters.has(creep.kind); }
 
-    isTransporter(creep: Creep): boolean
-    {
-        return this._transporters.has(creep.kind);
-    }
+    get goals(): TransportGoalsConfig { return this._goals; }
 
-    get speed(): number
-    {
-        return this._speed;
-    }
-
-    setup(opts: Opt<ResourceOptions>)
+    setup(opts: Opt<TransportOptions>)
     {
         this.reset();
 
         if (opts === undefined) return;
 
-        if (opts.targets !== undefined) this._targets.addAll(opts.targets);
-        if (opts.transporters !== undefined) this._transporters.addAll(opts.transporters);
         if (opts.speed !== undefined) this._speed = opts.speed;
+        if (opts.transporters !== undefined) this._transporters.addAll(opts.transporters);
+
+        this._goals.setup(opts.goals);
     }
 }
 
@@ -72,23 +84,23 @@ export class VisualConfig
 
         if (opts === undefined) return;
 
-        this._paths = opts.paths === undefined ? false : opts.paths;
-        this._resources = opts.resources === undefined ? false : opts.resources;
-        this._spawns = opts.spawns === undefined ? false : opts.spawns;
+        if (opts.paths !== undefined) this._paths = opts.paths;
+        if (opts.resources !== undefined) this._resources = opts.resources;
+        if (opts.spawns !== undefined) this._spawns = opts.spawns;
     }
 }
 
 export class ScreepsConfig
 {
-    private static _resource: ResourceConfig = new ResourceConfig();
+    private static _transport: TransportConfig = new TransportConfig();
     private static _visual: VisualConfig = new VisualConfig();
 
-    static get resource(): ResourceConfig { return ScreepsConfig._resource; }
+    static get transport(): TransportConfig { return ScreepsConfig._transport; }
     static get visual(): VisualConfig { return ScreepsConfig._visual; }
 
     static setup(opts: ScreepsOptions)
     {
-        ScreepsConfig._resource.setup(opts.resource);
+        ScreepsConfig._transport.setup(opts.transport);
         ScreepsConfig._visual.setup(opts.visual);
     }
 }

@@ -1,5 +1,5 @@
 
-export const VERSION = "0.5.23";
+export const VERSION = "0.5.24";
 export const SUICIDE = false;
 
 export const INFO: string = "I";
@@ -19,11 +19,15 @@ export const WORKER_ENERGY_SHARE = 0.25;
 
 export const SCREEPS_OPTIONS: ScreepsOptions =
 {
-    resource:
+    transport:
     {
-        targets: [STRUCTURE_SPAWN],
+        speed: 0.8,
         transporters: [TRANSPORTER],
-        speed: 1
+
+        goals:
+        {
+            spawns: true
+        }
     },
 
     visual:
