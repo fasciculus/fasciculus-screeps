@@ -1,5 +1,5 @@
 
-export const VERSION = "0.5.25";
+export const VERSION = "0.5.26";
 export const SUICIDE = false;
 
 export const INFO: string = "I";

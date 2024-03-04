@@ -179,7 +179,7 @@ export class Transport
 
     private static transporterValue(target: Assignable, transporter: Creep): number
     {
-        return Paths.cost(transporter.pos, target.pos, 1, PATH_COST_OFFSET);
+        return 1.0 / Paths.cost(transporter.pos, target.pos, 1, PATH_COST_OFFSET);
     }
 
     private static transport(): void
