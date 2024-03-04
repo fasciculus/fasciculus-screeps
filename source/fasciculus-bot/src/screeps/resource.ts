@@ -75,12 +75,12 @@ export class Resources
         const speed: number = Transports.speed;
         const avgCarryParts: number = Transports.avgCarryParts;
 
-        return Math.ceil(this.amount * cost * speed / avgCarryParts / TRANSPORTER_DIVISOR);
+        return this.amount * cost * speed / avgCarryParts / TRANSPORTER_DIVISOR;
     }
 
     private static transportersFree(this: Resource): number
     {
-        return Math.max(0, this.transportersRequired - this.assignedCount);
+        return Math.max(0, this.transportersRequired - this.transportersAssigned);
     }
 
     private static assignedCount(this: Resource): number { return Assignees.assignedCount(this.id); }
