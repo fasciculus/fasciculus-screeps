@@ -60,10 +60,12 @@ export class VisualConfig
 {
     private _paths: boolean = false;
     private _resources: boolean = false;
+    private _sources: boolean = false;
     private _spawns: boolean = false;
 
     get paths(): boolean { return this._paths; }
     get resources(): boolean { return this._resources; }
+    get sources(): boolean { return this._sources; }
     get spawns(): boolean { return this._spawns; }
 
     constructor()
@@ -75,6 +77,7 @@ export class VisualConfig
     {
         this._paths = false;
         this._resources = false;
+        this._sources = false;
         this._spawns = false;
     }
 
@@ -86,6 +89,7 @@ export class VisualConfig
 
         if (opts.paths !== undefined) this._paths = opts.paths;
         if (opts.resources !== undefined) this._resources = opts.resources;
+        if (opts.sources !== undefined) this._sources = opts.sources;
         if (opts.spawns !== undefined) this._spawns = opts.spawns;
     }
 }

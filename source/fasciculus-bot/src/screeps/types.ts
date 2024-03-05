@@ -229,6 +229,7 @@ declare global
     {
         paths?: boolean;
         resources?: boolean;
+        sources?: boolean;
         spawns?: boolean;
     }
 }

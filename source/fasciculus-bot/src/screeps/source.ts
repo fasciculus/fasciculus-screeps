@@ -2,14 +2,11 @@ import { Objects } from "../es/object";
 import { Assignees } from "./assign";
 import { Cached } from "./cache";
 import { Slots } from "./slot";
-import { Terrains } from "./terrain";
 
 export class Sources
 {
     private static _known: Cached<Map<SourceId, Source>> = Cached.simple(Sources.fetchKnown);
     private static _safe: Cached<Map<SourceId, Source>> = Cached.simple(Sources.fetchSafe);
-
-    private static _slots: Map<SourceId, number> = new Map();
 
     private static fetchKnown(): Map<SourceId, Source>
     {
@@ -25,21 +22,6 @@ export class Sources
     {
         return Sources._known.value.filter(Sources.isSafe);
     }
-
-    private static getSlots(id: SourceId, source: Opt<Source>): number
-    {
-        return source !== undefined ? Terrains.walkable(source.pos, 1) : 0;
-    }
-
-    //private static slotsCount(this: Source): number
-    //{
-    //    return Sources._slots.ensure(this.id, Sources.getSlots, this);
-    //}
-
-    //private static slotsFree(this: Source): number
-    //{
-    //    return this.slotsCount - this.assignedCount;
-    //}
 
     private static workCapacity(this: Source): number
     {

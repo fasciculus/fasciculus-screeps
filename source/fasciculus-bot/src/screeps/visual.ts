@@ -11,6 +11,8 @@ export class Visuals
     private static _resourceAssignmentStyle: TextStyle = { font: 0.35, color: "#ffc000", align: "center" };
     private static _resourceAmountStyle: TextStyle = { font: 0.35, color: "#ffff00", align: "center" };
 
+    private static _sourceSlotsStyle: TextStyle = { font: 0.35, color: "#ffffff", align: "center" };
+
     private static _spawnTransportStyle: TextStyle = { font: 0.5, color: "#c08000", align: "center" };
 
     static paint(): void
@@ -19,6 +21,7 @@ export class Visuals
 
         if (config.paths) Visuals.paintPaths();
         if (config.resources) Visuals.paintResources();
+        if (config.sources) Visuals.paintSources();
         if (config.spawns) Visuals.paintSpawns();
     }
 
@@ -59,6 +62,20 @@ export class Visuals
 
             visual.text(assignment, x, y - 0.10, Visuals._resourceAssignmentStyle);
             visual.text(amount, x, y + 0.35, Visuals._resourceAmountStyle);
+        }
+    }
+
+    static paintSources(): void
+    {
+        for (let source of Source.safe)
+        {
+            const pos: RoomPosition = source.pos;
+            const x: number = pos.x;
+            const y: number = pos.y;
+            const visual = Visuals.getVisual(pos.roomName);
+            const slots: string = `${source.slotsFree} / ${source.slotsCount}`;
+
+            visual.text(slots, x, y, Visuals._sourceSlotsStyle);
         }
     }
 
