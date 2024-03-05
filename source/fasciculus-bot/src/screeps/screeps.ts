@@ -14,7 +14,6 @@ import { Sites } from "./site";
 import { Sources } from "./source";
 import { Spawns } from "./spawn";
 import { Targets } from "./target";
-import { Terrains } from "./terrain";
 
 export class Screeps
 {
@@ -33,7 +32,6 @@ export class Screeps
         Sites.setup();
         Sources.setup();
         Spawns.setup();
-        Terrains.setup();
 
         BodyInfos.setup();
         Assignees.setup();

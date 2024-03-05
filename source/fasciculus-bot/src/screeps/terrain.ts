@@ -5,66 +5,28 @@ export class Terrains
 {
     private static _terrains: Cached<Map<string, RoomTerrain>> = Cached.simple(() => new Map());
 
+    private static fetchTerrain(name: string): RoomTerrain
+    {
+        return Game.map.getRoomTerrain(name);
+    }
+
+    static get(name: string): RoomTerrain
+    {
+        return Terrains._terrains.value.ensure(name, Terrains.fetchTerrain);
+    }
+
+    static walkable(pos: RoomPosition, range: number): number
+    {
+        const terrain: RoomTerrain = Terrains.get(pos.roomName);
+        var result: number = 0;
+
+        pos.forEachAtRange(range, (x, y) => { result += Terrains.getWalkable(x, y, terrain); });
+
+        return result;
+    }
+
     private static getWalkable(x: number, y: number, terrain: RoomTerrain): number
     {
         return terrain.get(x, y) == TERRAIN_MASK_WALL ? 0 : 1;
-    }
-
-    private static walkableAround(pos: RoomPosition, range: number): number
-    {
-        const terrain: RoomTerrain = Terrains.ofName(pos.roomName);
-        var result: number = 0;
-
-        pos.forEachAround(range, (x, y) => result += Terrains.getWalkable(x, y, terrain))
-
-        return result;
-    }
-
-    private static walkableAtRange(pos: RoomPosition, range: number): number
-    {
-        const terrain: RoomTerrain = Terrains.ofName(pos.roomName);
-        var result: number = 0;
-
-        pos.forEachAtRange(range, (x, y) => result += Terrains.getWalkable(x, y, terrain))
-
-        return result;
-    }
-
-    static ofRoom(room: Room): RoomTerrain
-    {
-        const terrains: Map<string, RoomTerrain> = Terrains._terrains.value;
-        const name: string = room.name;
-        var result: Opt<RoomTerrain> = terrains.get(name);
-
-        if (result === undefined)
-        {
-            terrains.set(name, result = room.getTerrain());
-        }
-
-        return result;
-    }
-
-    static ofName(name: string): RoomTerrain
-    {
-        const terrains: Map<string, RoomTerrain> = Terrains._terrains.value;
-        var result: Opt<RoomTerrain> = terrains.get(name);
-
-        if (result === undefined)
-        {
-            terrains.set(name, result = new Room.Terrain(name))
-        }
-
-        return result;
-    }
-
-    private static _instanceProperties: any =
-        {
-            "walkableAround": Objects.function(Terrains.walkableAround),
-            "walkableAtRange": Objects.function(Terrains.walkableAtRange),
-        }
-
-    static setup()
-    {
-        Object.defineProperties(Room.Terrain.prototype, Terrains._instanceProperties);
     }
 }

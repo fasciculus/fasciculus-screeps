@@ -1,4 +1,3 @@
-import { TranspileOptions } from "typescript";
 
 declare global
 {
@@ -31,6 +30,13 @@ declare global
         assign(creep: CreepId): void;
         unassign(creep: CreepId): void;
         unassignAll(): void;
+    }
+
+    interface _HasSlots extends _HasId, _HasRoomPosition, _Assignable
+    {
+        get slotsRange(): number;
+        get slotsCount(): number;
+        get slotsFree(): number;
     }
 
     interface _HasStore
@@ -122,8 +128,6 @@ declare global
         get energy(): number;
         get energyCapacity(): number;
 
-        get terrain(): RoomTerrain;
-
         get obstacles(): Array<AnyStructure>;
         get resources(): Array<Resource>;
         get sources(): Array<Source>;
@@ -151,23 +155,14 @@ declare global
         forEachAtRange(range: number, fn: (x: number, y: number) => void): void;
     }
 
-    interface RoomTerrain
-    {
-        walkableAround(pos: RoomPosition, range: number): number;
-        walkableAtRange(pos: RoomPosition, range: number): number;
-    }
-
     interface ScreepsOptions
     {
         transport?: TransportOptions;
         visual?: VisualOptions;
     }
 
-    interface Source extends _Assignable
+    interface Source extends _HasSlots
     {
-        get slotsCount(): number;
-        get slotsFree(): number;
-
         get workCapacity(): number;
         get workAssigned(): number;
         get workFree(): number;
@@ -238,4 +233,4 @@ declare global
     }
 }
 
-export { }
+export { };

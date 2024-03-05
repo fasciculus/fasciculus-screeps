@@ -3,6 +3,7 @@ import { Version } from "./common/version";
 import { ES } from "./es/es";
 import { Scheduler } from "./schedule";
 import { Screeps } from "./screeps/screeps";
+import { Terrains } from "./screeps/terrain";
 import { Visuals } from "./screeps/visual";
 import { W7N3 } from "./w7n3";
 
@@ -12,6 +13,9 @@ class Experiments
 {
     static run()
     {
+        const pos: RoomPosition = new RoomPosition(38, 6, "W7N3");
+
+        console.log(Terrains.walkable(pos, 1));
     }
 }
 

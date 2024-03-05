@@ -1,6 +1,7 @@
 import { Objects } from "../es/object";
 import { Assignees } from "./assign";
 import { Cached } from "./cache";
+import { Terrains } from "./terrain";
 
 export class Sources
 {
@@ -26,7 +27,7 @@ export class Sources
 
     private static getSlots(id: SourceId, source: Opt<Source>): number
     {
-        return source !== undefined ? source.room.terrain.walkableAround(source.pos, 1) : 0;
+        return source !== undefined ? Terrains.walkable(source.pos, 1) : 0;
     }
 
     private static slotsCount(this: Source): number

@@ -198,11 +198,6 @@ export class Rooms
         return result === undefined ? 0 : result;
     }
 
-    private static terrain(this: Room): RoomTerrain
-    {
-        return Terrains.ofRoom(this);
-    }
-
     private static obstacles(this: Room): Array<AnyStructure>
     {
         return Rooms._obstacles.value.ensure(this.name, Rooms.findObstacles, this);
@@ -263,7 +258,6 @@ export class Rooms
             "safe": Objects.getter(Rooms.safe),
             "energy": Objects.getter(Rooms.energy),
             "energyCapacity": Objects.getter(Rooms.energyCapacity),
-            "terrain": Objects.getter(Rooms.terrain),
             "obstacles": Objects.getter(Rooms.obstacles),
             "resources": Objects.getter(Rooms.resources),
             "sources": Objects.getter(Rooms.sources),

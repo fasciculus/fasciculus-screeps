@@ -1,6 +1,7 @@
 import { Objects } from "../es/object";
 import { Assignees } from "./assign";
 import { Cached } from "./cache";
+import { Terrains } from "./terrain";
 
 export class Controllers
 {
@@ -27,7 +28,7 @@ export class Controllers
 
     private static getSlots(id: ControllerId, controller: Opt<StructureController>): number
     {
-        return controller !== undefined ? controller.room.terrain.walkableAtRange(controller.pos, 2) : 0;
+        return controller !== undefined ? Terrains.walkable(controller.pos, 2) : 0;
     }
 
     private static safe(this: StructureController): boolean
