@@ -1,6 +1,7 @@
 import { Objects } from "../es/object";
 import { Assignees } from "./assign";
 import { Cached } from "./cache";
+import { Slots } from "./slot";
 import { Terrains } from "./terrain";
 
 export class Sources
@@ -30,15 +31,15 @@ export class Sources
         return source !== undefined ? Terrains.walkable(source.pos, 1) : 0;
     }
 
-    private static slotsCount(this: Source): number
-    {
-        return Sources._slots.ensure(this.id, Sources.getSlots, this);
-    }
+    //private static slotsCount(this: Source): number
+    //{
+    //    return Sources._slots.ensure(this.id, Sources.getSlots, this);
+    //}
 
-    private static slotsFree(this: Source): number
-    {
-        return this.slotsCount - this.assignedCount;
-    }
+    //private static slotsFree(this: Source): number
+    //{
+    //    return this.slotsCount - this.assignedCount;
+    //}
 
     private static workCapacity(this: Source): number
     {
@@ -63,6 +64,10 @@ export class Sources
     private static unassign(this: Source, creep: CreepId): void { Assignees.unassign(this.id, creep); }
     private static unassignAll(this: Source): void { Assignees.unassignAll(this.id); }
 
+    private static slotsRange(this: Source): number { return 1; }
+    private static slotsCount(this: Source): number { return Slots.slotsCount(this); }
+    private static slotsFree(this: Source): number { return Math.max(0, this.slotsCount - this.assignedCount); }
+
     private static safe()
     {
         return Sources._safe.value.data;
@@ -75,8 +80,6 @@ export class Sources
 
     private static _instanceProperties: any =
         {
-            "slotsCount": Objects.getter(Sources.slotsCount),
-            "slotsFree": Objects.getter(Sources.slotsFree),
             "workCapacity": Objects.getter(Sources.workCapacity),
             "workAssigned": Objects.getter(Sources.workAssigned),
             "workFree": Objects.getter(Sources.workFree),
@@ -85,6 +88,9 @@ export class Sources
             "assign": Objects.function(Sources.assign),
             "unassign": Objects.function(Sources.unassign),
             "unassignAll": Objects.function(Sources.unassignAll),
+            "slotsRange": Objects.getter(Sources.slotsRange),
+            "slotsCount": Objects.getter(Sources.slotsCount),
+            "slotsFree": Objects.getter(Sources.slotsFree),
         }
 
     private static _classProperties: any =

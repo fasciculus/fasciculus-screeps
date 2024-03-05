@@ -32,7 +32,7 @@ declare global
         unassignAll(): void;
     }
 
-    interface _HasSlots extends _HasId, _HasRoomPosition, _Assignable
+    interface _HasSlots extends _HasId, _HasRoomPosition
     {
         get slotsRange(): number;
         get slotsCount(): number;
@@ -161,7 +161,7 @@ declare global
         visual?: VisualOptions;
     }
 
-    interface Source extends _HasSlots
+    interface Source extends _HasSlots, _Assignable
     {
         get workCapacity(): number;
         get workAssigned(): number;
