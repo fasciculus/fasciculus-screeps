@@ -1,5 +1,5 @@
 
-export const VERSION = "0.6.3";
+export const VERSION = "0.6.4";
 export const SUICIDE = false;
 
 export const INFO: string = "I";
@@ -32,6 +32,7 @@ export const SCREEPS_OPTIONS: ScreepsOptions =
 
     visual:
     {
+        controllers: true,
         paths: false,
         resources: true,
         sources: true,

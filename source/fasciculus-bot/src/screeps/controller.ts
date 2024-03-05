@@ -2,15 +2,12 @@ import { Objects } from "../es/object";
 import { Assignees } from "./assign";
 import { Cached } from "./cache";
 import { Slots } from "./slot";
-import { Terrains } from "./terrain";
 
 export class Controllers
 {
     private static _known: Cached<Map<ControllerId, StructureController>> = Cached.simple(Controllers.fetchKnown);
     private static _my: Cached<Map<ControllerId, StructureController>> = Cached.simple(Controllers.fetchMy);
     private static _myReserved: Cached<Map<ControllerId, StructureController>> = Cached.simple(Controllers.fetchMyReserved);
-
-    private static _slots: Map<ControllerId, number> = new Map();
 
     private static fetchKnown(): Map<ControllerId, StructureController>
     {
@@ -27,11 +24,6 @@ export class Controllers
         return Controllers._known.value.filter((k, v) => Controllers.isMyReserved(v));
     }
 
-    private static getSlots(id: ControllerId, controller: Opt<StructureController>): number
-    {
-        return controller !== undefined ? Terrains.walkable(controller.pos, 2) : 0;
-    }
-
     private static safe(this: StructureController): boolean
     {
         return Controllers.isSafe(this);
@@ -46,16 +38,6 @@ export class Controllers
         return upgradeBlocked > 0;
     }
     
-    //private static slotsCount(this: StructureController): number
-    //{
-    //    return Controllers._slots.ensure(this.id, Controllers.getSlots, this);
-    //}
-
-    //private static slotsFree(this: StructureController): number
-    //{
-    //    return this.slotsCount - this.assignedCount;
-    //}
-
     private static assignedCount(this: StructureController): number { return Assignees.assignedCount(this.id); }
     private static assignedCreeps(this: StructureController): Array<Creep> { return Assignees.assignedCreeps(this.id); }
     private static assign(this: StructureController, creep: CreepId): void { Assignees.assign(this.id, creep); }

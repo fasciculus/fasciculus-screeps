@@ -58,11 +58,13 @@ export class TransportConfig
 
 export class VisualConfig
 {
+    private _controllers: boolean = false;
     private _paths: boolean = false;
     private _resources: boolean = false;
     private _sources: boolean = false;
     private _spawns: boolean = false;
 
+    get controllers(): boolean { return this._controllers; }
     get paths(): boolean { return this._paths; }
     get resources(): boolean { return this._resources; }
     get sources(): boolean { return this._sources; }
@@ -75,6 +77,7 @@ export class VisualConfig
 
     private reset(): void
     {
+        this._controllers = false;
         this._paths = false;
         this._resources = false;
         this._sources = false;
@@ -87,6 +90,7 @@ export class VisualConfig
 
         if (opts === undefined) return;
 
+        if (opts.controllers !== undefined) this._controllers = opts.controllers;
         if (opts.paths !== undefined) this._paths = opts.paths;
         if (opts.resources !== undefined) this._resources = opts.resources;
         if (opts.sources !== undefined) this._sources = opts.sources;

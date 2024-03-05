@@ -13,9 +13,6 @@ class Experiments
 {
     static run()
     {
-        const pos: RoomPosition = new RoomPosition(38, 6, "W7N3");
-
-        console.log(Terrains.walkable(pos, 1));
     }
 }
 

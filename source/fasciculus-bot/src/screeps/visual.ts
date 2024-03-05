@@ -6,6 +6,8 @@ export class Visuals
 {
     private static _visuals: Cached<Map<string, RoomVisual>> = Cached.simple(() => new Map());
 
+    private static _controllerSlotsStyle: TextStyle = { font: 0.35, color: "#ffffff", align: "center" };
+
     private static _pathStyle: LineStyle = { width: 0.035, lineStyle: "dashed", opacity: 0.25 };
 
     private static _resourceAssignmentStyle: TextStyle = { font: 0.35, color: "#ffc000", align: "center" };
@@ -19,6 +21,7 @@ export class Visuals
     {
         const config: VisualConfig = ScreepsConfig.visual;
 
+        if (config.controllers) Visuals.paintControllers();
         if (config.paths) Visuals.paintPaths();
         if (config.resources) Visuals.paintResources();
         if (config.sources) Visuals.paintSources();
@@ -28,6 +31,20 @@ export class Visuals
     static paintPaths(): void
     {
         Paths.forEach(Visuals.paintPath);
+    }
+
+    private static paintControllers(): void
+    {
+        for (let controller of StructureController.my)
+        {
+            const pos: RoomPosition = controller.pos;
+            const x: number = pos.x;
+            const y: number = pos.y;
+            const visual = Visuals.getVisual(pos.roomName);
+            const slots: string = `${controller.slotsFree} / ${controller.slotsCount}`;
+
+            visual.text(slots, x, y, Visuals._sourceSlotsStyle);
+        }
     }
 
     private static paintPath(origin: RoomPosition, path: Array<RoomPosition>): void

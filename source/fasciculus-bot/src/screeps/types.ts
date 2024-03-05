@@ -227,6 +227,7 @@ declare global
 
     interface VisualOptions
     {
+        controllers?: boolean;
         paths?: boolean;
         resources?: boolean;
         sources?: boolean;
