@@ -1,6 +1,7 @@
 import { Objects } from "../es/object";
 import { Assignees } from "./assign";
 import { Cached } from "./cache";
+import { Slots } from "./slot";
 import { Terrains } from "./terrain";
 
 export class Controllers
@@ -45,21 +46,25 @@ export class Controllers
         return upgradeBlocked > 0;
     }
     
-    private static slotsCount(this: StructureController): number
-    {
-        return Controllers._slots.ensure(this.id, Controllers.getSlots, this);
-    }
+    //private static slotsCount(this: StructureController): number
+    //{
+    //    return Controllers._slots.ensure(this.id, Controllers.getSlots, this);
+    //}
 
-    private static slotsFree(this: StructureController): number
-    {
-        return this.slotsCount - this.assignedCount;
-    }
+    //private static slotsFree(this: StructureController): number
+    //{
+    //    return this.slotsCount - this.assignedCount;
+    //}
 
     private static assignedCount(this: StructureController): number { return Assignees.assignedCount(this.id); }
     private static assignedCreeps(this: StructureController): Array<Creep> { return Assignees.assignedCreeps(this.id); }
     private static assign(this: StructureController, creep: CreepId): void { Assignees.assign(this.id, creep); }
     private static unassign(this: StructureController, creep: CreepId): void { Assignees.unassign(this.id, creep); }
     private static unassignAll(this: StructureController): void { Assignees.unassignAll(this.id); }
+
+    private static slotsRange(this: Source): number { return 2; }
+    private static slotsCount(this: Source): number { return Slots.slotsCount(this); }
+    private static slotsFree(this: Source): number { return Math.max(0, this.slotsCount - this.assignedCount); }
 
     private static my(): Array<StructureController>
     {
@@ -105,13 +110,14 @@ export class Controllers
         {
             "safe": Objects.getter(Controllers.safe),
             "blocked": Objects.getter(Controllers.blocked),
-            "slotsCount": Objects.getter(Controllers.slotsCount),
-            "slotsFree": Objects.getter(Controllers.slotsFree),
             "assignedCount": Objects.getter(Controllers.assignedCount),
             "assignedCreeps": Objects.getter(Controllers.assignedCreeps),
             "assign": Objects.function(Controllers.assign),
             "unassign": Objects.function(Controllers.unassign),
             "unassignAll": Objects.function(Controllers.unassignAll),
+            "slotsRange": Objects.getter(Controllers.slotsRange),
+            "slotsCount": Objects.getter(Controllers.slotsCount),
+            "slotsFree": Objects.getter(Controllers.slotsFree),
         };
 
     private static _classProperties: any =

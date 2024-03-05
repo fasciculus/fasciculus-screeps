@@ -174,7 +174,7 @@ declare global
         get safeWorkFree(): number;
     }
 
-    interface StructureController extends _Assignable
+    interface StructureController extends _HasSlots, _Assignable
     {
         get safe(): boolean;
 
