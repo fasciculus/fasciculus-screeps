@@ -1,9 +1,11 @@
 import { PATH_COST_OFFSET, TRANSPORTER, TRANSPORTER_MAX_IDLE_PERCENTAGE } from "../common/constant";
 import { Matcher } from "../common/match";
 import { BodyTemplate } from "../screeps/body";
+import { ScreepsConfig } from "../screeps/config";
 import { Paths } from "../screeps/path";
 import { Stores } from "../screeps/store";
 import { Targets } from "../screeps/target";
+import { Transports } from "../screeps/transport";
 
 const TRANSPORT_MIN_AMOUNT = 20;
 
@@ -27,7 +29,7 @@ export class Transport
 
         if (Transport.idlePercentage > TRANSPORTER_MAX_IDLE_PERCENTAGE) return false;
 
-        const existing: number = Creep.ofKind(TRANSPORTER).length;
+        const existing: number = Transports.transporters.length;
         const required: number = StructureSpawn.transportersRequired;
 
         return existing < required;
@@ -35,12 +37,12 @@ export class Transport
 
     private static adjustTemplate(): void
     {
-        Transport.template = Creep.ofKind(TRANSPORTER).length > 0 ? Transport.largeTemplate() : Transport.smallTemplate();
+        Transport.template = Transports.transporters.length > 0 ? Transport.largeTemplate() : Transport.smallTemplate();
     }
 
     static get idlePercentage(): number
     {
-        const all: Array<Creep> = Creep.ofKind(TRANSPORTER);
+        const all: Array<Creep> = Transports.transporters;
         const idle: Array<Creep> = all.filter(t => t.idle);
 
         return idle.length / Math.max(1, all.length);
@@ -55,7 +57,7 @@ export class Transport
 
     private static unassign(): void
     {
-        for (let transporter of Creep.ofKind(TRANSPORTER))
+        for (let transporter of Transports.transporters)
         {
             const target: Opt<Assignable> = transporter.target;
 
@@ -107,7 +109,7 @@ export class Transport
 
     private static assign(): void
     {
-        const transporters: Array<Creep> = Creep.ofKind(TRANSPORTER).filter(t => t.idle);
+        const transporters: Array<Creep> = Transports.transporters.filter(t => t.idle);
 
         if (transporters.length == 0) return;
 
@@ -184,7 +186,7 @@ export class Transport
 
     private static transport(): void
     {
-        for (let transporter of Creep.ofKind(TRANSPORTER))
+        for (let transporter of Transports.transporters)
         {
             const target: Opt<Assignable> = transporter.target;
 

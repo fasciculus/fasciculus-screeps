@@ -233,6 +233,10 @@ declare global
         sources?: boolean;
         spawns?: boolean;
     }
+
+    interface WorkOptions
+    {
+    }
 }
 
 export { };

@@ -36,6 +36,11 @@ export class Transports
         return result;
     }
 
+    static get transporters(): Array<Creep>
+    {
+        return Transports._transporters.value;
+    }
+
     static get speed(): number
     {
         return ScreepsConfig.transport.speed;
