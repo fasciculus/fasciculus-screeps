@@ -159,6 +159,7 @@ declare global
     {
         transport?: TransportOptions;
         visual?: VisualOptions;
+        work?: WorkOptions;
     }
 
     interface Source extends _HasSlots, _Assignable
@@ -236,6 +237,7 @@ declare global
 
     interface WorkOptions
     {
+        workers?: Array<string>;
     }
 }
 

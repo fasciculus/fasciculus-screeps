@@ -5,6 +5,7 @@ import { BodyTemplate } from "../screeps/body";
 import { Paths } from "../screeps/path";
 import { Stores } from "../screeps/store";
 import { Targets } from "../screeps/target";
+import { Works } from "../screeps/work";
 import { Harvest } from "./harvest";
 
 export class Work
@@ -15,9 +16,9 @@ export class Work
 
     static more(): boolean
     {
-        if (Work.hasIdle()) return false;
+        if (Works.workers.any(w => w.idle)) return false;
 
-        const workerCount: number = Creep.ofKind(WORKER).length;
+        const workerCount: number = Works.workers.length;
         const harvesterCount: number = Creep.ofKind(HARVESTER).length;
 
         if (workerCount >= harvesterCount * WORKER_HARVESTER_RATIO) return false;
@@ -30,16 +31,11 @@ export class Work
         return energyUsed < energyAvailable;
     }
 
-    private static hasIdle(): boolean
-    {
-        return Creep.ofKind(WORKER).any(w => w.idle);
-    }
-
     private static energyUsed(): number
     {
         var result: number = 0;
 
-        for (let worker of Creep.ofKind(WORKER))
+        for (let worker of Works.workers)
         {
             const target: Opt<Assignable> = worker.target;
 
@@ -79,7 +75,7 @@ export class Work
 
     private static unassign(): void
     {
-        for (let worker of Creep.ofKind(WORKER))
+        for (let worker of Works.workers)
         {
             const target: Opt<Assignable> = worker.target;
 
@@ -149,7 +145,7 @@ export class Work
 
     private static assign()
     {
-        const workers: Array<Creep> = Creep.ofKind(WORKER).filter(w => w.idle);
+        const workers: Array<Creep> = Works.workers.filter(w => w.idle);
 
         if (workers.length == 0) return;
 
@@ -238,7 +234,7 @@ export class Work
 
     private static work()
     {
-        for (let worker of Creep.ofKind(WORKER))
+        for (let worker of Works.workers)
         {
             const target: Opt<Assignable> = worker.target;
 

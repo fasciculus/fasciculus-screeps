@@ -98,17 +98,41 @@ export class VisualConfig
     }
 }
 
+export class WorkConfig
+{
+    private _workers: Set<string> = new Set();
+
+    private reset(): void
+    {
+        this._workers.clear();
+    }
+
+    isWorker(creep: Creep): boolean { return this._workers.has(creep.kind); }
+
+    setup(opts: Opt<WorkOptions>): void
+    {
+        this.reset();
+
+        if (opts === undefined) return;
+
+        if (opts.workers !== undefined) this._workers.addAll(opts.workers);
+    }
+}
+
 export class ScreepsConfig
 {
     private static _transport: TransportConfig = new TransportConfig();
     private static _visual: VisualConfig = new VisualConfig();
+    private static _work: WorkConfig = new WorkConfig();
 
     static get transport(): TransportConfig { return ScreepsConfig._transport; }
     static get visual(): VisualConfig { return ScreepsConfig._visual; }
+    static get work(): WorkConfig { return ScreepsConfig._work; }
 
     static setup(opts: ScreepsOptions)
     {
         ScreepsConfig._transport.setup(opts.transport);
         ScreepsConfig._visual.setup(opts.visual);
+        ScreepsConfig._work.setup(opts.work);
     }
 }

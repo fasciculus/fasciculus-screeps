@@ -1,5 +1,5 @@
 
-export const VERSION = "0.6.6";
+export const VERSION = "0.6.7";
 export const SUICIDE = false;
 
 export const INFO: string = "I";
@@ -37,5 +37,10 @@ export const SCREEPS_OPTIONS: ScreepsOptions =
         resources: true,
         sources: true,
         spawns: true,
+    },
+
+    work:
+    {
+        workers: [WORKER]
     }
 };
