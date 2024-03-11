@@ -2,7 +2,7 @@ import { Cached } from "./cache";
 import { ScreepsConfig, TransportConfig, TransportGoalsConfig } from "./config";
 import { PathResult, Paths } from "./path";
 
-export const TRANSPORTER_DIVISOR: number = 1000;
+export const TRANSPORTER_DIVISOR: number = 500;
 
 export class Transports
 {

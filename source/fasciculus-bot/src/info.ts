@@ -1,3 +1,4 @@
+import { Civil } from "./civ/civil";
 import { Transport } from "./civ/transport";
 import { INFO, TRANSPORTER } from "./common/constant";
 
@@ -22,6 +23,9 @@ export class Infos
             const transporters: number = Creep.ofKind(TRANSPORTER).length;
 
             visual.text(`I: ${idleTransporters.toFixed(0)} % of ${transporters}`, x, y, INFO_STYLE);
+            ++y;
+
+            visual.text(`C: ${Civil.next()}`, x, y, INFO_STYLE);
             ++y;
 
             visual.text(`B: ${Game.cpu.bucket}`, x, y, INFO_STYLE);
