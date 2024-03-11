@@ -6,16 +6,16 @@ export class Visuals
 {
     private static _visuals: Cached<Map<string, RoomVisual>> = Cached.simple(() => new Map());
 
-    private static _controllerSlotsStyle: TextStyle = { font: 0.35, color: "#ffffff", align: "center" };
+    private static _controllerSlotsStyle: TextStyle = { font: 0.35, color: "#ffffff", align: "center", stroke: "#000000" };
 
     private static _pathStyle: LineStyle = { width: 0.035, lineStyle: "dashed", opacity: 0.25 };
 
-    private static _resourceAssignmentStyle: TextStyle = { font: 0.35, color: "#ffc000", align: "center" };
-    private static _resourceAmountStyle: TextStyle = { font: 0.35, color: "#ffff00", align: "center" };
+    private static _resourceAssignmentStyle: TextStyle = { font: 0.35, color: "#ffc000", align: "center", stroke: "#000000" };
+    private static _resourceAmountStyle: TextStyle = { font: 0.35, color: "#ffff00", align: "center", stroke: "#000000" };
 
-    private static _sourceSlotsStyle: TextStyle = { font: 0.35, color: "#ffffff", align: "center" };
+    private static _sourceSlotsStyle: TextStyle = { font: 0.35, color: "#ffffff", align: "center", stroke: "#000000" };
 
-    private static _spawnTransportStyle: TextStyle = { font: 0.5, color: "#c08000", align: "center" };
+    private static _spawnTransportStyle: TextStyle = { font: 0.5, color: "#c08000", align: "center", stroke: "#000000" };
 
     static paint(): void
     {
@@ -43,7 +43,7 @@ export class Visuals
             const visual = Visuals.getVisual(pos.roomName);
             const slots: string = `${controller.slotsFree} / ${controller.slotsCount}`;
 
-            visual.text(slots, x, y, Visuals._sourceSlotsStyle);
+            visual.text(slots, x, y, Visuals._controllerSlotsStyle);
         }
     }
 
